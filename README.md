@@ -31,6 +31,15 @@
 | **Gitleaks** | Code Quality | 🟢 Adopt | Production-ready |
 | **Renovate** | Code Quality | 🟡 Trial | Exploring |
 | **Binary Authorization** | Code Quality | 🟡 Trial | Exploring |
+| **PyAV** | Video / Media | 🟢 Adopt | Production-ready |
+| **Motion Canvas** | Video / Media | 🟢 Adopt | Production-ready |
+| **Manim CE** | Video / Media | 🟢 Adopt | Production-ready |
+| **fluent-ffmpeg** | Video / Media | 🟢 Adopt | Production-ready |
+| **Three.js (headless)** | Video / Media | 🟢 Adopt | Production-ready |
+| **MoviePy** | Video / Media | 🟢 Adopt | Production-ready |
+| **Revideo** | Video / Media | 🟡 Trial | Exploring |
+| **Skia-Python** | Video / Media | 🟡 Trial | Exploring |
+| **GStreamer** | Video / Media | 🟡 Trial | Exploring |
 
 ---
 
@@ -42,6 +51,7 @@
 | AI / LLM Tooling | [domains/ai-llm.md](domains/ai-llm.md) | 6 |
 | GCP Infrastructure | [domains/gcp-infra.md](domains/gcp-infra.md) | 6 |
 | Code Quality & Security | [domains/code-quality-security.md](domains/code-quality-security.md) | 6 |
+| Video & Media | [domains/video-media.md](domains/video-media.md) | 22 |
 
 ---
 
@@ -50,6 +60,7 @@
 | Project | Description | File |
 |---------|-------------|------|
 | GCP SaaS Platform | Greenfield multi-tenant SaaS on GCP | [projects/gcp-saas-platform.md](projects/gcp-saas-platform.md) |
+| Programmatic Video Tools | Research spike: 22 video libraries for SaaS pipeline | [projects/programmatic-video-tools.md](projects/programmatic-video-tools.md) |
 
 ---
 
