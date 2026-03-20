@@ -1,149 +1,139 @@
-# Design: Video Catalog Examples — Extend domains/video-media.md
+# Design: Video Catalog — Interactive HTML Comparison Page
 
 **Date:** 2026-03-19
 **Status:** Approved
+**Replaces:** Original markdown-only design (same file, revised scope)
 
 ---
 
 ## Goal
 
-Extend `domains/video-media.md` with rich code examples for all 17 tools currently missing from that file. The root `video-media.md` serves as the broad catalog; `domains/video-media.md` is the deep-dive implementation reference.
+Build a self-contained interactive HTML comparison page for all video tools in the catalog, served via GitHub Pages from the `my-stack` repo. Same aesthetic as the existing `ultra-video-tool-comparison.html` (dark theme, card grid, filter bar, scores).
+
+Total tools: **28** (11 existing with demo videos + 17 new with code snippets only).
 
 ---
 
 ## Scope
 
-### Tools to Add (17 total)
+### All 28 Tools (11 existing + 17 new)
 
-**Players & Playback (new section)**
-- Video.js — web player, HLS/DASH, plugin ecosystem
-- Plyr — lightweight player, YouTube/Vimeo embeds
-- Shaka Player — adaptive streaming, DRM (Widevine/PlayReady/FairPlay)
+**Players & Playback**
+- Video.js (🟢 88), Plyr (🟡 82), Shaka Player (🟡 85)
 
-**Processing & Pipelines (new section)**
-- FFmpeg — CLI wrapper patterns (subprocess Python, fluent-ffmpeg Node)
-- MediaPipe — real-time ML on video (pose, face, hand tracking)
+**Processing & Pipelines**
+- FFmpeg (🟢 95), MediaPipe (🟡 83)
 
-**Programmatic Generation (additions to existing section)**
-- Anime.js — DOM/SVG/CSS timeline animations, Puppeteer capture
-- PixiJS — WebGL 2D, sprites, GPU filters, Puppeteer capture
-- Lottie-Web — AE JSON animations in browser
-- p5.js — creative coding sketches (LGPL-2.1 warning)
-- Rive — state machine animations (editor closed-source warning)
-- Vispy — OpenGL scientific viz, point clouds
-- Movis — After Effects-style Python compositing
-- Matplotlib Animation — chart animation via FuncAnimation + FFMpegWriter
-- Editly — declarative JSON video editing (Node.js)
+**Programmatic Generation — Adopt**
+- PyAV (🟢 97), Manim CE (🟢 94), Motion Canvas (🟢 93), Three.js headless (🟢 92), MoviePy (🟢 91), fluent-ffmpeg (🟢 91), D3.js (🟢 90), Anime.js (🟢 86), PixiJS (🟢 87)
 
-**Hold (new section, abbreviated)**
-- LibOpenShot — LGPL-3 warning, redirect to alternatives
-- ProjectM — LGPL warning, redirect
-- Pytoon — pre-alpha warning, redirect
+**Programmatic Generation — Trial**
+- Revideo (🟡 90), Skia-Python (🟡 88), GStreamer (🟡 87), Lottie-Web (🟡 78), Rive (🟡 80), Vispy (🟡 75), Movis (🟡 72), Matplotlib Animation (🟡 74), Editly (🟡 77), p5.js (🟡 72)
+
+**Hold**
+- Remotion (🔴 — commercial licence), LibOpenShot (🔴 — LGPL-3), ProjectM (🔴 — LGPL), Pytoon (🔴 — pre-alpha)
 
 ---
 
-## Entry Format
+## Output File
 
-Each entry follows the established pattern from existing tools:
-
-```markdown
-### ToolName
-
-| Field | Value |
-| Radar | 🟢/🟡/🔴 |
-| Status | ... |
-| Score | N / 100 |
-| Licence | ... |
-| Website | ... |
-| Projects | [Programmatic Video Tools](../projects/programmatic-video-tools.md) |
-
-**Why:** / **Why Evaluating:** / **Why Hold:** paragraph
-
-**My Pattern:** bullet points (omitted for Hold entries)
-
-**[Descriptive heading]:**
-```code snippet```
-
-**Gotchas:** bullet points
-
-**Alternatives Considered:** table (omitted for Hold entries)
-```
-
-Hold entries use the Remotion pattern: licence warning block + redirect table, minimal code. Hold entries omit Score, My Pattern, and Alternatives Considered.
+`docs/video-tools.html` — single self-contained file, no external dependencies (all CSS + JS inline).
 
 ---
 
-## Score Assignments
+## GitHub Pages Setup
 
-| Tool | Score |
-|------|-------|
-| FFmpeg | 95 |
-| Video.js | 88 |
-| Shaka Player | 85 |
-| Plyr | 82 |
-| MediaPipe | 83 |
-| Anime.js | 86 |
-| PixiJS | 87 |
-| Lottie-Web | 78 |
-| Rive | 80 |
-| Vispy | 75 |
-| Movis | 72 |
-| Matplotlib Animation | 74 |
-| Editly | 77 |
-| p5.js | 72 |
+- Enable GitHub Pages on `my-stack` repo, serving from `main` branch `/docs` folder
+- Page URL: `https://amitrintzler.github.io/my-stack/video-tools.html`
 
 ---
 
-## File Structure After Changes
-
-The current file has a single flat `## Tools` section with 11 tools. This restructuring:
-- Renames `## Tools` → `## Programmatic Generation`
-- Adds three new top-level sections: `## Players & Playback`, `## Processing & Pipelines`, `## Hold`
-- Moves the existing `### Remotion` entry from `## Programmatic Generation` into `## Hold`
-- Keeps `### fluent-ffmpeg` in `## Programmatic Generation` (it is a Node.js wrapper, not a CLI tool — distinct from the new `### FFmpeg` entry in Processing)
-- Updates the H1 title from `# 🎬 Video & Media — Programmatic Generation` to `# 🎬 Video & Media` and updates the intro blockquote to reflect the broader scope
-- Updates the header licence warning list to include new entries with licence concerns (p5.js LGPL-2.1 already present; add Rive closed-source editor, ProjectM LGPL, LibOpenShot LGPL-3 already present)
+## Page Structure
 
 ```
-domains/video-media.md
-  ## Players & Playback        ← NEW SECTION
-    ### Video.js
-    ### Plyr
-    ### Shaka Player
-  ## Processing & Pipelines    ← NEW SECTION
-    ### FFmpeg
-    ### MediaPipe
-  ## Programmatic Generation   ← RENAMED from "## Tools"
-    ### PyAV                   ← existing
-    ### Manim CE               ← existing
-    ### Motion Canvas          ← existing
-    ### fluent-ffmpeg          ← existing (stays here, not moved to Processing)
-    ### MoviePy                ← existing
-    ### Three.js (headless)    ← existing
-    ### Revideo                ← existing
-    ### Skia-Python            ← existing
-    ### GStreamer               ← existing
-    ### D3.js                  ← existing
-    ### Anime.js               ← NEW
-    ### PixiJS                 ← NEW
-    ### Lottie-Web             ← NEW
-    ### p5.js                  ← NEW
-    ### Rive                   ← NEW
-    ### Vispy                  ← NEW
-    ### Movis                  ← NEW
-    ### Matplotlib Animation   ← NEW
-    ### Editly                 ← NEW
-  ## Hold                      ← NEW SECTION
-    ### Remotion               ← MOVED from Programmatic Generation
-    ### LibOpenShot            ← NEW
-    ### ProjectM               ← NEW
-    ### Pytoon                 ← NEW
+Header
+  Title: "Video & Media Tools"
+  Subtitle: "28 tools evaluated for programmatic video generation"
+  Stats bar: total tools / adopt count / trial count / hold count
+
+Filter Bar
+  By language:   All | Python | TypeScript | JavaScript
+  By radar:      All | 🟢 Adopt | 🟡 Trial | 🔴 Hold
+  By capability: All | Video | Audio | 3D | Data Viz | ML | Cloud (filter label matches matrix column "Cloud")
+
+Card Grid (responsive, 2-col on wide, 1-col on narrow)
+  Each card:
+    - Tool name + score badge (top right)
+    - Radar pill (Adopt / Trial / Hold)
+    - Language tag(s)
+    - Code snippet panel (syntax-highlighted, scrollable, max ~20 lines)
+    - Capability dots row (filled = yes, empty = no)
+    - Licence tag (colour-coded: green=permissive, amber=LGPL, red=commercial)
+    - Links row: Website → | GitHub → | (Demo video → for the 11 existing tools)
+    - Hold cards: show licence warning banner instead of code snippet
 ```
+
+---
+
+## Code Snippet Format
+
+Each card shows the most useful minimal example for that tool — same examples as in `domains/video-media.md`. Syntax highlighting via a small inline Prism.js bundle (Python + JS/TS only — keeps size minimal).
+
+For the 11 tools that have demo videos in `programmatic-video-tools`, a "▶ Demo video" link points to `https://amitrintzler.github.io/programmatic-video-tools/`.
+
+---
+
+## Card Capabilities Matrix
+
+| Tool | Video | Audio | 3D | Data Viz | ML | Cloud |
+|------|-------|----|----|----|----|----|
+| PyAV | ● | ● | ○ | ○ | ○ | ● |
+| Manim CE | ● | ○ | ○ | ● | ○ | ● |
+| Motion Canvas | ● | ○ | ○ | ● | ○ | ● |
+| Three.js | ● | ○ | ● | ○ | ○ | ● |
+| fluent-ffmpeg | ● | ● | ○ | ○ | ○ | ● |
+| MoviePy | ● | ● | ○ | ○ | ○ | ● |
+| D3.js | ● | ○ | ○ | ● | ○ | ● |
+| FFmpeg | ● | ● | ○ | ○ | ○ | ● |
+| MediaPipe | ○ | ○ | ○ | ○ | ● | ● |
+| Video.js | ● | ● | ○ | ○ | ○ | ● |
+| Shaka Player | ● | ● | ○ | ○ | ○ | ● |
+| Plyr | ● | ● | ○ | ○ | ○ | ● |
+| Anime.js | ● | ○ | ○ | ○ | ○ | ● |
+| PixiJS | ● | ○ | ○ | ○ | ○ | ● |
+| Revideo | ● | ● | ○ | ● | ○ | ● |
+| Skia-Python | ● | ○ | ○ | ○ | ○ | ● |
+| GStreamer | ● | ● | ○ | ○ | ○ | ● |
+| Lottie-Web | ● | ○ | ○ | ○ | ○ | ● |
+| Rive | ● | ○ | ○ | ○ | ○ | ○ |
+| Vispy | ● | ○ | ● | ● | ○ | ○ |
+| Movis | ● | ● | ○ | ○ | ○ | ○ |
+| Matplotlib Anim | ● | ○ | ○ | ● | ○ | ● |
+| Editly | ● | ● | ○ | ○ | ○ | ● |
+| p5.js | ● | ○ | ○ | ○ | ○ | ● |
+| Remotion | ● | ● | ○ | ● | ○ | ● |
+| LibOpenShot | ● | ● | ○ | ○ | ○ | ○ |
+| ProjectM | ● | ○ | ● | ○ | ○ | ○ |
+| Pytoon | ● | ○ | ○ | ○ | ○ | ○ |
+
+---
+
+## Design Aesthetic (matching existing comparison page)
+
+- Background: `#0a0a1a`
+- Card background: `#12122a`
+- Card border: `#2a2a4a`
+- Accent: `#4ecdc4`
+- Title gradient: `#4ecdc4 → #ff6b6b → #ffd93d`
+- Score badge colour is independent of radar status (a tool can be Adopt with a mid-range score badge): high (≥90): `#4ecdc4`; mid (75-89): `#ffd93d`; low (<75): `#ff6b6b`
+- Radar pill colour is always based on radar status (Adopt=green, Trial=amber, Hold=red), not score
+- Hover: lift + teal glow shadow
+- Font: system-ui stack
 
 ---
 
 ## Out of Scope
 
-- Changes to root `video-media.md`
-- Changes to `projects/programmatic-video-tools.md`
-- New files or per-tool files
+- Actual video file generation for the 17 new tools
+- Changes to `domains/video-media.md` (separate task if desired)
+- Other domain HTML pages (this is video only)
