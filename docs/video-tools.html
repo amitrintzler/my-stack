@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video &amp; Media Tools — 28 Tools Evaluated</title>
+  <style>
+    :root {
+      --bg: #0a0a1a;
+      --card-bg: #12122a;
+      --card-border: #2a2a4a;
+      --accent: #4ecdc4;
+      --warm: #ff6b6b;
+      --gold: #ffd93d;
+      --text: #e2e2f0;
+      --muted: #6868a0;
+      --code-bg: #060614;
+      --font-ui: 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      --font-code: 'JetBrains Mono', 'Cascadia Code', 'SF Mono', Consolas, monospace;
+      --radius: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    a { text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #app {
+      position: relative;
+      z-index: 1;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 64px 0 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .grad {
+      background: linear-gradient(90deg, #4ecdc4 0%, #ff6b6b 50%, #ffd93d 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 28px;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .stat b {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
+      margin-right: 4px;
+    }
+
+    .stat.adopt b { color: var(--accent); }
+    .stat.trial b { color: var(--gold); }
+    .stat.hold b  { color: var(--warm); }
+    .stat.total b { color: var(--text); }
+
+    /* ── Filters ── */
+    .filters {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10, 10, 26, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 0;
+      margin-bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .fgroup {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .flabel {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      min-width: 82px;
+    }
+
+    .fbtn-row { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .fbtn {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      border: 1px solid var(--card-border);
+      transition: all 0.15s ease;
+    }
+
+    .fbtn:hover { color: var(--text); border-color: #4a4a70; }
+    .fbtn.active { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+    .fbtn.f-adopt.active { background: var(--accent); border-color: var(--accent); }
+    .fbtn.f-trial.active { background: var(--gold);  border-color: var(--gold);  }
+    .fbtn.f-hold.active  { background: var(--warm);  border-color: var(--warm);  }
+
+    /* ── Grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(560px, 1fr));
+      gap: 20px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      animation: cardIn 0.35s ease both;
+    }
+
+    .card.radar-adopt { border-top: 2px solid var(--accent); }
+    .card.radar-trial { border-top: 2px solid var(--gold); }
+    .card.radar-hold  { border-top: 2px solid var(--warm); }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(78, 205, 196, 0.14);
+      border-color: rgba(78, 205, 196, 0.28);
+    }
+
+    .card.radar-hold:hover {
+      box-shadow: 0 12px 40px rgba(255, 107, 107, 0.12);
+      border-color: rgba(255, 107, 107, 0.25);
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Card Header ── */
+    .card-header { padding: 16px 18px 12px; }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 9px;
+    }
+
+    .card-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .card-badges { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+
+    .score-badge {
+      font-size: 0.74rem;
+      font-weight: 700;
+      font-family: var(--font-code);
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: #0a0a1a;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .radar-pill {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: #0a0a1a;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 9px;
+    }
+
+    .lang-tag {
+      font-size: 0.68rem;
+      font-family: var(--font-code);
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(78, 205, 196, 0.1);
+      color: var(--accent);
+    }
+
+    .lic-tag {
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid currentColor;
+      opacity: 0.8;
+    }
+
+    .cat-tag {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-left: auto;
+      opacity: 0.75;
+    }
+
+    .best-for {
+      font-size: 0.83rem;
+      color: #a8a8cc;
+      line-height: 1.45;
+    }
+
+    .best-for strong { color: var(--muted); font-weight: 600; }
+
+    /* ── Hold Banner ── */
+    .hold-banner {
+      background: rgba(255, 107, 107, 0.07);
+      border-top: 1px solid rgba(255, 107, 107, 0.18);
+      border-bottom: 1px solid rgba(255, 107, 107, 0.18);
+      padding: 9px 18px;
+      font-size: 0.78rem;
+      color: #ff9090;
+      line-height: 1.45;
+    }
+
+    /* ── Code ── */
+    .code-wrap {
+      flex: 1;
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+      overflow: hidden;
+    }
+
+    .code-block {
+      background: var(--code-bg);
+      margin: 0;
+      padding: 14px 18px;
+      font-family: var(--font-code);
+      font-size: 0.76rem;
+      line-height: 1.65;
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 230px;
+      white-space: pre;
+    }
+
+    .code-block::-webkit-scrollbar { width: 4px; height: 4px; }
+    .code-block::-webkit-scrollbar-track { background: transparent; }
+    .code-block::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 2px; }
+    .code-block::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+    .code-block { scrollbar-width: thin; scrollbar-color: #2a2a4a transparent; }
+
+    /* Syntax highlight colours */
+    .hl-kw  { color: #c792ea; }
+    .hl-str { color: #c3e88d; }
+    .hl-cmt { color: #4a6070; font-style: italic; }
+    .hl-num { color: #f78c6c; }
+    .hl-cls { color: #82aaff; }
+    .hl-dec { color: #ffcb6b; }
+
+    /* ── Card Footer ── */
+    .card-footer { padding: 11px 18px 14px; }
+
+    .caps-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .cap-dot {
+      font-size: 0.67rem;
+      padding: 2px 7px;
+      border-radius: 3px;
+      border: 1px solid var(--card-border);
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+
+    .cap-dot.on {
+      background: rgba(78, 205, 196, 0.1);
+      border-color: rgba(78, 205, 196, 0.28);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .links-row { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .link {
+      font-size: 0.76rem;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+
+    .link:hover { color: var(--accent); }
+    .demo-link { color: var(--gold); font-weight: 600; }
+    .demo-link:hover { color: #ffe870; }
+
+    /* ── Empty State ── */
+    .empty {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 660px) {
+      .card-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.8rem; }
+      .filters { padding: 10px 0; }
+      .fgroup { gap: 8px; }
+      .flabel { min-width: 62px; font-size: 0.62rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1><span class="grad">Video &amp; Media Tools</span></h1>
+      <p class="sub">28 tools evaluated for programmatic video generation</p>
+      <div class="stats-bar">
+        <span class="stat total"><b id="s-total">28</b> tools</span>
+        <span class="stat adopt"><b id="s-adopt">11</b> adopt</span>
+        <span class="stat trial"><b id="s-trial">13</b> trial</span>
+        <span class="stat hold"><b id="s-hold">4</b> hold</span>
+      </div>
+    </header>
+
+    <nav class="filters" aria-label="Filter tools">
+      <div class="fgroup">
+        <span class="flabel">Language</span>
+        <div class="fbtn-row" data-filter="lang">
+          <button class="fbtn active" data-val="all">All</button>
+          <button class="fbtn" data-val="python">Python</button>
+          <button class="fbtn" data-val="typescript">TypeScript</button>
+          <button class="fbtn" data-val="javascript">JavaScript</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <span class="flabel">Radar</span>
+        <div class="fbtn-row" data-filter="radar">
+          <button class="fbtn active" data-val="all">All</button>
+          <button class="fbtn f-adopt" data-val="adopt">🟢 Adopt</button>
+          <button class="fbtn f-trial" data-val="trial">🟡 Trial</button>
+          <button class="fbtn f-hold"  data-val="hold">🔴 Hold</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <span class="flabel">Capability</span>
+        <div class="fbtn-row" data-filter="cap">
+          <button class="fbtn active" data-val="all">All</button>
+          <button class="fbtn" data-val="video">Video</button>
+          <button class="fbtn" data-val="audio">Audio</button>
+          <button class="fbtn" data-val="3d">3D</button>
+          <button class="fbtn" data-val="dataViz">Data Viz</button>
+          <button class="fbtn" data-val="ml">ML</button>
+          <button class="fbtn" data-val="cloud">Cloud</button>
+        </div>
+      </div>
+    </nav>
+
+    <div id="grid" class="card-grid"></div>
+    <p id="empty" class="empty" hidden>No tools match this filter combination.</p>
+  </div>
+
+  <script>
+    // ─────────────────────────────────────────────────────────────────────────
+    // Tool data
+    // ─────────────────────────────────────────────────────────────────────────
+    const TOOLS = [
+
+      // ── Players & Playback ──────────────────────────────────────────────
+
+      {
+        name: 'Video.js', score: 88, radar: 'adopt',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'Apache-2.0', type: 'permissive' },
+        category: 'Player',
+        bestFor: 'HLS/DASH playback with quality switching, DVR controls, and a rich plugin ecosystem',
+        website: 'https://videojs.com', github: 'https://github.com/videojs/video.js',
+        demoVideo: false,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
+
+const player = videojs('my-video', {
+  controls: true, autoplay: false, preload: 'auto', fluid: true,
+  sources: [{ src: 'stream.m3u8', type: 'application/x-mpegURL' }],
+});
+
+// Monitor quality level switches
+player.ready(() => {
+  const levels = player.qualityLevels();
+  levels.on('change', () => {
+    const q = levels[levels.selectedIndex];
+    console.log('Quality: ' + q.height + 'p @ ' + q.bitrate + ' bps');
+  });
+
+  // Programmatically disable lowest tier
+  for (let i = 0; i < levels.length; i++) {
+    if (i === 0) levels[i].enabled = false;
+  }
+});`,
+      },
+
+      {
+        name: 'Plyr', score: 82, radar: 'trial',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Player',
+        bestFor: 'Lightweight custom-styled player — HLS via hls.js, clean API, minimal footprint',
+        website: 'https://plyr.io', github: 'https://github.com/sampotts/plyr',
+        demoVideo: false,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import Plyr from 'plyr';
+import Hls from 'hls.js';
+
+const video = document.querySelector('#player video');
+
+// Wire HLS before Plyr attaches
+if (Hls.isSupported()) {
+  const hls = new Hls();
+  hls.loadSource('https://cdn.example.com/stream.m3u8');
+  hls.attachMedia(video);
+}
+
+const player = new Plyr('#player', {
+  controls: ['play', 'progress', 'current-time',
+             'mute', 'volume', 'captions', 'settings', 'fullscreen'],
+  settings: ['quality', 'speed'],
+  quality: { default: 1080, options: [4320, 2160, 1440, 1080, 720, 480, 360] },
+  speed:   { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] },
+});`,
+      },
+
+      {
+        name: 'Shaka Player', score: 85, radar: 'trial',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'Apache-2.0', type: 'permissive' },
+        category: 'Player',
+        bestFor: 'Adaptive streaming (DASH/HLS) with Widevine/PlayReady DRM out of the box',
+        website: 'https://shaka-player-demo.appspot.com', github: 'https://github.com/shaka-project/shaka-player',
+        demoVideo: false,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import shaka from 'shaka-player';
+
+shaka.polyfill.installAll();
+
+const video  = document.getElementById('video');
+const player = new shaka.Player(video);
+
+// Widevine DRM
+player.configure({
+  drm: {
+    servers: { 'com.widevine.alpha': 'https://license.example.com/widevine' },
+  },
+  abr: { enabled: true, defaultBandwidthEstimate: 5e6 },
+});
+
+player.addEventListener('error', e => console.error('Shaka error', e.detail));
+player.addEventListener('adaptation', () => {
+  const track = player.getVariantTracks().find(t => t.active);
+  console.log('ABR switched to ' + track.height + 'p');
+});
+
+await player.load('https://cdn.example.com/manifest.mpd');`,
+      },
+
+      // ── Processing & Pipelines ──────────────────────────────────────────
+
+      {
+        name: 'FFmpeg', score: 95, radar: 'adopt',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'LGPL-2.1', type: 'lgpl' },
+        category: 'Processing',
+        bestFor: 'Universal video processing — trim, filter, transcode, watermark, mux in one pass',
+        website: 'https://ffmpeg.org', github: 'https://github.com/kkroening/ffmpeg-python',
+        demoVideo: false,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import ffmpeg
+
+# Trim 10s→40s, scale, add watermark, re-encode in one filter-graph pass
+(
+  ffmpeg
+  .input('input.mp4', ss=10, t=30)
+  .filter('scale', 1280, 720)
+  .filter('drawtext',
+    text='© 2026',
+    fontsize=28, fontcolor='white@0.75',
+    x='w-tw-20', y='h-th-20',
+  )
+  .output(
+    'output.mp4',
+    vcodec='libx264', crf=18,
+    acodec='aac',     audio_bitrate='256k',
+    movflags='faststart',
+  )
+  .overwrite_output()
+  .run()
+)`,
+      },
+
+      {
+        name: 'MediaPipe', score: 83, radar: 'trial',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'Apache-2.0', type: 'permissive' },
+        category: 'Processing',
+        bestFor: 'ML-based video analysis — pose, hands, face landmarks, object detection per frame',
+        website: 'https://ai.google.dev/edge/mediapipe', github: 'https://github.com/google-ai-edge/mediapipe',
+        demoVideo: false,
+        caps: { video: false, audio: false, '3d': false, dataViz: false, ml: true, cloud: true },
+        code:
+`import mediapipe as mp
+import cv2
+
+mp_pose = mp.solutions.pose
+mp_draw = mp.solutions.drawing_utils
+
+cap = cv2.VideoCapture('input.mp4')
+
+with mp_pose.Pose(
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
+) as pose:
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+        rgb     = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = pose.process(rgb)
+
+        if results.pose_landmarks:
+            mp_draw.draw_landmarks(
+                frame, results.pose_landmarks,
+                mp_pose.POSE_CONNECTIONS,
+            )
+        cv2.imwrite(
+            'frame_{:04.0f}.png'.format(cap.get(cv2.CAP_PROP_POS_FRAMES)),
+            frame,
+        )
+
+cap.release()`,
+      },
+
+      // ── Programmatic Generation — Adopt ────────────────────────────────
+
+      {
+        name: 'PyAV', score: 97, radar: 'adopt',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'BSD-3', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Frame-accurate H.264/H.265 encoding from Python — GPU-ready, no subprocess overhead',
+        website: 'https://pyav.org', github: 'https://github.com/PyAV-Org/PyAV',
+        demoVideo: true,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import av, numpy as np
+from PIL import Image, ImageDraw
+
+W, H, FPS = 1280, 720, 30
+
+with av.open('output.mp4', 'w') as container:
+    vs = container.add_stream('h264', rate=FPS)
+    vs.width, vs.height = W, H
+    vs.pix_fmt  = 'yuv420p'
+    vs.options  = {'crf': '17', 'preset': 'fast'}
+
+    for i in range(FPS * 10):          # 10-second video
+        img  = Image.new('RGB', (W, H), (10, 10, 30))
+        draw = ImageDraw.Draw(img)
+        x    = int(W * (i / (FPS * 10)))
+        draw.ellipse([x-40, H//2-40, x+40, H//2+40], fill=(80, 200, 120))
+
+        frame     = av.VideoFrame.from_ndarray(np.array(img), format='rgb24')
+        frame.pts = i
+        for pkt in vs.encode(frame):
+            container.mux(pkt)
+
+    for pkt in vs.encode():            # flush encoder
+        container.mux(pkt)`,
+      },
+
+      {
+        name: 'Manim CE', score: 94, radar: 'adopt',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Math animations, diagram explainers, data storytelling — LaTeX first-class',
+        website: 'https://www.manim.community/', github: 'https://github.com/ManimCommunity/manim',
+        demoVideo: true,
+        caps: { video: true, audio: false, '3d': false, dataViz: true, ml: false, cloud: true },
+        code:
+`from manim import *
+
+class BarChartDemo(Scene):
+    def construct(self):
+        chart = BarChart(
+            values=[4, 7, 2, 9, 5],
+            bar_names=["Q1", "Q2", "Q3", "Q4", "Q5"],
+            y_range=[0, 10, 2],
+            bar_colors=[BLUE, GREEN, YELLOW, RED, PURPLE],
+        )
+        label = chart.get_axis_labels(
+            x_label="Quarter", y_label="Revenue"
+        )
+        self.play(Create(chart), Write(label), run_time=2)
+        self.play(
+            chart.animate.change_bar_values([6, 3, 8, 4, 7]),
+            run_time=1.5,
+        )
+        self.wait()
+
+# manim -pqh demo.py BarChartDemo   # 1080p render
+# manim -pql demo.py BarChartDemo   # fast preview`,
+      },
+
+      {
+        name: 'Motion Canvas', score: 93, radar: 'adopt',
+        languages: ['typescript'], lang: 'typescript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Product demos, explainer videos, animated code visualizations — TypeScript-first',
+        website: 'https://motioncanvas.io', github: 'https://github.com/motion-canvas/motion-canvas',
+        demoVideo: true,
+        caps: { video: true, audio: false, '3d': false, dataViz: true, ml: false, cloud: true },
+        code:
+`import { makeScene2D, Txt, Rect } from '@motion-canvas/2d';
+import { waitFor, createRef } from '@motion-canvas/core';
+
+export default makeScene2D(function* (view) {
+  const code = createRef<Txt>();
+
+  view.add(
+    <Rect fill="#1e1e2e" radius={12} padding={32} width={800} height={400}>
+      <Txt
+        ref={code}
+        fill="#cdd6f4"
+        fontFamily="JetBrains Mono"
+        fontSize={24}
+        text=""
+      />
+    </Rect>
+  );
+
+  // Typing effect — each character appears at 40ms intervals
+  const snippet = 'const video = await render(scene);';
+  for (const char of snippet) {
+    code().text(code().text() + char);
+    yield* waitFor(0.04);
+  }
+  yield* waitFor(1);
+});
+
+// npx @motion-canvas/cli render`,
+      },
+
+      {
+        name: 'Three.js', score: 92, radar: 'adopt',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: '3D product reveals, particle systems, data globes — headless GPU capture via Puppeteer',
+        website: 'https://threejs.org', github: 'https://github.com/mrdoob/three.js',
+        demoVideo: true,
+        caps: { video: true, audio: false, '3d': true, dataViz: false, ml: false, cloud: true },
+        code:
+`// Serve your Three.js scene at localhost:3000, then capture with Puppeteer
+import puppeteer from 'puppeteer';
+
+const browser = await puppeteer.launch({
+  args: ['--use-gl=egl', '--no-sandbox'],   // required for headless GPU on Linux
+});
+const page = await browser.newPage();
+await page.setViewport({ width: 1280, height: 720 });
+await page.goto('http://localhost:3000/scene');
+
+const FPS = 30, DURATION = 10;
+const frames = [];
+
+for (let i = 0; i < FPS * DURATION; i++) {
+  await page.evaluate(f => window.renderFrame(f), i);  // advance your scene
+  frames.push(await page.screenshot({ type: 'png' }));
+}
+await browser.close();
+
+// Pipe frames[] as PNG → ffmpeg stdin → H.264 output`,
+      },
+
+      {
+        name: 'MoviePy', score: 91, radar: 'adopt',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Compositing existing clips — text overlays, watermarks, subtitles, concatenation',
+        website: 'https://zulko.github.io/moviepy/', github: 'https://github.com/Zulko/moviepy',
+        demoVideo: true,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`from moviepy import VideoFileClip, TextClip, CompositeVideoClip, concatenate_videoclips
+
+base = VideoFileClip('input.mp4')
+
+# Animated title overlay
+title = (
+    TextClip('Product Demo', font_size=72, color='white', font='DejaVu-Sans-Bold')
+    .with_position(('center', 60))
+    .with_duration(3.0)
+)
+
+# Lower-third caption
+caption = (
+    TextClip('Version 2.0  |  March 2026', font_size=32, color='#4ecdc4')
+    .with_position(('center', base.h - 80))
+    .with_duration(base.duration)
+)
+
+final = CompositeVideoClip([base, title, caption])
+final.write_videofile('output.mp4', fps=30, codec='libx264', audio_codec='aac')`,
+      },
+
+      {
+        name: 'fluent-ffmpeg', score: 91, radar: 'adopt',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Node.js pipeline layer — concat scenes, mux background audio, apply colour grade',
+        website: 'https://github.com/fluent-ffmpeg/node-fluent-ffmpeg', github: 'https://github.com/fluent-ffmpeg/node-fluent-ffmpeg',
+        demoVideo: true,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import ffmpeg from 'fluent-ffmpeg';
+
+// Concat two scene files + mix background music
+ffmpeg()
+  .input('scene1.mp4')
+  .input('scene2.mp4')
+  .input('background.mp3')
+  .complexFilter([
+    '[0:v][1:v]concat=n=2:v=1:a=0[v]',   // video concat
+    '[2:a]volume=0.25[music]',             // duck music
+  ])
+  .outputOptions([
+    '-map [v]', '-map [music]',
+    '-shortest',
+    '-c:v libx264', '-crf 18', '-preset fast',
+    '-c:a aac',     '-b:a 256k',
+    '-movflags faststart',
+  ])
+  .output('final.mp4')
+  .on('end', () => console.log('Done'))
+  .on('error', err => console.error(err))
+  .run();`,
+      },
+
+      {
+        name: 'D3.js', score: 90, radar: 'adopt',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'ISC', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Data-driven SVG animations — bar chart races, time-series, geographic maps via Puppeteer',
+        website: 'https://d3js.org', github: 'https://github.com/d3/d3',
+        demoVideo: true,
+        caps: { video: true, audio: false, '3d': false, dataViz: true, ml: false, cloud: true },
+        code:
+`// Bar chart race: update bars every 750ms, capture via Puppeteer CDP
+const bars = svg.selectAll('rect').data(data, d => d.name);
+
+// Enter: new countries appear at width=0
+bars.enter().append('rect')
+  .attr('x', 0)
+  .attr('y',      d => yScale(d.name))
+  .attr('height', yScale.bandwidth())
+  .attr('width',  0)
+  .attr('fill',   d => colorScale(d.category));
+
+// Update: animate to new value
+bars.transition()
+  .duration(750)
+  .ease(d3.easeLinear)
+  .attr('width', d => xScale(d.value))
+  .attr('y',     d => yScale(d.name));   // re-sort position
+
+// Exit: countries that leave the top-10 shrink away
+bars.exit().transition().duration(300).attr('width', 0).remove();`,
+      },
+
+      {
+        name: 'Anime.js', score: 86, radar: 'adopt',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Lightweight CSS/DOM animations — capture with Puppeteer for clean motion-graphics clips',
+        website: 'https://animejs.com', github: 'https://github.com/juliangarnier/anime',
+        demoVideo: false,
+        caps: { video: true, audio: false, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import anime from 'animejs';
+import puppeteer from 'puppeteer';
+
+// In browser: staggered reveal of stat cards
+const anim = anime({
+  targets: '.stat-card',
+  translateY:  [40, 0],
+  opacity:     [0, 1],
+  scale:       [0.9, 1],
+  duration:    800,
+  delay:       anime.stagger(120),   // 120ms between each card
+  easing:      'easeOutExpo',
+  autoplay:    false,
+});
+
+// Frame-accurate capture at 30 fps
+const FPS = 30, DURATION_MS = 1200;
+const frames = [];
+
+for (let f = 0; f < Math.ceil(FPS * DURATION_MS / 1000); f++) {
+  anim.seek((f / FPS) * 1000);
+  frames.push(await page.screenshot({ type: 'png' }));
+}
+// Encode frames → MP4 with ffmpeg-python`,
+      },
+
+      {
+        name: 'PixiJS', score: 87, radar: 'adopt',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'WebGL 2D sprites, particle systems, sprite-sheet animations — GPU-accelerated',
+        website: 'https://pixijs.com', github: 'https://github.com/pixijs/pixijs',
+        demoVideo: false,
+        caps: { video: true, audio: false, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import * as PIXI from 'pixi.js';
+
+const app = new PIXI.Application({
+  width: 1280, height: 720, backgroundColor: 0x0a0a1a,
+  antialias: true,
+});
+
+// Particle emitter
+const container = new PIXI.ParticleContainer(2000, { scale: true, position: true, alpha: true });
+app.stage.addChild(container);
+
+const particles = Array.from({ length: 500 }, () => {
+  const p = new PIXI.Sprite(PIXI.Texture.WHITE);
+  p.tint = 0x4ecdc4;
+  p.alpha = Math.random() * 0.8 + 0.2;
+  p.width = p.height = Math.random() * 4 + 1;
+  p.x = Math.random() * 1280;
+  p.y = Math.random() * 720;
+  container.addChild(p);
+  return p;
+});
+
+app.ticker.add(() => {
+  particles.forEach(p => { p.y -= 0.5 + Math.random(); if (p.y < 0) p.y = 720; });
+  // Extract pixels → encode with PyAV or ffmpeg
+  const pixels = app.renderer.extract.pixels(app.stage);
+});`,
+      },
+
+      // ── Programmatic Generation — Trial ────────────────────────────────
+
+      {
+        name: 'Revideo', score: 90, radar: 'trial',
+        languages: ['typescript'], lang: 'typescript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Data-driven bulk video generation — render N personalised videos from a dataset in parallel',
+        website: 'https://re.video', github: 'https://github.com/redotvideo/revideo',
+        demoVideo: true,
+        caps: { video: true, audio: true, '3d': false, dataViz: true, ml: false, cloud: true },
+        code:
+`import { renderVideo } from '@revideo/renderer';
+import { makeScene2D, Txt, Rect } from '@revideo/2d';
+import { createRef, waitFor } from '@revideo/core';
+
+// Scene reads 'name' variable at render time
+const scene = makeScene2D(function* (view) {
+  const label = createRef<Txt>();
+  const name  = view.variables().get('name', 'World');
+
+  view.add(
+    <Rect fill="#12122a" radius={16} width={900} height={500}>
+      <Txt ref={label} fill="#4ecdc4" fontSize={72} text="" />
+    </Rect>
+  );
+
+  // Type out personalised greeting character by character
+  for (const char of ('Hello, ' + name + '!').split('')) {
+    label().text(label().text() + char);
+    yield* waitFor(0.05);
+  }
+  yield* waitFor(1);
+});
+
+// Bulk render — one MP4 per name, all in parallel
+const names = ['Alice', 'Bob', 'Carol', 'David'];
+await Promise.all(
+  names.map(n => renderVideo({ scene, variables: { name: n }, outFile: n + '.mp4' }))
+);`,
+      },
+
+      {
+        name: 'Skia-Python', score: 88, radar: 'trial',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'BSD-3', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Chrome-quality 2D rendering — better font shaping and anti-aliasing than Pillow',
+        website: 'https://kyamagu.github.io/skia-python/', github: 'https://github.com/kyamagu/skia-python',
+        demoVideo: true,
+        caps: { video: true, audio: false, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import skia
+import numpy as np
+
+surface = skia.Surface(1280, 720)
+
+with surface as canvas:
+    # Gradient background
+    paint = skia.Paint(Shader=skia.GradientShader.MakeLinear(
+        [(0, 0), (1280, 720)],
+        [0xFF1e1e2e, 0xFF313244],
+    ))
+    canvas.drawPaint(paint)
+
+    # Crisp text with GPU-quality anti-aliasing
+    blob = skia.TextBlob.MakeFromString(
+        'Hello Skia', skia.Font(None, 80)
+    )
+    canvas.drawTextBlob(
+        blob, 340, 390,
+        skia.Paint(Color=0xFF4ecdc4, AntiAlias=True),
+    )
+
+# BGRA → RGB → PyAV VideoFrame
+frame_array = surface.toarray()[:, :, :3][:, :, ::-1]`,
+      },
+
+      {
+        name: 'GStreamer', score: 87, radar: 'trial',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'LGPL', type: 'lgpl' },
+        category: 'Programmatic',
+        bestFor: 'Broadcast pipelines, embedded targets (Jetson/Pi), GPU-accelerated live streams',
+        website: 'https://gstreamer.freedesktop.org', github: 'https://gitlab.freedesktop.org/gstreamer/gstreamer',
+        demoVideo: true,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import gi
+gi.require_version('Gst', '1.0')
+from gi.repository import Gst
+
+Gst.init(None)
+
+# Declarative pipeline string: testsrc → H.264 → MP4
+pipeline = Gst.parse_launch(
+    'videotestsrc num-buffers=300 ! '
+    'video/x-raw,width=1280,height=720,framerate=30/1 ! '
+    'x264enc bitrate=4000 ! '              # swap nvh264enc for NVENC
+    'mp4mux ! '
+    'filesink location=out.mp4'
+)
+
+pipeline.set_state(Gst.State.PLAYING)
+pipeline.get_bus().timed_pop_filtered(
+    Gst.CLOCK_TIME_NONE, Gst.MessageType.EOS
+)
+pipeline.set_state(Gst.State.NULL)
+# appsrc + appsink to inject/extract numpy frames programmatically`,
+      },
+
+      {
+        name: 'Lottie-Web', score: 78, radar: 'trial',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Playback and frame-capture of After Effects animations exported via Bodymovin JSON',
+        website: 'https://airbnb.design/lottie/', github: 'https://github.com/airbnb/lottie-web',
+        demoVideo: false,
+        caps: { video: true, audio: false, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import lottie from 'lottie-web';
+
+// Load a Bodymovin-exported JSON animation
+const anim = lottie.loadAnimation({
+  container: document.getElementById('container'),
+  renderer:  'canvas',     // use 'canvas' for pixel capture; 'svg' for DOM
+  loop:      false,
+  autoplay:  false,
+  path:      'animation.json',
+});
+
+anim.addEventListener('DOMLoaded', () => {
+  const canvas = document.querySelector('canvas');
+  const total  = anim.totalFrames;
+  const frames = [];
+
+  // Scrub frame-by-frame and capture each as PNG
+  for (let f = 0; f < total; f++) {
+    anim.goToAndStop(f, true);
+    frames.push(canvas.toDataURL('image/png'));
+  }
+
+  // Send frames[] to server → encode with ffmpeg-python
+  fetch('/encode', { method: 'POST', body: JSON.stringify(frames) });
+});`,
+      },
+
+      {
+        name: 'Rive', score: 80, radar: 'trial',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'State machine animations with runtime-controllable transitions — great for interactive UI clips',
+        website: 'https://rive.app', github: 'https://github.com/rive-app/rive-wasm',
+        demoVideo: false,
+        caps: { video: true, audio: false, '3d': false, dataViz: false, ml: false, cloud: false },
+        code:
+`import { Rive, Layout, Fit, Alignment } from '@rive-app/canvas';
+
+const r = new Rive({
+  src:           'character.riv',
+  canvas:        document.getElementById('canvas'),
+  layout:        new Layout({ fit: Fit.Cover, alignment: Alignment.Center }),
+  autoplay:      true,
+  stateMachines: 'State Machine 1',
+  onLoad: () => {
+    const inputs = r.stateMachineInputs('State Machine 1');
+
+    // Get named inputs defined in the Rive editor
+    const speedInput = inputs.find(i => i.name === 'Speed');
+    const jumpTrigger = inputs.find(i => i.name === 'Jump');
+
+    speedInput.value = 1.5;   // animate at 1.5× speed
+    jumpTrigger.fire();        // trigger jump state transition
+
+    // Record canvas frames via requestAnimationFrame → ffmpeg
+  },
+});`,
+      },
+
+      {
+        name: 'Vispy', score: 75, radar: 'trial',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'BSD-3', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Scientific 3D data visualization — GPU-accelerated OpenGL from Python, rotating plots',
+        website: 'https://vispy.org', github: 'https://github.com/vispy/vispy',
+        demoVideo: false,
+        caps: { video: true, audio: false, '3d': true, dataViz: true, ml: false, cloud: false },
+        code:
+`import numpy as np
+from vispy import app, scene
+from vispy.io import write_png
+
+canvas = scene.SceneCanvas(size=(1280, 720), bgcolor='black', show=False)
+view   = canvas.central_widget.add_view()
+view.camera = 'turntable'
+
+# Animated 3D scatter — 1 000 random points
+pos = np.random.randn(1000, 3).astype(np.float32)
+scatter = scene.visuals.Markers()
+scatter.set_data(pos, face_color=(0.3, 0.8, 0.5, 0.8), size=5)
+view.add(scatter)
+
+frames = []
+for i in range(120):               # 4 s at 30 fps
+    view.camera.azimuth = i * 3    # rotate 3° per frame (full 360° turn)
+    img = canvas.render()          # numpy RGBA array
+    frames.append(img)
+
+# Pass frames[] to PyAV to encode H.264`,
+      },
+
+      {
+        name: 'Movis', score: 72, radar: 'trial',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Layer-based video composition with keyframe animation — After Effects style from Python',
+        website: 'https://github.com/rezoo/movis', github: 'https://github.com/rezoo/movis',
+        demoVideo: false,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: false },
+        code:
+`import movis as mv
+
+comp = mv.layer.Composition(size=(1280, 720), duration=5.0)
+
+# Background rectangle
+bg = comp.add_layer(
+    mv.layer.Rectangle(size=(1280, 720), color=(10, 10, 30))
+)
+
+# Title that fades in over 1 second starting at t=0.5
+title = comp.add_layer(
+    mv.layer.Text('Hello Movis', font_size=80, color=(255, 255, 255)),
+    offset=0.5,
+)
+title.opacity.enable_motion().extend(
+    keyframes=[0.0, 1.0], values=[0.0, 1.0]
+)
+
+# Subtitle with slide-in
+sub = comp.add_layer(
+    mv.layer.Text('Layered video composition in Python', font_size=36,
+                  color=(120, 120, 200)),
+    offset=1.2,
+)
+sub.position.enable_motion().extend(
+    keyframes=[0.0, 0.6], values=[(640, 500), (640, 440)]
+)
+
+comp.write_video('output.mp4')`,
+      },
+
+      {
+        name: 'Matplotlib Animation', score: 74, radar: 'trial',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'BSD-3', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Quick scientific plots and data animations exported to MP4 — minimal setup',
+        website: 'https://matplotlib.org', github: 'https://github.com/matplotlib/matplotlib',
+        demoVideo: false,
+        caps: { video: true, audio: false, '3d': false, dataViz: true, ml: false, cloud: true },
+        code:
+`import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation, FFMpegWriter
+
+fig, ax = plt.subplots(figsize=(12.8, 7.2), dpi=100, facecolor='#0a0a1a')
+ax.set_facecolor('#12122a')
+ax.tick_params(colors='#6868a0')
+for spine in ax.spines.values():
+    spine.set_edgecolor('#2a2a4a')
+
+line, = ax.plot([], [], color='#4ecdc4', linewidth=2)
+x_data, y_data = [], []
+
+def update(frame):
+    x_data.append(frame / 10)
+    y_data.append(np.sin(frame / 5) * np.exp(-frame / 200))
+    line.set_data(x_data, y_data)
+    ax.relim()
+    ax.autoscale_view()
+    return (line,)
+
+anim   = FuncAnimation(fig, update, frames=300, interval=33, blit=True)
+writer = FFMpegWriter(fps=30, bitrate=4000, codec='libx264')
+anim.save('output.mp4', writer=writer)`,
+      },
+
+      {
+        name: 'Editly', score: 77, radar: 'trial',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Declarative JSON-driven slideshow and video editing — no ffmpeg knowledge needed',
+        website: 'https://github.com/mifi/editly', github: 'https://github.com/mifi/editly',
+        demoVideo: false,
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`import editly from 'editly';
+
+await editly({
+  width: 1280, height: 720, fps: 30,
+  outPath: 'output.mp4',
+  audioFilePath: 'background.mp3',
+  clips: [
+    {
+      duration: 3,
+      layers: [{
+        type: 'title-background',
+        text: 'Chapter 1',
+        background: { type: 'linear-gradient', colors: ['#4ecdc4', '#1a1a2e'] },
+      }],
+    },
+    {
+      duration: 5,
+      transition: { name: 'fade', duration: 0.5 },
+      layers: [
+        { type: 'video', path: 'clip.mp4' },
+        { type: 'title', text: 'Key insight', position: 'bottom',
+          textColor: '#ffffff', fontPath: './fonts/Inter-Bold.ttf' },
+      ],
+    },
+    {
+      duration: 2,
+      layers: [{ type: 'title-background', text: 'Thanks', background: { type: 'radial-gradient', colors: ['#12122a', '#000'] } }],
+    },
+  ],
+});`,
+      },
+
+      {
+        name: 'p5.js', score: 72, radar: 'trial',
+        languages: ['javascript'], lang: 'javascript',
+        licence: { label: 'LGPL-2.1', type: 'lgpl' },
+        category: 'Programmatic',
+        bestFor: 'Generative art, creative coding, visual experiments — export frames via p5.capture',
+        website: 'https://p5js.org', github: 'https://github.com/processing/p5.js',
+        demoVideo: false,
+        caps: { video: true, audio: false, '3d': false, dataViz: false, ml: false, cloud: true },
+        code:
+`// Use the p5.capture library or Puppeteer frame extraction to export MP4
+const sketch = p => {
+  let t = 0;
+
+  p.setup = () => {
+    p.createCanvas(1280, 720);
+    p.frameRate(30);
+  };
+
+  p.draw = () => {
+    p.background(10, 10, 26);
+
+    // Lissajous particle field
+    for (let i = 0; i < 300; i++) {
+      const angle = (i / 300) * p.TWO_PI + t;
+      const r     = 220 + 90 * p.sin(i * 0.08 + t * 1.5);
+      const x     = p.width  / 2 + r * p.cos(angle);
+      const y     = p.height / 2 + r * p.sin(angle * 1.3);
+      const alpha = p.map(p.sin(i * 0.05 + t), -1, 1, 60, 200);
+
+      p.fill(78, 205, 196, alpha);
+      p.noStroke();
+      p.circle(x, y, p.map(i % 10, 0, 10, 2, 8));
+    }
+    t += 0.018;
+  };
+};
+new p5(sketch);`,
+      },
+
+      // ── Hold ────────────────────────────────────────────────────────────
+
+      {
+        name: 'Remotion', score: 88, radar: 'hold',
+        languages: ['typescript'], lang: 'typescript',
+        licence: { label: 'Commercial', type: 'commercial' },
+        category: 'Programmatic',
+        bestFor: 'React-based declarative video — React devs are immediately productive; blocked for SaaS',
+        website: 'https://remotion.dev', github: 'https://github.com/remotion-dev/remotion',
+        demoVideo: true,
+        holdReason: 'Commercial SaaS licence required — $1,500+/yr for any server-side render delivered to users. Free for personal/open-source only.',
+        caps: { video: true, audio: true, '3d': false, dataViz: true, ml: false, cloud: true },
+        code:
+`// ⚠️ Illustrative only — production use requires a paid company licence
+import { AbsoluteFill, useCurrentFrame, interpolate, Sequence } from 'remotion';
+
+export const MyScene: React.FC = () => {
+  const frame = useCurrentFrame();
+
+  const titleOpacity = interpolate(frame, [0, 30], [0, 1], { extrapolateRight: 'clamp' });
+  const slideX       = interpolate(frame, [0, 25], [-200, 0], { extrapolateRight: 'clamp' });
+
+  return (
+    <AbsoluteFill style={{ background: '#1e1e2e', justifyContent: 'center', alignItems: 'center' }}>
+      <Sequence from={0} durationInFrames={60}>
+        <h1 style={{ color: '#cdd6f4', fontSize: 72, opacity: titleOpacity }}>
+          Hello Remotion
+        </h1>
+      </Sequence>
+      <Sequence from={20}>
+        <p style={{ color: '#4ecdc4', fontSize: 32, transform: 'translateX(' + slideX + 'px)' }}>
+          React components as video frames
+        </p>
+      </Sequence>
+    </AbsoluteFill>
+  );
+};`,
+      },
+
+      {
+        name: 'LibOpenShot', score: null, radar: 'hold',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'LGPL-3', type: 'lgpl' },
+        category: 'Programmatic',
+        bestFor: 'Non-linear video editing Python API — trim, layer, composite; blocked by LGPL-3',
+        website: 'https://www.openshot.org', github: 'https://github.com/OpenShot/libopenshot',
+        demoVideo: false,
+        holdReason: 'LGPL-3 — dynamic linking only in proprietary products. Incompatible with static builds or some cloud deployment models.',
+        caps: { video: true, audio: true, '3d': false, dataViz: false, ml: false, cloud: false },
+        code:
+`# ⚠️ LGPL-3 — dynamic linking only; verify compatibility before adopting
+import openshot
+
+timeline = openshot.Timeline(
+    1280, 720,
+    openshot.Fraction(30, 1),
+    44100, 2,
+    openshot.LAYOUT_STEREO,
+)
+timeline.Open()
+
+clip = openshot.Clip('input.mp4')
+clip.Position(0.0)
+clip.Layer(1)
+clip.scale_x = openshot.Keyframe(0.8)   # 80% width keyframe at t=0
+timeline.AddClip(clip)
+
+writer = openshot.FFmpegWriter('output.mp4')
+writer.SetVideoOptions(
+    True, 'libx264', openshot.Fraction(30, 1),
+    1280, 720, openshot.Fraction(1, 1), False, False, 4000000,
+)
+writer.SetAudioOptions(True, 'aac', 44100, 2, openshot.LAYOUT_STEREO, 256000)
+writer.Open()
+timeline.Close()`,
+      },
+
+      {
+        name: 'ProjectM', score: null, radar: 'hold',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'LGPL-2.1', type: 'lgpl' },
+        category: 'Programmatic',
+        bestFor: 'Music-reactive Milkdrop visualizer — renders presets from PCM audio; blocked by LGPL',
+        website: 'https://github.com/projectM-visualizer/projectm', github: 'https://github.com/projectM-visualizer/projectm',
+        demoVideo: false,
+        holdReason: 'LGPL-2.1 — links to libprojectM at runtime. No static bundling in proprietary binaries allowed.',
+        caps: { video: true, audio: false, '3d': true, dataViz: false, ml: false, cloud: false },
+        code:
+`# ⚠️ LGPL-2.1 — use dynamic linking only; do not statically bundle libprojectM
+import pyprojectM        # unofficial Python binding — pin version carefully
+import numpy as np
+
+pm = pyprojectM.ProjectM(width=1280, height=720, fps=60)
+pm.load_preset_file('/usr/share/projectM/presets/Flexi - disco ball.milk')
+pm.set_beat_sensitivity(1.2)
+
+# Feed 512-sample float32 PCM chunks, receive rendered RGBA frames
+for chunk in audio_pcm_chunks:         # iterate your audio source
+    pm.add_pcm_float(chunk)
+    frame = pm.render_frame()          # numpy RGBA (1280 × 720)
+
+    # Pass frame to PyAV for H.264 encode
+    av_frame = av.VideoFrame.from_ndarray(
+        frame[:, :, :3], format='rgb24'
+    )`,
+      },
+
+      {
+        name: 'Pytoon', score: null, radar: 'hold',
+        languages: ['python'], lang: 'python',
+        licence: { label: 'MIT', type: 'permissive' },
+        category: 'Programmatic',
+        bestFor: 'Declarative cartoon character animation from SVG sprites — blocked: pre-alpha, unstable API',
+        website: 'https://github.com/jaley612/pytoon', github: 'https://github.com/jaley612/pytoon',
+        demoVideo: false,
+        holdReason: 'Pre-alpha — API breaks between minor versions. Not production-ready. Revisit when v1.0 is released.',
+        caps: { video: true, audio: false, '3d': false, dataViz: false, ml: false, cloud: false },
+        code:
+`# ⚠️ Pre-alpha — pin exact version; expect API changes between releases
+import pytoon
+
+scene = pytoon.Scene(width=1280, height=720, fps=24)
+
+# Load character from SVG (limb positions defined in SVG layer names)
+char = pytoon.Character.from_svg('character.svg')
+scene.add(char)
+
+# Declarative animation timeline
+char.animate('walk',   start=0.0, end=3.0)    # built-in walk cycle 0–3s
+char.animate('wave',   start=3.0, end=5.0)    # wave emote 3–5s
+char.animate('idle',   start=5.0, end=8.0)    # idle breathing loop
+
+# Background layer
+bg = pytoon.Background(color='#0a0a1a')
+scene.add(bg, z_index=0)
+
+scene.render('output.mp4')`,
+      },
+
+    ]; // end TOOLS
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Syntax highlighter (character tokeniser — Python + JS/TS)
+    // ─────────────────────────────────────────────────────────────────────────
+    const PY_KW = new Set([
+      'False','None','True','and','as','assert','async','await',
+      'break','class','continue','def','del','elif','else','except',
+      'finally','for','from','global','if','import','in','is',
+      'lambda','nonlocal','not','or','pass','raise','return',
+      'try','while','with','yield',
+    ]);
+
+    const JS_KW = new Set([
+      'async','await','break','case','catch','class','const','continue',
+      'debugger','default','delete','do','else','export','extends',
+      'finally','for','from','function','if','import','in','instanceof',
+      'let','new','of','return','static','super','switch','throw','try',
+      'typeof','var','void','while','with','yield',
+      'interface','type','enum','implements','declare','abstract',
+      'readonly','namespace','module',
+      'true','false','null','undefined',
+    ]);
+
+    function highlight(code, lang) {
+      const isPy = lang === 'python';
+      const tokens = [];
+      let i = 0;
+      const len = code.length;
+
+      while (i < len) {
+        const ch  = code[i];
+        const ch2 = code.slice(i, i + 2);
+        const ch3 = code.slice(i, i + 3);
+
+        // Python comment
+        if (isPy && ch === '#') {
+          const end = code.indexOf('\n', i);
+          const s = end < 0 ? code.slice(i) : code.slice(i, end);
+          tokens.push(['cmt', s]); i += s.length; continue;
+        }
+
+        // JS line comment
+        if (!isPy && ch2 === '//') {
+          const end = code.indexOf('\n', i);
+          const s = end < 0 ? code.slice(i) : code.slice(i, end);
+          tokens.push(['cmt', s]); i += s.length; continue;
+        }
+
+        // JS block comment
+        if (!isPy && ch2 === '/*') {
+          const end = code.indexOf('*/', i + 2);
+          const s = end < 0 ? code.slice(i) : code.slice(i, end + 2);
+          tokens.push(['cmt', s]); i += s.length; continue;
+        }
+
+        // Python triple-quoted strings
+        if (isPy && (ch3 === '"""' || ch3 === "'''")) {
+          const q = ch3;
+          let j = i + 3;
+          while (j < len) {
+            if (code[j] === '\\') { j += 2; continue; }
+            if (code.slice(j, j + 3) === q) { j += 3; break; }
+            j++;
+          }
+          tokens.push(['str', code.slice(i, j)]); i = j; continue;
+        }
+
+        // JS template literal
+        if (!isPy && ch === '`') {
+          let j = i + 1;
+          while (j < len) {
+            if (code[j] === '\\') { j += 2; continue; }
+            if (code[j] === '`') { j++; break; }
+            j++;
+          }
+          tokens.push(['str', code.slice(i, j)]); i = j; continue;
+        }
+
+        // Regular string
+        if (ch === '"' || ch === "'") {
+          let j = i + 1;
+          while (j < len) {
+            if (code[j] === '\\') { j += 2; continue; }
+            if (code[j] === ch || code[j] === '\n') { if (code[j] === ch) j++; break; }
+            j++;
+          }
+          tokens.push(['str', code.slice(i, j)]); i = j; continue;
+        }
+
+        // Number
+        if (/\d/.test(ch) && (i === 0 || /\W/.test(code[i - 1]))) {
+          let j = i;
+          while (j < len && /[\d.e_]/.test(code[j])) j++;
+          tokens.push(['num', code.slice(i, j)]); i = j; continue;
+        }
+
+        // Identifier / keyword
+        if (/[a-zA-Z_$]/.test(ch)) {
+          let j = i;
+          while (j < len && /[\w$]/.test(code[j])) j++;
+          const word = code.slice(i, j);
+          if ((isPy && PY_KW.has(word)) || (!isPy && JS_KW.has(word))) {
+            tokens.push(['kw', word]);
+          } else if (/^[A-Z]/.test(word)) {
+            tokens.push(['cls', word]);
+          } else if (j < len && code[j] === '(' ) {
+            tokens.push(['dec', word]);
+          } else {
+            tokens.push([null, word]);
+          }
+          i = j; continue;
+        }
+
+        tokens.push([null, ch]); i++;
+      }
+
+      return tokens.map(([type, text]) => {
+        const esc = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return type ? '<span class="hl-' + type + '">' + esc + '</span>' : esc;
+      }).join('');
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Card renderer
+    // ─────────────────────────────────────────────────────────────────────────
+    const SCORE_COLOR = s => s == null ? '#555' : s >= 90 ? '#4ecdc4' : s >= 75 ? '#ffd93d' : '#ff6b6b';
+    const RADAR_COLOR = { adopt: '#4ecdc4', trial: '#ffd93d', hold: '#ff6b6b' };
+    const LIC_COLOR   = { permissive: '#4ecdc4', lgpl: '#ffd93d', commercial: '#ff6b6b' };
+    const CAPS_DEF    = ['video','audio','3d','dataViz','ml','cloud'];
+    const CAP_LABEL   = { video:'Video', audio:'Audio', '3d':'3D', dataViz:'Data Viz', ml:'ML', cloud:'Cloud' };
+    const LANG_SHORT  = { javascript:'JS', typescript:'TS', python:'Py' };
+    const DEMO_BASE   = 'https://amitrintzler.github.io/programmatic-video-tools/';
+
+    function e(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function renderCard(t) {
+      const sc = SCORE_COLOR(t.score);
+      const rc = RADAR_COLOR[t.radar];
+      const lc = LIC_COLOR[t.licence.type];
+
+      const scoreHtml = t.score != null
+        ? '<span class="score-badge" style="background:' + sc + '">' + t.score + '</span>'
+        : '<span class="score-badge" style="background:#444;color:#888">—</span>';
+
+      const langTags = t.languages.map(l =>
+        '<span class="lang-tag">' + (LANG_SHORT[l] || l) + '</span>'
+      ).join('');
+
+      const capDots = CAPS_DEF.map(c =>
+        '<span class="cap-dot' + (t.caps[c] ? ' on' : '') + '">' + CAP_LABEL[c] + '</span>'
+      ).join('');
+
+      const demoLink = t.demoVideo
+        ? '<a class="link demo-link" href="' + DEMO_BASE + '" target="_blank" rel="noopener">▶ Demo</a>'
+        : '';
+
+      const ghLink = t.github && t.github !== t.website
+        ? '<a class="link" href="' + e(t.github) + '" target="_blank" rel="noopener">GitHub ↗</a>'
+        : '';
+
+      const holdBanner = t.holdReason
+        ? '<div class="hold-banner">⚠️ ' + e(t.holdReason) + '</div>'
+        : '';
+
+      const codeHtml = highlight(t.code, t.lang || t.languages[0]);
+
+      return `
+        <div class="card-header">
+          <div class="card-title-row">
+            <span class="card-name">${e(t.name)}</span>
+            <div class="card-badges">
+              ${scoreHtml}
+              <span class="radar-pill" style="background:${rc}">${t.radar}</span>
+            </div>
+          </div>
+          <div class="card-meta">
+            ${langTags}
+            <span class="lic-tag" style="color:${lc};border-color:${lc}">${e(t.licence.label)}</span>
+            <span class="cat-tag">${e(t.category)}</span>
+          </div>
+          <p class="best-for"><strong>Best for:</strong> ${e(t.bestFor)}</p>
+        </div>
+        ${holdBanner}
+        <div class="code-wrap">
+          <pre class="code-block"><code>${codeHtml}</code></pre>
+        </div>
+        <div class="card-footer">
+          <div class="caps-row">${capDots}</div>
+          <div class="links-row">
+            <a class="link" href="${e(t.website)}" target="_blank" rel="noopener">Website ↗</a>
+            ${ghLink}
+            ${demoLink}
+          </div>
+        </div>`;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Filter logic
+    // ─────────────────────────────────────────────────────────────────────────
+    const filters = { lang: 'all', radar: 'all', cap: 'all' };
+
+    function applyFilters() {
+      let total = 0, adopt = 0, trial = 0, hold = 0;
+
+      document.querySelectorAll('.card').forEach(card => {
+        const langs = card.dataset.langs.split(' ');
+        const caps  = card.dataset.caps.split(' ');
+
+        const langOk  = filters.lang  === 'all' || langs.includes(filters.lang);
+        const radarOk = filters.radar === 'all' || card.dataset.radar === filters.radar;
+        const capOk   = filters.cap   === 'all' || caps.includes(filters.cap);
+        const show    = langOk && radarOk && capOk;
+
+        card.hidden = !show;
+        if (show) {
+          total++;
+          if (card.dataset.radar === 'adopt') adopt++;
+          else if (card.dataset.radar === 'trial') trial++;
+          else hold++;
+        }
+      });
+
+      document.getElementById('s-total').textContent = total;
+      document.getElementById('s-adopt').textContent = adopt;
+      document.getElementById('s-trial').textContent = trial;
+      document.getElementById('s-hold').textContent  = hold;
+      document.getElementById('empty').hidden = total > 0;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Initialise
+    // ─────────────────────────────────────────────────────────────────────────
+    const grid = document.getElementById('grid');
+
+    TOOLS.forEach((t, idx) => {
+      const card = document.createElement('div');
+      card.className = 'card radar-' + t.radar;
+      card.dataset.langs = t.languages.join(' ');
+      card.dataset.radar = t.radar;
+      card.dataset.caps  = CAPS_DEF.filter(c => t.caps[c]).join(' ') || 'none';
+      card.style.animationDelay = (idx * 28) + 'ms';
+      card.innerHTML = renderCard(t);
+      grid.appendChild(card);
+    });
+
+    document.querySelectorAll('.fbtn-row').forEach(row => {
+      row.querySelectorAll('.fbtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          row.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          filters[row.dataset.filter] = btn.dataset.val;
+          applyFilters();
+        });
+      });
+    });
+
+    applyFilters();
+  </script>
+</body>
+</html>
