@@ -38,6 +38,7 @@
 | **Three.js (headless)** | Video / Media | 🟢 Adopt | Production-ready |
 | **MoviePy** | Video / Media | 🟢 Adopt | Production-ready |
 | **Revideo** | Video / Media | 🟡 Trial | Exploring |
+| **HyperFrames** | Video / Media | 🟡 Trial | Exploring |
 | **Skia-Python** | Video / Media | 🟡 Trial | Exploring |
 | **GStreamer** | Video / Media | 🟡 Trial | Exploring |
 
