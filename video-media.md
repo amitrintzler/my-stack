@@ -344,6 +344,108 @@
 
 ---
 
+## HyperFrames
+
+| Field | Value |
+|-------|-------|
+| **Link** | [github.com/heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) |
+| **Use Case** | Write plain HTML + CSS/GSAP, render deterministic MP4/WebM via headless Chrome + FFmpeg. Agent-friendly non-interactive CLI. |
+| **Radar** | 🟡 Trial |
+| **Status** | Exploring |
+| **Licence** | Apache 2.0 |
+
+**Pros:**
+- HTML-native — no proprietary DSL or React compiler. `data-start`, `data-duration`, `data-track-index` attributes drive the timeline; a `window.__timelines[id]` GSAP timeline drives animation.
+- `npx hyperframes init` → working project in one command. Ships `doctor`, `lint`, `snapshot`, `render`, `preview` subcommands — all non-interactive, composable in CI.
+- Parallel frame capture (8 Chrome workers on 16 cores rendered 5s @ 1080p30 in **7.1s** in my test) — faster than single-process Puppeteer capture.
+- Linter caught a real issue (`missing_timeline_registry`) in one of my test compositions.
+- Apache 2.0 — no commercial gotcha like Remotion.
+- First-class agent story: `hyperframes skills` drops AGENTS.md / CLAUDE.md guides into the project.
+
+**Cons:**
+- Pulls a ~110 MB Chrome Headless Shell on first run (`hyperframes browser ensure`) — heavy for ephemeral CI runners; cache the `~/.cache/hyperframes/chrome` path.
+- CDN `<script>` tags (e.g. GSAP from jsdelivr) failed in my sandboxed network — render continued but animation silently didn't run. **Bundle animation libs locally** (`./vendor/gsap.min.js`) to be safe in airgapped / restricted networks.
+- `render -o out.mp4` short flag errored with `Not a directory`; `--output out.mp4` works. Minor CLI parsing bug in v0.4.6.
+- Linter flags `missing_timeline_registry` even for pure CSS `@keyframes` compositions that don't need a GSAP timeline — render still succeeds (non-strict by default) but the warning is a false positive for CSS-only scenes.
+- Young project (v0.4.6 at test time) — expect API churn.
+
+**Tested Example 1 — animated title card (GSAP):**
+
+```html
+<!-- index.html -->
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="./vendor/gsap.min.js"></script>
+    <style>
+      html, body { width: 1920px; height: 1080px; background: #0f172a; }
+      .stage { display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column; }
+      .title { font-size: 140px; font-weight: 800; color: #f8fafc; }
+      .accent { color: #60a5fa; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+      <div class="stage clip" data-start="0" data-duration="5" data-track-index="1">
+        <div class="title">
+          <span id="w1">Render</span>
+          <span id="w2" class="accent">video</span>
+          <span id="w3">from HTML</span>
+        </div>
+      </div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#w1", { opacity: 0, y: 40, duration: 0.5 }, 0.3);
+      tl.from("#w2", { opacity: 0, y: 40, duration: 0.5 }, 0.5);
+      tl.from("#w3", { opacity: 0, y: 40, duration: 0.5 }, 0.7);
+      window.__timelines = { main: tl };
+    </script>
+  </body>
+</html>
+```
+
+```bash
+npx hyperframes lint                    # 0 errors, 0 warnings
+npx hyperframes render --output out.mp4 # 150 frames, 227 KB, 7.1s wall-clock
+```
+
+**Tested Example 2 — animated bar chart (pure CSS, no GSAP):**
+
+```html
+<div id="root" data-composition-id="main" data-start="0" data-duration="6"
+     data-width="1920" data-height="1080">
+  <div class="stage clip" data-start="0" data-duration="6" data-track-index="1">
+    <h1>Video-Media Stack Usage</h1>
+    <div class="row r1">
+      <div class="label">PyAV</div>
+      <div class="track"><div class="bar" style="--w: 92%"></div></div>
+      <div class="value">92%</div>
+    </div>
+    <!-- ... more rows ... -->
+  </div>
+</div>
+
+<style>
+  .bar { width: 0; animation: grow 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  .r1 .bar { background: linear-gradient(90deg, #3b82f6, #60a5fa); animation-delay: 0.3s; }
+  @keyframes grow { to { width: var(--w); } }
+</style>
+```
+
+```bash
+npx hyperframes render --output out.mp4
+# ✗ missing_timeline_registry: Missing `window.__timelines` registration.  ← false positive for CSS-only
+# Render continues → 180 frames, 102 KB, 7.3s
+```
+
+**Honest verdict:**
+
+Slotted between Motion Canvas and Remotion. If your designers / agents already speak HTML+CSS and you want MP4 out without React or a $1,500/yr commercial licence, HyperFrames is the cleanest path I've tested. The agent-first CLI (every command works non-interactively, with `--quiet`, `--strict`, JSON-ish output) is genuinely well-designed for Claude-Code / Cursor pipelines. Not yet production-ready for me — the CDN-blocking and linter false-positive burn time — but a strong **🟡 Trial** to revisit at v1.0.
+
+---
+
 ## Skia-Python
 
 | Field | Value |
