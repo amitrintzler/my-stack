@@ -371,6 +371,10 @@
 
 **Tested Example 1 — animated title card (GSAP):**
 
+![HyperFrames GSAP title card demo](samples/hyperframes/01-title-card-gsap.gif)
+
+_Rendered MP4: [`samples/hyperframes/01-title-card-gsap.mp4`](samples/hyperframes/01-title-card-gsap.mp4) — 1920×1080 · H.264 · 30fps · 5s · 228 KB_
+
 ```html
 <!-- index.html -->
 <!doctype html>
@@ -412,6 +416,10 @@ npx hyperframes render --output out.mp4 # 150 frames, 227 KB, 7.1s wall-clock
 ```
 
 **Tested Example 2 — animated bar chart (pure CSS, no GSAP):**
+
+![HyperFrames CSS bar chart demo](samples/hyperframes/02-bar-chart-css.gif)
+
+_Rendered MP4: [`samples/hyperframes/02-bar-chart-css.mp4`](samples/hyperframes/02-bar-chart-css.mp4) — 1920×1080 · H.264 · 30fps · 6s · 102 KB_
 
 ```html
 <div id="root" data-composition-id="main" data-start="0" data-duration="6"
