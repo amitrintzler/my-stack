@@ -219,110 +219,190 @@
 
       /* === SCENE 5: חגיגה === */
       #s5 {
-        background: radial-gradient(ellipse at center 30%, #0a1e4a 0%, #05132e 50%, #000 100%);
+        background:
+          radial-gradient(ellipse at 50% 30%, rgba(30, 64, 140, 0.4) 0%, transparent 60%),
+          radial-gradient(ellipse at center 100%, #1a3a80 0%, #0a1d4a 40%, #050c26 80%, #000 100%);
         overflow: hidden;
       }
-      .night-flag {
+      .s5-rays {
         position: absolute;
-        width: 1100px;
-        height: 720px;
+        bottom: 0;
         left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
+        transform: translateX(-50%);
+        width: 2000px;
+        height: 800px;
+        background:
+          conic-gradient(from 180deg at 50% 100%,
+            transparent 0deg,
+            rgba(255, 230, 150, 0.05) 5deg,
+            transparent 10deg,
+            rgba(255, 230, 150, 0.08) 15deg,
+            transparent 20deg,
+            rgba(255, 230, 150, 0.05) 30deg,
+            transparent 40deg,
+            rgba(255, 230, 150, 0.07) 50deg,
+            transparent 60deg,
+            transparent 300deg,
+            rgba(255, 230, 150, 0.07) 310deg,
+            transparent 320deg,
+            rgba(255, 230, 150, 0.05) 330deg,
+            transparent 340deg,
+            rgba(255, 230, 150, 0.08) 345deg,
+            transparent 355deg,
+            transparent 360deg);
         opacity: 0;
+        pointer-events: none;
       }
-      .night-flag svg {
+      .flag-stage {
+        position: absolute;
+        top: 44%;
+        left: 50%;
+        width: 900px;
+        height: 620px;
+        margin-left: -450px;
+        margin-top: -310px;
+        opacity: 0;
+        perspective: 1800px;
+      }
+      .flag {
+        position: relative;
         width: 100%;
         height: 100%;
-        filter: drop-shadow(0 10px 50px rgba(0,56,184,0.4));
+        background: #fff;
+        box-shadow:
+          0 20px 80px rgba(0, 56, 184, 0.45),
+          0 4px 30px rgba(0, 0, 0, 0.4);
+        transform-origin: left center;
+        /* subtle waving shadow effect via background */
+        background:
+          linear-gradient(90deg,
+            rgba(0, 0, 0, 0.04) 0%,
+            transparent 15%,
+            rgba(255, 255, 255, 0) 45%,
+            rgba(0, 0, 0, 0.03) 65%,
+            transparent 85%,
+            rgba(0, 0, 0, 0.05) 100%),
+          #fff;
       }
+      .flag-stripe {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 14.3%;
+        background: #0038B8;
+      }
+      .flag-stripe.top { top: 14.3%; }
+      .flag-stripe.bot { bottom: 14.3%; }
+      .flag-star {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 260px;
+        height: 260px;
+        margin-top: -130px;
+        margin-left: -130px;
+        z-index: 5;
+      }
+      .flag-star svg { width: 100%; height: 100%; }
       .firework {
         position: absolute;
-        width: 3px;
-        height: 3px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .firework-trail {
+        position: absolute;
+        width: 2px;
+        height: 2px;
         border-radius: 50%;
         opacity: 0;
         pointer-events: none;
       }
       .s5-caption {
         position: absolute;
-        bottom: 120px;
+        bottom: 90px;
         left: 0; right: 0;
         text-align: center;
-        font-size: 44px;
+        font-size: 68px;
         font-weight: 400;
-        letter-spacing: 6px;
-        color: #f4e6b8;
+        letter-spacing: 8px;
+        color: #fff;
         opacity: 0;
+        text-shadow: 0 2px 30px rgba(255, 255, 255, 0.3),
+                     0 4px 60px rgba(100, 160, 255, 0.25);
+      }
+      .s5-caption-sub {
+        position: absolute;
+        bottom: 54px;
+        left: 0; right: 0;
+        text-align: center;
+        font-size: 22px;
+        font-weight: 300;
+        letter-spacing: 14px;
+        color: #9fc5ff;
+        opacity: 0;
+        direction: ltr;
+        text-transform: uppercase;
       }
 
       /* === SCENE 6: המסר === */
       #s6 {
-        background: radial-gradient(ellipse at center, #0a1428 0%, #000 80%);
+        background:
+          radial-gradient(ellipse at 50% 40%, rgba(20, 40, 90, 0.6) 0%, #050a1e 50%, #000 100%);
+      }
+      .s6-stars { position: absolute; inset: 0; pointer-events: none; }
+      .s6-star {
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+        opacity: 0;
       }
       .s6-wrap {
         display: flex;
         flex-direction: column;
         align-items: center;
         position: relative;
-      }
-      .s6-flag-bg {
-        position: absolute;
-        width: 900px;
-        height: 580px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        z-index: 0;
-      }
-      .s6-flag-bg svg {
-        width: 100%;
-        height: 100%;
-        opacity: 0.12;
+        z-index: 2;
       }
       .s6-primary {
-        font-size: 110px;
+        font-size: 120px;
         font-weight: 600;
         color: #fff;
         letter-spacing: 4px;
         text-align: center;
         line-height: 1.2;
-        position: relative;
-        z-index: 2;
         opacity: 0;
-        text-shadow: 0 2px 40px rgba(255,255,255,0.15);
+        text-shadow: 0 2px 40px rgba(255, 255, 255, 0.2),
+                     0 4px 80px rgba(100, 160, 255, 0.15);
       }
       .s6-divider {
         width: 0;
         height: 1px;
-        background: linear-gradient(90deg, transparent, #f4d798, transparent);
-        margin: 40px 0;
-        position: relative;
-        z-index: 2;
+        background: linear-gradient(90deg, transparent, #f4d798 50%, transparent);
+        margin: 50px 0;
       }
       .s6-secondary {
-        font-size: 40px;
+        font-size: 42px;
         font-weight: 300;
-        letter-spacing: 12px;
+        letter-spacing: 14px;
         color: #f4e6b8;
-        position: relative;
-        z-index: 2;
         opacity: 0;
       }
       .s6-candle {
         position: absolute;
-        bottom: 80px;
+        bottom: 70px;
         left: 50%;
         transform: translateX(-50%);
-        width: 12px;
-        height: 22px;
+        width: 14px;
+        height: 26px;
         background: radial-gradient(ellipse at 50% 85%, #fff5a8 0%, #ffb347 40%, #ff6a00 75%, transparent 100%);
         border-radius: 50% 50% 30% 30% / 70% 70% 30% 30%;
         opacity: 0;
         box-shadow:
-          0 0 16px 4px rgba(255, 170, 60, 0.35),
-          0 0 32px 10px rgba(255, 120, 30, 0.2);
+          0 0 24px 8px rgba(255, 170, 60, 0.4),
+          0 0 50px 16px rgba(255, 120, 30, 0.25);
         animation: flicker 2.2s ease-in-out infinite alternate;
       }
     </style>
@@ -401,34 +481,29 @@
 
       <!-- SCENE 5: חגיגה (30-42s) -->
       <div id="s5" class="scene clip" data-start="30" data-duration="12.5" data-track-index="5">
+        <div class="s5-rays"></div>
         <div id="fireworks-container"></div>
-        <div class="night-flag">
-          <svg viewBox="0 0 220 140">
-            <rect x="0" y="0" width="220" height="140" fill="#fff"/>
-            <rect x="0" y="20" width="220" height="18" fill="#0038B8"/>
-            <rect x="0" y="102" width="220" height="18" fill="#0038B8"/>
-            <g transform="translate(110 70)" fill="none" stroke="#0038B8" stroke-width="3" stroke-linejoin="miter">
-              <polygon points="0,-26 22,12 -22,12"/>
-              <polygon points="0,26 22,-12 -22,-12"/>
-            </g>
-          </svg>
+        <div class="flag-stage">
+          <div class="flag">
+            <div class="flag-stripe top"></div>
+            <div class="flag-stripe bot"></div>
+            <div class="flag-star">
+              <svg viewBox="0 0 200 200">
+                <polygon points="100,15 175,150 25,150"
+                  fill="none" stroke="#0038B8" stroke-width="10" stroke-linejoin="miter"/>
+                <polygon points="100,185 25,50 175,50"
+                  fill="none" stroke="#0038B8" stroke-width="10" stroke-linejoin="miter"/>
+              </svg>
+            </div>
+          </div>
         </div>
         <div class="s5-caption">יום העצמאות ה-78</div>
+        <div class="s5-caption-sub">Independence Day · 2026</div>
       </div>
 
       <!-- SCENE 6: המסר (42-50s) -->
       <div id="s6" class="scene clip" data-start="42" data-duration="8" data-track-index="6">
-        <div class="s6-flag-bg">
-          <svg viewBox="0 0 220 140">
-            <rect x="0" y="0" width="220" height="140" fill="#fff"/>
-            <rect x="0" y="20" width="220" height="18" fill="#0038B8"/>
-            <rect x="0" y="102" width="220" height="18" fill="#0038B8"/>
-            <g transform="translate(110 70)" fill="none" stroke="#0038B8" stroke-width="3" stroke-linejoin="miter">
-              <polygon points="0,-26 22,12 -22,12"/>
-              <polygon points="0,26 22,-12 -22,-12"/>
-            </g>
-          </svg>
-        </div>
+        <div class="s6-stars" id="s6-stars"></div>
         <div class="s6-wrap">
           <div class="s6-primary">אנחנו חוגגים בזכותם</div>
           <div class="s6-divider"></div>
@@ -495,30 +570,65 @@
         burstContainer.appendChild(sp);
       }
 
-      // --- Scene 5: Fireworks ---
+      // --- Scene 5: Fireworks (bigger, richer) ---
       const fwContainer = document.getElementById('fireworks-container');
       const fireworkBursts = [
-        { cx: 25, cy: 30, delay: 30.2, color: '#ffd966' },
-        { cx: 72, cy: 25, delay: 30.8, color: '#9fc5ff' },
-        { cx: 48, cy: 20, delay: 32.0, color: '#fff' },
-        { cx: 18, cy: 45, delay: 33.5, color: '#ffb347' },
-        { cx: 80, cy: 42, delay: 34.2, color: '#9fc5ff' },
-        { cx: 38, cy: 28, delay: 36.0, color: '#ffd966' },
+        { cx: 18, cy: 22, delay: 30.3, color: '#ffd966', size: 'lg' },
+        { cx: 78, cy: 18, delay: 30.9, color: '#9fc5ff', size: 'lg' },
+        { cx: 42, cy: 12, delay: 32.0, color: '#fff',    size: 'md' },
+        { cx: 62, cy: 32, delay: 32.8, color: '#ffb347', size: 'md' },
+        { cx: 12, cy: 38, delay: 33.6, color: '#9fc5ff', size: 'lg' },
+        { cx: 85, cy: 40, delay: 34.4, color: '#ffd966', size: 'md' },
+        { cx: 30, cy: 20, delay: 35.6, color: '#fff',    size: 'lg' },
+        { cx: 70, cy: 28, delay: 36.4, color: '#ffb347', size: 'md' },
+        { cx: 50, cy: 16, delay: 37.4, color: '#ffd966', size: 'lg' },
+        { cx: 22, cy: 32, delay: 38.2, color: '#9fc5ff', size: 'md' },
       ];
-      fireworkBursts.forEach((b, idx) => {
-        for (let i = 0; i < 24; i++) {
+      fireworkBursts.forEach((b) => {
+        const particleCount = b.size === 'lg' ? 32 : 22;
+        const distanceBase = b.size === 'lg' ? 160 : 110;
+        for (let i = 0; i < particleCount; i++) {
           const f = document.createElement('div');
           f.className = 'firework';
           f.style.left = b.cx + '%';
           f.style.top = b.cy + '%';
           f.style.background = b.color;
-          f.style.boxShadow = `0 0 8px ${b.color}`;
-          const angle = (i / 24) * Math.PI * 2 + rand() * 0.2;
+          f.style.boxShadow = `0 0 12px ${b.color}, 0 0 20px ${b.color}`;
+          const angle = (i / particleCount) * Math.PI * 2 + rand() * 0.15;
           f.dataset.angle = angle;
-          f.dataset.distance = (80 + rand() * 80).toFixed(0);
+          f.dataset.distance = (distanceBase + rand() * 100).toFixed(0);
           f.dataset.delay = b.delay;
           fwContainer.appendChild(f);
         }
+        // trail — rising streak before the burst
+        const trail = document.createElement('div');
+        trail.className = 'firework-trail';
+        trail.style.left = b.cx + '%';
+        trail.style.top = (b.cy + 40) + '%';
+        trail.style.background = b.color;
+        trail.style.boxShadow = `0 0 6px ${b.color}`;
+        trail.dataset.targetTop = b.cy + '%';
+        trail.dataset.delay = (b.delay - 0.4).toFixed(2);
+        fwContainer.appendChild(trail);
+      });
+
+      // --- Scene 6: stars ---
+      const s6Stars = document.getElementById('s6-stars');
+      const s6StarPoints = [
+        [10, 15], [22, 25], [35, 12], [58, 20], [72, 18], [88, 24],
+        [15, 80], [32, 85], [50, 88], [68, 82], [85, 86],
+        [8, 45], [92, 48]
+      ];
+      s6StarPoints.forEach(([x, y]) => {
+        const s = document.createElement('div');
+        s.className = 's6-star';
+        s.style.left = x + '%';
+        s.style.top = y + '%';
+        const sz = 1.5 + rand() * 2;
+        s.style.width = sz + 'px';
+        s.style.height = sz + 'px';
+        s.dataset.opacity = (0.15 + rand() * 0.4).toFixed(2);
+        s6Stars.appendChild(s);
       });
 
       // === TIMELINE ===
@@ -662,67 +772,112 @@
         }, 29.6);
       });
 
-      // SCENE 5 — חגיגה מאופקת
-      // Flag fades in gently
-      tl.fromTo('.night-flag',
-        { opacity: 0, scale: 0.92 },
-        { opacity: 0.85, scale: 1, duration: 2.0, ease: 'power2.out' },
-        30.3
+      // SCENE 5 — חגיגה
+      // Rays of light wash up from below
+      tl.fromTo('.s5-rays',
+        { opacity: 0 },
+        { opacity: 1, duration: 2.5, ease: 'power2.out' },
+        30.2
       );
 
-      // Fireworks — each burst expands then fades
+      // Flag emerges, scales up gently
+      tl.fromTo('.flag-stage',
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 2.0, ease: 'power2.out' },
+        30.4
+      );
+
+      // Subtle whole-flag wave — rotate Y back/forth gently
+      tl.fromTo('.flag',
+        { rotationY: -6 },
+        {
+          rotationY: 6,
+          duration: 4.0,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: 2
+        },
+        31.0
+      );
+
+      // Firework trails — rise toward burst point
+      gsap.utils.toArray('.firework-trail').forEach((el) => {
+        const delay = parseFloat(el.dataset.delay);
+        const targetTop = el.dataset.targetTop;
+        tl.fromTo(el,
+          { opacity: 0, top: el.style.top },
+          { opacity: 0.8, duration: 0.1 },
+          delay
+        );
+        tl.to(el, {
+          top: targetTop,
+          duration: 0.4,
+          ease: 'power2.out'
+        }, delay);
+        tl.to(el, { opacity: 0, duration: 0.15 }, delay + 0.4);
+      });
+
+      // Firework bursts — expand then fade with trail
       gsap.utils.toArray('.firework').forEach((el) => {
         const angle = parseFloat(el.dataset.angle);
         const distance = parseFloat(el.dataset.distance);
         const delay = parseFloat(el.dataset.delay);
         tl.fromTo(el,
-          { opacity: 0, x: 0, y: 0 },
-          { opacity: 1, duration: 0.15 },
+          { opacity: 0, x: 0, y: 0, scale: 0.4 },
+          { opacity: 1, scale: 1, duration: 0.2 },
           delay
         );
         tl.to(el, {
           x: Math.cos(angle) * distance,
           y: Math.sin(angle) * distance,
-          duration: 1.6,
+          duration: 1.8,
           ease: 'power2.out'
         }, delay);
         tl.to(el, {
           opacity: 0,
-          duration: 0.9
-        }, delay + 1.0);
+          y: `+=${40 + rand() * 30}`,
+          duration: 1.1
+        }, delay + 1.2);
       });
 
+      // Caption — appears mid-celebration with soft rise
       tl.fromTo('.s5-caption',
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 1.6, ease: 'power2.out' },
-        37.0
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1.8, ease: 'power2.out' },
+        36.5
+      );
+      tl.fromTo('.s5-caption-sub',
+        { opacity: 0 },
+        { opacity: 1, duration: 1.4, ease: 'power2.out' },
+        37.8
       );
 
-      // SCENE 6 — המסר
-      tl.fromTo('.s6-flag-bg',
-        { opacity: 0 },
-        { opacity: 1, duration: 2.0, ease: 'power1.inOut' },
-        42.2
-      );
+      // SCENE 6 — המסר (clean, no flag competing with text)
+      tl.to('.s6-star', {
+        opacity: (i, el) => parseFloat(el.dataset.opacity),
+        duration: 2.0,
+        stagger: 0.04,
+        ease: 'power1.inOut'
+      }, 42.2);
       tl.fromTo('.s6-primary',
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 2.0, ease: 'power2.out' },
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 2.2, ease: 'power2.out' },
         42.6
       );
       tl.to('.s6-divider', {
-        width: 500,
-        duration: 1.6,
+        width: 540,
+        duration: 1.8,
         ease: 'power2.out'
-      }, 44.4);
+      }, 44.6);
       tl.fromTo('.s6-secondary',
         { opacity: 0 },
-        { opacity: 1, duration: 1.8, ease: 'power2.out' },
-        45.2
+        { opacity: 1, duration: 2.0, ease: 'power2.out' },
+        45.6
       );
       tl.fromTo('.s6-candle',
         { opacity: 0 },
-        { opacity: 1, duration: 1.6, ease: 'power2.out' },
-        46.2
+        { opacity: 1, duration: 1.8, ease: 'power2.out' },
+        46.8
       );
 
       window.__timelines["main"] = tl;
