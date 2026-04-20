@@ -1,55 +1,36 @@
-# 🔧 [Tool Name]
+# Template — Tool Entry
 
-> One-line description of what it does and why it matters.
+> Paste this block into the appropriate `domains/*.md` file. Keep headings at `### ToolName` (H3) — the domain file wraps tools under a single `## Tools` section.
 
 ---
 
-## Meta
+### [Tool Name]
 
 | Field | Value |
 |-------|-------|
-| **Category** | e.g. CI/CD, AI/LLM, Infra, Security |
 | **Radar** | 🟢 Adopt / 🟡 Trial / 🔴 Hold |
 | **Status** | Production-ready / Exploring / Deprecated |
+| **Score** | _optional, e.g. 90 / 100_ |
+| **Licence** | e.g. MIT, BSD-3, Apache 2.0, LGPL _(flag commercial gotchas)_ |
 | **Website** | [link](https://...) |
-| **Docs** | [link](https://...) |
-| **Projects** | e.g. [GCP SaaS Platform](../projects/gcp-saas-platform.md) |
+| **Projects** | e.g. [GCP SaaS Platform](../projects/gcp-saas-platform.md) _— optional_ |
 
----
+**Why:** One paragraph. What problem does this solve, why it beats alternatives in your context.
 
-## Why I Use It
+**My Pattern:** _(optional — how you actually wire it up)_
+- Bullet the pipeline / integration points
+- Config defaults you always set
 
-<!-- What problem does this solve? Why did I choose it over alternatives? -->
-
----
-
-## Key Concepts
-
-<!-- 3-5 bullet points of the mental model I need to remember -->
-
-- 
-- 
-- 
-
----
-
-## My Config / Usage Pattern
-
-```yaml
-# Paste a minimal working config, command, or code snippet here
+**Code / Config:** _(optional — minimal working snippet)_
+```lang
+// paste a real snippet you've run, not pseudo-code
 ```
 
----
+**Gotchas:**
+- Things that burned you or took time to figure out
+- Sharp edges a reader should know before adopting
 
-## Gotchas & Lessons Learned
-
-<!-- Things that burned me or took time to figure out -->
-
-- 
-
----
-
-## Alternatives Considered
+**Alternatives Considered:** _(optional table)_
 
 | Tool | Why I didn't choose it |
 |------|----------------------|
@@ -57,7 +38,9 @@
 
 ---
 
-## References
+## Notes on format
 
-- 
-- 
+- Root-level files (`frontend-ui.md`) are legacy; canonical entries live under `domains/`.
+- After adding a tool, mirror its status into `radar/adopt.md`, `radar/trial.md`, or `radar/hold.md`.
+- Update the domain tool count in `README.md` if you're adding/removing entries.
+- Date the README (`*Last updated: YYYY-MM*`) when the radar materially changes.
