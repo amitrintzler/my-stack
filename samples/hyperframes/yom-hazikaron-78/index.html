@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="./vendor/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Noto Hebrew";
+        font-weight: 300;
+        font-style: normal;
+        src: url("./vendor/noto-hebrew-300.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Noto Hebrew";
+        font-weight: 400;
+        font-style: normal;
+        src: url("./vendor/noto-hebrew-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Noto Hebrew";
+        font-weight: 600;
+        font-style: normal;
+        src: url("./vendor/noto-hebrew-600.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Noto Hebrew";
+        font-weight: 800;
+        font-style: normal;
+        src: url("./vendor/noto-hebrew-800.woff2") format("woff2");
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0a0a0a;
+        font-family: "Noto Hebrew", -apple-system, "Segoe UI", sans-serif;
+        direction: rtl;
+        color: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      #root { position: relative; width: 100%; height: 100%; }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      /* === SCENE 1: Silence === */
+      #scene1 {
+        background: radial-gradient(ellipse at center, #141414 0%, #0a0a0a 100%);
+      }
+      .stars { position: absolute; inset: 0; pointer-events: none; }
+      .star {
+        position: absolute;
+        width: 2px; height: 2px;
+        background: #fff;
+        border-radius: 50%;
+        opacity: 0;
+      }
+      .s1-he {
+        font-size: 90px;
+        font-weight: 300;
+        color: #e8e8e8;
+        letter-spacing: 6px;
+      }
+      .s1-en {
+        font-size: 24px;
+        font-weight: 300;
+        color: #888;
+        letter-spacing: 8px;
+        margin-top: 28px;
+        text-transform: uppercase;
+        direction: ltr;
+      }
+      .s1-line {
+        width: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #555, transparent);
+        margin-top: 48px;
+      }
+
+      /* === SCENE 2: The Flame === */
+      #scene2 {
+        background: radial-gradient(ellipse at center 60%, #1a1408 0%, #0a0a0a 70%);
+      }
+      .candle {
+        position: relative;
+        width: 120px; height: 200px;
+        margin-bottom: 56px;
+      }
+      .candle-body {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 48px; height: 140px;
+        background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+        border-radius: 6px 6px 2px 2px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      }
+      .wick {
+        position: absolute;
+        bottom: 140px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 3px; height: 10px;
+        background: #2a2a2a;
+      }
+      .flame {
+        position: absolute;
+        bottom: 144px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 28px; height: 50px;
+        background: radial-gradient(ellipse at 50% 80%, #fff5a8 0%, #ffb347 40%, #ff6a00 70%, transparent 100%);
+        border-radius: 50% 50% 30% 30% / 70% 70% 30% 30%;
+        filter: blur(0.5px);
+        animation: flicker 1.6s ease-in-out infinite alternate;
+        box-shadow: 0 0 40px 12px rgba(255, 170, 60, 0.4),
+                    0 0 80px 24px rgba(255, 120, 30, 0.25);
+      }
+      @keyframes flicker {
+        0%   { transform: translateX(-50%) scaleY(1)    scaleX(1);    opacity: 1;   }
+        30%  { transform: translateX(-50%) scaleY(1.08) scaleX(0.95); opacity: 0.94; }
+        60%  { transform: translateX(-50%) scaleY(0.94) scaleX(1.05); opacity: 0.98; }
+        100% { transform: translateX(-50%) scaleY(1.04) scaleX(0.98); opacity: 1;    }
+      }
+      .s2-he {
+        font-size: 68px;
+        font-weight: 400;
+        color: #f4d798;
+        letter-spacing: 3px;
+      }
+      .s2-en {
+        font-size: 22px;
+        font-weight: 300;
+        color: #a08860;
+        letter-spacing: 6px;
+        margin-top: 24px;
+        direction: ltr;
+        text-transform: uppercase;
+      }
+      .years {
+        display: flex;
+        gap: 48px;
+        margin-top: 60px;
+        direction: ltr;
+      }
+      .year {
+        font-size: 26px;
+        font-weight: 600;
+        color: #aa8844;
+        letter-spacing: 2px;
+        opacity: 0;
+      }
+
+      /* === SCENE 3: The Number === */
+      #scene3 {
+        background: radial-gradient(ellipse at center, #141008 0%, #0a0a0a 100%);
+      }
+      .counter {
+        font-size: 220px;
+        font-weight: 800;
+        color: #f4d798;
+        letter-spacing: -2px;
+        line-height: 1;
+        direction: ltr;
+        text-shadow: 0 0 60px rgba(244, 215, 152, 0.3);
+      }
+      .s3-label {
+        font-size: 34px;
+        font-weight: 400;
+        color: #d4b878;
+        margin-top: 40px;
+        letter-spacing: 2px;
+      }
+      .s3-en {
+        font-size: 20px;
+        font-weight: 300;
+        color: #8a7048;
+        letter-spacing: 4px;
+        margin-top: 20px;
+        direction: ltr;
+        text-transform: uppercase;
+      }
+
+      /* === SCENE 4: Dawn (transition) === */
+      #scene4 {
+        background: linear-gradient(180deg, #0a0a0a 0%, #0a1a2f 50%, #0038B8 100%);
+      }
+      .dawn-glow {
+        position: absolute;
+        bottom: -200px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1400px; height: 1400px;
+        background: radial-gradient(circle, rgba(255,200,100,0.35) 0%, transparent 50%);
+        border-radius: 50%;
+        opacity: 0;
+      }
+      .s4-he {
+        font-size: 110px;
+        font-weight: 600;
+        color: #fff;
+        letter-spacing: 4px;
+        text-shadow: 0 2px 40px rgba(255,255,255,0.3);
+        position: relative;
+        z-index: 2;
+      }
+      .s4-en {
+        font-size: 26px;
+        font-weight: 300;
+        color: #b8d4ff;
+        letter-spacing: 6px;
+        margin-top: 32px;
+        direction: ltr;
+        text-transform: uppercase;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* === SCENE 5: The Flag === */
+      #scene5 {
+        background: #0038B8;
+      }
+      .flag {
+        position: relative;
+        width: 1200px;
+        height: 800px;
+        background: #fff;
+        box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+        transform-origin: center;
+        overflow: hidden;
+      }
+      .stripe {
+        position: absolute;
+        left: 0; right: 0;
+        height: 120px;
+        background: #0038B8;
+        transform: scaleX(0);
+        transform-origin: right;
+      }
+      .stripe-top { top: 80px; }
+      .stripe-bot { bottom: 80px; }
+      .star-of-david {
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 360px; height: 360px;
+        transform: translate(-50%, -50%) scale(0) rotate(-30deg);
+      }
+      .star-of-david svg { width: 100%; height: 100%; }
+      .s5-badge {
+        position: absolute;
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 0;
+      }
+      .s5-he {
+        font-size: 80px;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: 4px;
+        direction: ltr;
+      }
+      .s5-en {
+        font-size: 22px;
+        font-weight: 300;
+        color: #b8d4ff;
+        letter-spacing: 6px;
+        margin-top: 16px;
+        direction: ltr;
+        text-transform: uppercase;
+      }
+
+      /* === SCENE 6: Celebration === */
+      #scene6 {
+        background: radial-gradient(ellipse at center, #1e5fd6 0%, #0038B8 70%, #002a8c 100%);
+        overflow: hidden;
+      }
+      .confetti {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        opacity: 0;
+        top: -20px;
+      }
+      .c-w { background: #fff; }
+      .c-b { background: #66a3ff; }
+      .c-g { background: #ffd966; }
+      .burst {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .spark {
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 8px; height: 8px;
+        background: #ffd966;
+        border-radius: 50%;
+        opacity: 0;
+        box-shadow: 0 0 10px #ffd966;
+      }
+      .s6-main {
+        font-size: 120px;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: 2px;
+        text-shadow: 0 4px 40px rgba(0,0,0,0.3);
+        transform: scale(0.6);
+        opacity: 0;
+        position: relative;
+        z-index: 3;
+      }
+      .s6-sub {
+        font-size: 32px;
+        font-weight: 400;
+        color: #d4e4ff;
+        letter-spacing: 4px;
+        margin-top: 24px;
+        direction: ltr;
+        text-transform: uppercase;
+        opacity: 0;
+        position: relative;
+        z-index: 3;
+      }
+      .s6-stamp {
+        position: absolute;
+        bottom: 100px;
+        left: 50%;
+        font-size: 56px;
+        font-weight: 800;
+        color: #ffd966;
+        letter-spacing: 8px;
+        padding: 20px 60px;
+        border: 3px solid #ffd966;
+        border-radius: 4px;
+        z-index: 4;
+        box-shadow: 0 0 40px rgba(255, 217, 102, 0.4);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="30"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- SCENE 1: Silence (0-4s) -->
+      <div id="scene1" class="scene clip" data-start="0" data-duration="4.5" data-track-index="1">
+        <div class="stars" id="stars"></div>
+        <div class="s1-he">יום הזיכרון</div>
+        <div class="s1-line"></div>
+        <div class="s1-en">Yom HaZikaron · Day of Remembrance</div>
+      </div>
+
+      <!-- SCENE 2: The Flame (4-10s) -->
+      <div id="scene2" class="scene clip" data-start="4" data-duration="6.5" data-track-index="2">
+        <div class="candle">
+          <div class="candle-body"></div>
+          <div class="wick"></div>
+          <div class="flame"></div>
+        </div>
+        <div class="s2-he">לזכרם נצור בליבנו</div>
+        <div class="s2-en">We Remember · We Honor</div>
+        <div class="years">
+          <span class="year y1">1948</span>
+          <span class="year y2">1967</span>
+          <span class="year y3">1973</span>
+          <span class="year y4">1982</span>
+          <span class="year y5">2023</span>
+        </div>
+      </div>
+
+      <!-- SCENE 3: The Number (10-14s) -->
+      <div id="scene3" class="scene clip" data-start="10" data-duration="4.5" data-track-index="3">
+        <div class="counter" id="counter">0</div>
+        <div class="s3-label">חיילים וקורבנות פעולות איבה</div>
+        <div class="s3-en">Fallen Soldiers and Victims of Terror</div>
+      </div>
+
+      <!-- SCENE 4: Dawn (14-18s) -->
+      <div id="scene4" class="scene clip" data-start="14" data-duration="4.5" data-track-index="4">
+        <div class="dawn-glow"></div>
+        <div class="s4-he">מזיכרון לעצמאות</div>
+        <div class="s4-en">From Memory to Independence</div>
+      </div>
+
+      <!-- SCENE 5: The Flag (18-24s) -->
+      <div id="scene5" class="scene clip" data-start="18" data-duration="6.5" data-track-index="5">
+        <div class="flag">
+          <div class="stripe stripe-top"></div>
+          <div class="stripe stripe-bot"></div>
+          <div class="star-of-david">
+            <svg viewBox="0 0 200 200">
+              <polygon points="100,10 125,70 190,70 138,108 158,170 100,132 42,170 62,108 10,70 75,70"
+                       fill="none" stroke="#0038B8" stroke-width="20" stroke-linejoin="miter" display="none"/>
+              <!-- Two triangles forming Star of David -->
+              <polygon points="100,15 175,150 25,150" fill="none" stroke="#0038B8" stroke-width="14" stroke-linejoin="miter"/>
+              <polygon points="100,185 25,50 175,50" fill="none" stroke="#0038B8" stroke-width="14" stroke-linejoin="miter"/>
+            </svg>
+          </div>
+          <div class="s5-badge">
+            <div class="s5-he">78</div>
+            <div class="s5-en">Years of Independence</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 6: Celebration (24-30s) -->
+      <div id="scene6" class="scene clip" data-start="24" data-duration="6" data-track-index="6">
+        <div class="burst" id="burst"></div>
+        <div id="confetti-field"></div>
+        <div class="s6-main">יום העצמאות ה-78 שמח</div>
+        <div class="s6-sub">Happy 78th Independence Day · Israel</div>
+        <div class="s6-stamp">עם ישראל חי</div>
+      </div>
+    </div>
+
+    <script>
+      // Seeded PRNG for deterministic renders (mulberry32)
+      function mulberry32(seed) {
+        return function() {
+          let t = seed += 0x6D2B79F5;
+          t = Math.imul(t ^ t >>> 15, t | 1);
+          t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      const rand = mulberry32(19480514); // Israel's founding date as seed
+
+      // Generate stars for scene 1
+      const starsContainer = document.getElementById('stars');
+      const starPositions = [
+        [12, 18], [22, 32], [35, 15], [48, 28], [62, 18], [75, 35], [88, 22],
+        [15, 55], [30, 68], [45, 75], [58, 62], [72, 78], [85, 65],
+        [8, 88], [25, 92], [42, 88], [58, 95], [78, 85], [92, 90]
+      ];
+      starPositions.forEach(([x, y], i) => {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.left = x + '%';
+        s.style.top = y + '%';
+        const size = (rand() * 2 + 1.5);
+        s.style.width = size + 'px';
+        s.style.height = size + 'px';
+        s.dataset.targetOpacity = (0.2 + rand() * 0.6).toFixed(2);
+        starsContainer.appendChild(s);
+      });
+
+      // Generate confetti for scene 6
+      const confettiField = document.getElementById('confetti-field');
+      const colors = ['c-w', 'c-b', 'c-g'];
+      for (let i = 0; i < 80; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti ' + colors[i % 3];
+        c.style.left = (rand() * 100) + '%';
+        c.style.transform = `rotate(${rand() * 360}deg)`;
+        c.dataset.fallDx = ((rand() - 0.5) * 300).toFixed(0);
+        c.dataset.fallDur = (4.5 + rand() * 1.5).toFixed(2);
+        c.dataset.fallRot = (rand() * 720 - 360).toFixed(0);
+        confettiField.appendChild(c);
+      }
+
+      // Generate sparks for burst
+      const burst = document.getElementById('burst');
+      for (let i = 0; i < 30; i++) {
+        const s = document.createElement('div');
+        s.className = 'spark';
+        const angle = (i / 30) * Math.PI * 2;
+        s.dataset.angle = angle;
+        s.dataset.distance = (400 + rand() * 200).toFixed(0);
+        burst.appendChild(s);
+      }
+
+      // === TIMELINE ===
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      // Framework handles clip show/hide via data-start / data-duration.
+      // We only animate content inside each clip.
+
+      // SCENE 1 (0-4.5s)
+      tl.to('.star', {
+        opacity: (i, el) => parseFloat(el.dataset.targetOpacity),
+        duration: 1.2,
+        stagger: 0.04,
+        ease: 'power1.inOut'
+      }, 0.2);
+      tl.from('.s1-he', { opacity: 0, y: 20, duration: 1.8, ease: 'power2.out' }, 0.8);
+      tl.to('.s1-line', { width: 340, duration: 1.2, ease: 'power2.out' }, 2.0);
+      tl.from('.s1-en', { opacity: 0, duration: 1.2 }, 2.2);
+
+      // SCENE 2 (4-10.5s)
+      tl.from('.candle', { opacity: 0, scale: 0.8, duration: 1.2, ease: 'power2.out' }, 4.2);
+      tl.from('.s2-he', { opacity: 0, y: 20, duration: 1.2 }, 5.2);
+      tl.from('.s2-en', { opacity: 0, duration: 1.0 }, 5.8);
+      tl.to('.year', { opacity: 1, duration: 0.4, stagger: 0.25, ease: 'power1.out' }, 6.6);
+
+      // SCENE 3 (10-14.5s)
+      const counterObj = { n: 0 };
+      tl.to(counterObj, {
+        n: 25040,
+        duration: 2.5,
+        ease: 'power2.out',
+        onUpdate: () => {
+          document.getElementById('counter').textContent =
+            Math.round(counterObj.n).toLocaleString('en-US');
+        }
+      }, 10.4);
+      tl.from('.s3-label', { opacity: 0, y: 16, duration: 0.8 }, 11.8);
+      tl.from('.s3-en', { opacity: 0, duration: 0.8 }, 12.4);
+
+      // SCENE 4 (14-18.5s)
+      tl.to('.dawn-glow', { opacity: 1, duration: 2.5, ease: 'power2.out' }, 14.2);
+      tl.from('.s4-he', { opacity: 0, y: 30, duration: 1.6, ease: 'power2.out' }, 14.6);
+      tl.from('.s4-en', { opacity: 0, duration: 1.2 }, 15.8);
+
+      // SCENE 5 (18-24.5s)
+      tl.from('.flag', { opacity: 0, scale: 0.85, duration: 1.2, ease: 'power2.out' }, 18.2);
+      tl.to('.stripe-top', { scaleX: 1, duration: 1.0, ease: 'power2.inOut' }, 18.8);
+      tl.to('.stripe-bot', { scaleX: 1, duration: 1.0, ease: 'power2.inOut' }, 19.0);
+      tl.to('.star-of-david', {
+        scale: 1,
+        rotation: 0,
+        duration: 1.4,
+        ease: 'back.out(1.4)'
+      }, 19.6);
+      tl.to('.s5-badge', {
+        opacity: 1,
+        y: -60,
+        duration: 1.0,
+        ease: 'power2.out'
+      }, 21.2);
+
+      // SCENE 6 (24-30s) — animate inner content; framework handles clip entry
+
+      // Confetti fall (deterministic via dataset)
+      gsap.utils.toArray('.confetti').forEach((el, i) => {
+        tl.to(el, {
+          opacity: 1,
+          duration: 0.2
+        }, 24.2 + i * 0.02);
+        tl.to(el, {
+          y: 1200,
+          x: parseFloat(el.dataset.fallDx),
+          rotation: `+=${el.dataset.fallRot}`,
+          duration: parseFloat(el.dataset.fallDur),
+          ease: 'power1.in'
+        }, 24.2 + i * 0.02);
+      });
+
+      // Spark burst
+      gsap.utils.toArray('.spark').forEach((el, i) => {
+        const angle = parseFloat(el.dataset.angle);
+        const distance = parseFloat(el.dataset.distance);
+        tl.to(el, {
+          opacity: 1,
+          x: Math.cos(angle) * distance,
+          y: Math.sin(angle) * distance,
+          duration: 1.2,
+          ease: 'power2.out'
+        }, 24.8);
+        tl.to(el, {
+          opacity: 0,
+          duration: 0.8
+        }, 25.6);
+      });
+
+      // Main text
+      tl.to('.s6-main', {
+        opacity: 1,
+        scale: 1,
+        duration: 1.0,
+        ease: 'back.out(1.6)'
+      }, 24.6);
+      tl.to('.s6-sub', { opacity: 1, duration: 0.8 }, 25.4);
+
+      // Final stamp — use fromTo so GSAP owns xPercent + scale
+      tl.fromTo('.s6-stamp',
+        { xPercent: -50, scale: 0 },
+        { xPercent: -50, scale: 1, duration: 0.6, ease: 'back.out(2)' },
+        27.0
+      );
+      tl.to('.s6-stamp', {
+        scale: 1.05,
+        duration: 0.3,
+        yoyo: true,
+        repeat: 3
+      }, 27.8);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
