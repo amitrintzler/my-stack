@@ -5,350 +5,325 @@
     <meta name="viewport" content="width=1920, height=1080" />
     <script src="./vendor/gsap.min.js"></script>
     <style>
-      @font-face {
-        font-family: "Noto Hebrew";
-        font-weight: 300;
-        font-style: normal;
-        src: url("./vendor/noto-hebrew-300.woff2") format("woff2");
-      }
-      @font-face {
-        font-family: "Noto Hebrew";
-        font-weight: 400;
-        font-style: normal;
-        src: url("./vendor/noto-hebrew-400.woff2") format("woff2");
-      }
-      @font-face {
-        font-family: "Noto Hebrew";
-        font-weight: 600;
-        font-style: normal;
-        src: url("./vendor/noto-hebrew-600.woff2") format("woff2");
-      }
-      @font-face {
-        font-family: "Noto Hebrew";
-        font-weight: 800;
-        font-style: normal;
-        src: url("./vendor/noto-hebrew-800.woff2") format("woff2");
-      }
+      @font-face { font-family: "Noto Hebrew"; font-weight: 300; src: url("./vendor/noto-hebrew-300.woff2") format("woff2"); }
+      @font-face { font-family: "Noto Hebrew"; font-weight: 400; src: url("./vendor/noto-hebrew-400.woff2") format("woff2"); }
+      @font-face { font-family: "Noto Hebrew"; font-weight: 600; src: url("./vendor/noto-hebrew-600.woff2") format("woff2"); }
+      @font-face { font-family: "Noto Hebrew"; font-weight: 800; src: url("./vendor/noto-hebrew-800.woff2") format("woff2"); }
 
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body {
-        width: 1920px;
-        height: 1080px;
-        overflow: hidden;
-        background: #0a0a0a;
-        font-family: "Noto Hebrew", -apple-system, "Segoe UI", sans-serif;
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: #000;
+        font-family: "Noto Hebrew", -apple-system, sans-serif;
         direction: rtl;
         color: #fff;
         -webkit-font-smoothing: antialiased;
       }
-
       #root { position: relative; width: 100%; height: 100%; }
 
       .scene {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
         flex-direction: column;
       }
 
-      /* === SCENE 1: Silence === */
-      #scene1 {
-        background: radial-gradient(ellipse at center, #141414 0%, #0a0a0a 100%);
+      /* === SCENE 1: שקט === */
+      #s1 {
+        background: radial-gradient(ellipse at center, #0e0a05 0%, #000 80%);
       }
-      .stars { position: absolute; inset: 0; pointer-events: none; }
+      .candle-wrap {
+        position: relative;
+        width: 80px; height: 220px;
+        margin-bottom: 50px;
+      }
+      .candle-body {
+        position: absolute;
+        bottom: 0; left: 50%;
+        width: 36px; height: 150px;
+        background: linear-gradient(180deg, #1c1c1c 0%, #0a0a0a 100%);
+        border-radius: 4px 4px 2px 2px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.5);
+      }
+      .candle-wick {
+        position: absolute;
+        bottom: 150px; left: 50%;
+        width: 2px; height: 8px;
+        background: #1a1a1a;
+      }
+      .candle-flame {
+        position: absolute;
+        bottom: 152px; left: 50%;
+        width: 22px; height: 42px;
+        background: radial-gradient(ellipse at 50% 85%, #fff5a8 0%, #ffb347 35%, #ff6a00 70%, transparent 100%);
+        border-radius: 50% 50% 30% 30% / 70% 70% 30% 30%;
+        filter: blur(0.5px);
+        opacity: 0;
+        box-shadow:
+          0 0 30px 10px rgba(255, 170, 60, 0.35),
+          0 0 60px 20px rgba(255, 120, 30, 0.22);
+        animation: flicker 1.8s ease-in-out infinite alternate;
+      }
+      @keyframes flicker {
+        0%   { transform: scaleY(1)    scaleX(1)    translateY(0); }
+        25%  { transform: scaleY(1.06) scaleX(0.96) translateY(-0.5px); }
+        60%  { transform: scaleY(0.95) scaleX(1.03) translateY(0.5px); }
+        100% { transform: scaleY(1.03) scaleX(0.99) translateY(0); }
+      }
+      .s1-title {
+        font-size: 78px;
+        font-weight: 300;
+        letter-spacing: 8px;
+        color: #e8dcc0;
+      }
+      .stars-1 { position: absolute; inset: 0; pointer-events: none; }
       .star {
         position: absolute;
-        width: 2px; height: 2px;
         background: #fff;
         border-radius: 50%;
         opacity: 0;
       }
-      .s1-he {
-        font-size: 90px;
-        font-weight: 300;
-        color: #e8e8e8;
-        letter-spacing: 6px;
-      }
-      .s1-en {
-        font-size: 24px;
-        font-weight: 300;
-        color: #888;
-        letter-spacing: 8px;
-        margin-top: 28px;
-        text-transform: uppercase;
-        direction: ltr;
-      }
-      .s1-line {
-        width: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, #555, transparent);
-        margin-top: 48px;
-      }
 
-      /* === SCENE 2: The Flame === */
-      #scene2 {
-        background: radial-gradient(ellipse at center 60%, #1a1408 0%, #0a0a0a 70%);
+      /* === SCENE 2: שיר הרעות === */
+      #s2 {
+        background: radial-gradient(ellipse at center, #0a0805 0%, #000 75%);
       }
-      .candle {
-        position: relative;
-        width: 120px; height: 200px;
-        margin-bottom: 56px;
+      .candle-sm {
+        position: absolute;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 14px;
+        height: 26px;
+        background: radial-gradient(ellipse at 50% 85%, #fff5a8 0%, #ffb347 40%, #ff6a00 75%, transparent 100%);
+        border-radius: 50% 50% 30% 30% / 70% 70% 30% 30%;
+        filter: blur(0.3px);
+        box-shadow:
+          0 0 20px 6px rgba(255, 170, 60, 0.35),
+          0 0 40px 14px rgba(255, 120, 30, 0.2);
+        animation: flicker 2.2s ease-in-out infinite alternate;
       }
-      .candle-body {
+      .silhouettes {
         position: absolute;
         bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 48px; height: 140px;
-        background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
-        border-radius: 6px 6px 2px 2px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        left: 0; right: 0;
+        height: 400px;
+        pointer-events: none;
+        opacity: 0.25;
       }
-      .wick {
+      .silhouette {
         position: absolute;
-        bottom: 140px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 3px; height: 10px;
-        background: #2a2a2a;
-      }
-      .flame {
-        position: absolute;
-        bottom: 144px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 28px; height: 50px;
-        background: radial-gradient(ellipse at 50% 80%, #fff5a8 0%, #ffb347 40%, #ff6a00 70%, transparent 100%);
-        border-radius: 50% 50% 30% 30% / 70% 70% 30% 30%;
-        filter: blur(0.5px);
-        animation: flicker 1.6s ease-in-out infinite alternate;
-        box-shadow: 0 0 40px 12px rgba(255, 170, 60, 0.4),
-                    0 0 80px 24px rgba(255, 120, 30, 0.25);
-      }
-      @keyframes flicker {
-        0%   { transform: translateX(-50%) scaleY(1)    scaleX(1);    opacity: 1;   }
-        30%  { transform: translateX(-50%) scaleY(1.08) scaleX(0.95); opacity: 0.94; }
-        60%  { transform: translateX(-50%) scaleY(0.94) scaleX(1.05); opacity: 0.98; }
-        100% { transform: translateX(-50%) scaleY(1.04) scaleX(0.98); opacity: 1;    }
-      }
-      .s2-he {
-        font-size: 68px;
-        font-weight: 400;
-        color: #f4d798;
-        letter-spacing: 3px;
-      }
-      .s2-en {
-        font-size: 22px;
-        font-weight: 300;
-        color: #a08860;
-        letter-spacing: 6px;
-        margin-top: 24px;
-        direction: ltr;
-        text-transform: uppercase;
-      }
-      .years {
-        display: flex;
-        gap: 48px;
-        margin-top: 60px;
-        direction: ltr;
-      }
-      .year {
-        font-size: 26px;
-        font-weight: 600;
-        color: #aa8844;
-        letter-spacing: 2px;
+        bottom: 0;
+        width: 80px;
+        height: 280px;
+        background: linear-gradient(180deg, transparent 0%, #3a2f1a 70%, #1a1209 100%);
+        border-radius: 40px 40px 0 0;
+        filter: blur(2px);
         opacity: 0;
       }
-
-      /* === SCENE 3: The Number === */
-      #scene3 {
-        background: radial-gradient(ellipse at center, #141008 0%, #0a0a0a 100%);
+      .poem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        max-width: 1400px;
+        text-align: center;
+        position: relative;
+        z-index: 2;
       }
-      .counter {
-        font-size: 220px;
-        font-weight: 800;
-        color: #f4d798;
-        letter-spacing: -2px;
-        line-height: 1;
-        direction: ltr;
-        text-shadow: 0 0 60px rgba(244, 215, 152, 0.3);
-      }
-      .s3-label {
-        font-size: 34px;
-        font-weight: 400;
-        color: #d4b878;
-        margin-top: 40px;
-        letter-spacing: 2px;
-      }
-      .s3-en {
-        font-size: 20px;
+      .poem-line {
+        font-size: 62px;
         font-weight: 300;
-        color: #8a7048;
-        letter-spacing: 4px;
-        margin-top: 20px;
-        direction: ltr;
-        text-transform: uppercase;
+        color: #e8dcc0;
+        letter-spacing: 3px;
+        line-height: 1.5;
+        direction: rtl;
+      }
+      .poem-word {
+        display: inline-block;
+        opacity: 0;
+        margin-left: 0.35em;
+      }
+      .poem-line.accent .poem-word {
+        color: #f4d798;
+        font-weight: 400;
       }
 
-      /* === SCENE 4: Dawn (transition) === */
-      #scene4 {
-        background: linear-gradient(180deg, #0a0a0a 0%, #0a1a2f 50%, #0038B8 100%);
+      /* === SCENE 3: הצפירה === */
+      #s3 {
+        background: #000;
       }
-      .dawn-glow {
+      .siren-wrap {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 120px;
+      }
+      .sine-wave {
+        width: 1400px;
+        height: 160px;
+        position: relative;
+        opacity: 0;
+      }
+      .sine-wave svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+      .sine-wave path {
+        fill: none;
+        stroke: #fff;
+        stroke-width: 2;
+        stroke-linecap: round;
+        filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
+      }
+      .siren-label {
+        font-size: 24px;
+        font-weight: 300;
+        letter-spacing: 10px;
+        color: #888;
+        text-transform: uppercase;
+        opacity: 0;
+        direction: ltr;
+      }
+
+      /* === SCENE 4: השנייה === */
+      #s4 {
+        background: #000;
+        overflow: hidden;
+      }
+      .burst-center {
         position: absolute;
-        bottom: -200px;
+        top: 50%;
         left: 50%;
-        transform: translateX(-50%);
-        width: 1400px; height: 1400px;
-        background: radial-gradient(circle, rgba(255,200,100,0.35) 0%, transparent 50%);
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        background: #fff;
         border-radius: 50%;
         opacity: 0;
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
       }
-      .s4-he {
+      .burst-spark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 4px;
+        height: 4px;
+        background: #ffd966;
+        border-radius: 50%;
+        opacity: 0;
+        box-shadow: 0 0 8px #ffd966;
+      }
+
+      /* === SCENE 5: חגיגה === */
+      #s5 {
+        background: radial-gradient(ellipse at center 30%, #0a1e4a 0%, #05132e 50%, #000 100%);
+        overflow: hidden;
+      }
+      .night-flag {
+        position: absolute;
+        width: 1100px;
+        height: 720px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+      }
+      .night-flag svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 10px 50px rgba(0,56,184,0.4));
+      }
+      .firework {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .s5-caption {
+        position: absolute;
+        bottom: 120px;
+        left: 0; right: 0;
+        text-align: center;
+        font-size: 44px;
+        font-weight: 400;
+        letter-spacing: 6px;
+        color: #f4e6b8;
+        opacity: 0;
+      }
+
+      /* === SCENE 6: המסר === */
+      #s6 {
+        background: radial-gradient(ellipse at center, #0a1428 0%, #000 80%);
+      }
+      .s6-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+      .s6-flag-bg {
+        position: absolute;
+        width: 900px;
+        height: 580px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        z-index: 0;
+      }
+      .s6-flag-bg svg {
+        width: 100%;
+        height: 100%;
+        opacity: 0.12;
+      }
+      .s6-primary {
         font-size: 110px;
         font-weight: 600;
         color: #fff;
         letter-spacing: 4px;
-        text-shadow: 0 2px 40px rgba(255,255,255,0.3);
+        text-align: center;
+        line-height: 1.2;
+        position: relative;
+        z-index: 2;
+        opacity: 0;
+        text-shadow: 0 2px 40px rgba(255,255,255,0.15);
+      }
+      .s6-divider {
+        width: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #f4d798, transparent);
+        margin: 40px 0;
         position: relative;
         z-index: 2;
       }
-      .s4-en {
-        font-size: 26px;
+      .s6-secondary {
+        font-size: 40px;
         font-weight: 300;
-        color: #b8d4ff;
-        letter-spacing: 6px;
-        margin-top: 32px;
-        direction: ltr;
-        text-transform: uppercase;
+        letter-spacing: 12px;
+        color: #f4e6b8;
         position: relative;
         z-index: 2;
+        opacity: 0;
       }
-
-      /* === SCENE 5: The Flag === */
-      #scene5 {
-        background: #0038B8;
-      }
-      .flag {
-        position: relative;
-        width: 1200px;
-        height: 800px;
-        background: #fff;
-        box-shadow: 0 20px 80px rgba(0,0,0,0.4);
-        transform-origin: center;
-        overflow: hidden;
-      }
-      .stripe {
+      .s6-candle {
         position: absolute;
-        left: 0; right: 0;
-        height: 120px;
-        background: #0038B8;
-        transform: scaleX(0);
-        transform-origin: right;
-      }
-      .stripe-top { top: 80px; }
-      .stripe-bot { bottom: 80px; }
-      .star-of-david {
-        position: absolute;
-        top: 50%; left: 50%;
-        width: 360px; height: 360px;
-        transform: translate(-50%, -50%) scale(0) rotate(-30deg);
-      }
-      .star-of-david svg { width: 100%; height: 100%; }
-      .s5-badge {
-        position: absolute;
-        bottom: -100px;
+        bottom: 80px;
         left: 50%;
         transform: translateX(-50%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        width: 12px;
+        height: 22px;
+        background: radial-gradient(ellipse at 50% 85%, #fff5a8 0%, #ffb347 40%, #ff6a00 75%, transparent 100%);
+        border-radius: 50% 50% 30% 30% / 70% 70% 30% 30%;
         opacity: 0;
-      }
-      .s5-he {
-        font-size: 80px;
-        font-weight: 800;
-        color: #fff;
-        letter-spacing: 4px;
-        direction: ltr;
-      }
-      .s5-en {
-        font-size: 22px;
-        font-weight: 300;
-        color: #b8d4ff;
-        letter-spacing: 6px;
-        margin-top: 16px;
-        direction: ltr;
-        text-transform: uppercase;
-      }
-
-      /* === SCENE 6: Celebration === */
-      #scene6 {
-        background: radial-gradient(ellipse at center, #1e5fd6 0%, #0038B8 70%, #002a8c 100%);
-        overflow: hidden;
-      }
-      .confetti {
-        position: absolute;
-        width: 14px;
-        height: 14px;
-        opacity: 0;
-        top: -20px;
-      }
-      .c-w { background: #fff; }
-      .c-b { background: #66a3ff; }
-      .c-g { background: #ffd966; }
-      .burst {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-      }
-      .spark {
-        position: absolute;
-        top: 50%; left: 50%;
-        width: 8px; height: 8px;
-        background: #ffd966;
-        border-radius: 50%;
-        opacity: 0;
-        box-shadow: 0 0 10px #ffd966;
-      }
-      .s6-main {
-        font-size: 120px;
-        font-weight: 800;
-        color: #fff;
-        letter-spacing: 2px;
-        text-shadow: 0 4px 40px rgba(0,0,0,0.3);
-        transform: scale(0.6);
-        opacity: 0;
-        position: relative;
-        z-index: 3;
-      }
-      .s6-sub {
-        font-size: 32px;
-        font-weight: 400;
-        color: #d4e4ff;
-        letter-spacing: 4px;
-        margin-top: 24px;
-        direction: ltr;
-        text-transform: uppercase;
-        opacity: 0;
-        position: relative;
-        z-index: 3;
-      }
-      .s6-stamp {
-        position: absolute;
-        bottom: 100px;
-        left: 50%;
-        font-size: 56px;
-        font-weight: 800;
-        color: #ffd966;
-        letter-spacing: 8px;
-        padding: 20px 60px;
-        border: 3px solid #ffd966;
-        border-radius: 4px;
-        z-index: 4;
-        box-shadow: 0 0 40px rgba(255, 217, 102, 0.4);
+        box-shadow:
+          0 0 16px 4px rgba(255, 170, 60, 0.35),
+          0 0 32px 10px rgba(255, 120, 30, 0.2);
+        animation: flicker 2.2s ease-in-out infinite alternate;
       }
     </style>
   </head>
@@ -357,83 +332,114 @@
       id="root"
       data-composition-id="main"
       data-start="0"
-      data-duration="30"
+      data-duration="50"
       data-width="1920"
       data-height="1080"
     >
-      <!-- SCENE 1: Silence (0-4s) -->
-      <div id="scene1" class="scene clip" data-start="0" data-duration="4.5" data-track-index="1">
-        <div class="stars" id="stars"></div>
-        <div class="s1-he">יום הזיכרון</div>
-        <div class="s1-line"></div>
-        <div class="s1-en">Yom HaZikaron · Day of Remembrance</div>
-      </div>
-
-      <!-- SCENE 2: The Flame (4-10s) -->
-      <div id="scene2" class="scene clip" data-start="4" data-duration="6.5" data-track-index="2">
-        <div class="candle">
+      <!-- SCENE 1: שקט (0-7s) -->
+      <div id="s1" class="scene clip" data-start="0" data-duration="7.5" data-track-index="1">
+        <div class="stars-1" id="stars"></div>
+        <div class="candle-wrap">
           <div class="candle-body"></div>
-          <div class="wick"></div>
-          <div class="flame"></div>
+          <div class="candle-wick"></div>
+          <div class="candle-flame"></div>
         </div>
-        <div class="s2-he">לזכרם נצור בליבנו</div>
-        <div class="s2-en">We Remember · We Honor</div>
-        <div class="years">
-          <span class="year y1">1948</span>
-          <span class="year y2">1967</span>
-          <span class="year y3">1973</span>
-          <span class="year y4">1982</span>
-          <span class="year y5">2023</span>
+        <div class="s1-title">יום הזיכרון</div>
+      </div>
+
+      <!-- SCENE 2: שיר הרעות (7-20s) -->
+      <div id="s2" class="scene clip" data-start="7" data-duration="13.5" data-track-index="2">
+        <div class="candle-sm"></div>
+        <div class="silhouettes" id="silhouettes"></div>
+        <div class="poem">
+          <div class="poem-line" id="line1">
+            <span class="poem-word">אך</span>
+            <span class="poem-word">נזכור</span>
+            <span class="poem-word">את</span>
+            <span class="poem-word">כולם</span>
+          </div>
+          <div class="poem-line" id="line2">
+            <span class="poem-word">את</span>
+            <span class="poem-word">יפי</span>
+            <span class="poem-word">הבלורית</span>
+            <span class="poem-word">והתואר</span>
+          </div>
+          <div class="poem-line accent" id="line3">
+            <span class="poem-word">כי</span>
+            <span class="poem-word">רעות</span>
+            <span class="poem-word">שכזאת</span>
+            <span class="poem-word">לעולם</span>
+          </div>
+          <div class="poem-line accent" id="line4">
+            <span class="poem-word">לא</span>
+            <span class="poem-word">תתן</span>
+            <span class="poem-word">את</span>
+            <span class="poem-word">ליבנו</span>
+            <span class="poem-word">לשכוח</span>
+          </div>
         </div>
       </div>
 
-      <!-- SCENE 3: The Number (10-14s) -->
-      <div id="scene3" class="scene clip" data-start="10" data-duration="4.5" data-track-index="3">
-        <div class="counter" id="counter">0</div>
-        <div class="s3-label">חיילים וקורבנות פעולות איבה</div>
-        <div class="s3-en">Fallen Soldiers and Victims of Terror</div>
-      </div>
-
-      <!-- SCENE 4: Dawn (14-18s) -->
-      <div id="scene4" class="scene clip" data-start="14" data-duration="4.5" data-track-index="4">
-        <div class="dawn-glow"></div>
-        <div class="s4-he">מזיכרון לעצמאות</div>
-        <div class="s4-en">From Memory to Independence</div>
-      </div>
-
-      <!-- SCENE 5: The Flag (18-24s) -->
-      <div id="scene5" class="scene clip" data-start="18" data-duration="6.5" data-track-index="5">
-        <div class="flag">
-          <div class="stripe stripe-top"></div>
-          <div class="stripe stripe-bot"></div>
-          <div class="star-of-david">
-            <svg viewBox="0 0 200 200">
-              <polygon points="100,10 125,70 190,70 138,108 158,170 100,132 42,170 62,108 10,70 75,70"
-                       fill="none" stroke="#0038B8" stroke-width="20" stroke-linejoin="miter" display="none"/>
-              <!-- Two triangles forming Star of David -->
-              <polygon points="100,15 175,150 25,150" fill="none" stroke="#0038B8" stroke-width="14" stroke-linejoin="miter"/>
-              <polygon points="100,185 25,50 175,50" fill="none" stroke="#0038B8" stroke-width="14" stroke-linejoin="miter"/>
+      <!-- SCENE 3: הצפירה (20-28s) -->
+      <div id="s3" class="scene clip" data-start="20" data-duration="8.5" data-track-index="3">
+        <div class="siren-wrap">
+          <div class="sine-wave">
+            <svg viewBox="0 0 1400 160" preserveAspectRatio="none">
+              <path id="sine-path"
+                d="M 0 80 Q 50 80 50 80 T 100 80 T 150 80 T 200 80 T 250 80 T 300 80 T 350 80 T 400 80 T 450 80 T 500 80 T 550 80 T 600 80 T 650 80 T 700 80 T 750 80 T 800 80 T 850 80 T 900 80 T 950 80 T 1000 80 T 1050 80 T 1100 80 T 1150 80 T 1200 80 T 1250 80 T 1300 80 T 1350 80 T 1400 80"/>
             </svg>
           </div>
-          <div class="s5-badge">
-            <div class="s5-he">78</div>
-            <div class="s5-en">Years of Independence</div>
-          </div>
+          <div class="siren-label">11:00 · כל הארץ עומדת</div>
         </div>
       </div>
 
-      <!-- SCENE 6: Celebration (24-30s) -->
-      <div id="scene6" class="scene clip" data-start="24" data-duration="6" data-track-index="6">
-        <div class="burst" id="burst"></div>
-        <div id="confetti-field"></div>
-        <div class="s6-main">יום העצמאות ה-78 שמח</div>
-        <div class="s6-sub">Happy 78th Independence Day · Israel</div>
-        <div class="s6-stamp">עם ישראל חי</div>
+      <!-- SCENE 4: השנייה (28-30s) -->
+      <div id="s4" class="scene clip" data-start="28" data-duration="2.5" data-track-index="4">
+        <div class="burst-center" id="burst-center"></div>
+        <div id="burst-container"></div>
+      </div>
+
+      <!-- SCENE 5: חגיגה (30-42s) -->
+      <div id="s5" class="scene clip" data-start="30" data-duration="12.5" data-track-index="5">
+        <div id="fireworks-container"></div>
+        <div class="night-flag">
+          <svg viewBox="0 0 220 140">
+            <rect x="0" y="0" width="220" height="140" fill="#fff"/>
+            <rect x="0" y="20" width="220" height="18" fill="#0038B8"/>
+            <rect x="0" y="102" width="220" height="18" fill="#0038B8"/>
+            <g transform="translate(110 70)" fill="none" stroke="#0038B8" stroke-width="3" stroke-linejoin="miter">
+              <polygon points="0,-26 22,12 -22,12"/>
+              <polygon points="0,26 22,-12 -22,-12"/>
+            </g>
+          </svg>
+        </div>
+        <div class="s5-caption">יום העצמאות ה-78</div>
+      </div>
+
+      <!-- SCENE 6: המסר (42-50s) -->
+      <div id="s6" class="scene clip" data-start="42" data-duration="8" data-track-index="6">
+        <div class="s6-flag-bg">
+          <svg viewBox="0 0 220 140">
+            <rect x="0" y="0" width="220" height="140" fill="#fff"/>
+            <rect x="0" y="20" width="220" height="18" fill="#0038B8"/>
+            <rect x="0" y="102" width="220" height="18" fill="#0038B8"/>
+            <g transform="translate(110 70)" fill="none" stroke="#0038B8" stroke-width="3" stroke-linejoin="miter">
+              <polygon points="0,-26 22,12 -22,12"/>
+              <polygon points="0,26 22,-12 -22,-12"/>
+            </g>
+          </svg>
+        </div>
+        <div class="s6-wrap">
+          <div class="s6-primary">אנחנו חוגגים בזכותם</div>
+          <div class="s6-divider"></div>
+          <div class="s6-secondary">עם ישראל חי</div>
+        </div>
+        <div class="s6-candle"></div>
       </div>
     </div>
 
     <script>
-      // Seeded PRNG for deterministic renders (mulberry32)
+      // Deterministic PRNG (mulberry32)
       function mulberry32(seed) {
         return function() {
           let t = seed += 0x6D2B79F5;
@@ -442,167 +448,282 @@
           return ((t ^ t >>> 14) >>> 0) / 4294967296;
         };
       }
-      const rand = mulberry32(19480514); // Israel's founding date as seed
+      const rand = mulberry32(19480514);
 
-      // Generate stars for scene 1
+      // --- Scene 1: Stars ---
       const starsContainer = document.getElementById('stars');
-      const starPositions = [
-        [12, 18], [22, 32], [35, 15], [48, 28], [62, 18], [75, 35], [88, 22],
-        [15, 55], [30, 68], [45, 75], [58, 62], [72, 78], [85, 65],
-        [8, 88], [25, 92], [42, 88], [58, 95], [78, 85], [92, 90]
+      const starPoints = [
+        [8, 22], [18, 35], [32, 18], [45, 30], [58, 15], [72, 32], [85, 20], [92, 40],
+        [12, 58], [26, 70], [40, 65], [55, 78], [68, 62], [82, 72],
+        [10, 88], [28, 92], [48, 85], [62, 94], [78, 88], [90, 92]
       ];
-      starPositions.forEach(([x, y], i) => {
+      starPoints.forEach(([x, y]) => {
         const s = document.createElement('div');
         s.className = 'star';
         s.style.left = x + '%';
         s.style.top = y + '%';
-        const size = (rand() * 2 + 1.5);
+        const size = 1.5 + rand() * 1.8;
         s.style.width = size + 'px';
         s.style.height = size + 'px';
-        s.dataset.targetOpacity = (0.2 + rand() * 0.6).toFixed(2);
+        s.dataset.opacity = (0.2 + rand() * 0.45).toFixed(2);
         starsContainer.appendChild(s);
       });
 
-      // Generate confetti for scene 6
-      const confettiField = document.getElementById('confetti-field');
-      const colors = ['c-w', 'c-b', 'c-g'];
-      for (let i = 0; i < 80; i++) {
-        const c = document.createElement('div');
-        c.className = 'confetti ' + colors[i % 3];
-        c.style.left = (rand() * 100) + '%';
-        c.style.transform = `rotate(${rand() * 360}deg)`;
-        c.dataset.fallDx = ((rand() - 0.5) * 300).toFixed(0);
-        c.dataset.fallDur = (4.5 + rand() * 1.5).toFixed(2);
-        c.dataset.fallRot = (rand() * 720 - 360).toFixed(0);
-        confettiField.appendChild(c);
+      // --- Scene 2: Silhouettes ---
+      const silhouettesContainer = document.getElementById('silhouettes');
+      const silhouettePositions = [8, 20, 32, 45, 56, 68, 80, 90];
+      silhouettePositions.forEach((x, i) => {
+        const el = document.createElement('div');
+        el.className = 'silhouette';
+        el.style.left = x + '%';
+        const h = 240 + rand() * 80;
+        const w = 60 + rand() * 30;
+        el.style.height = h + 'px';
+        el.style.width = w + 'px';
+        silhouettesContainer.appendChild(el);
+      });
+
+      // --- Scene 4: Sparks for burst ---
+      const burstContainer = document.getElementById('burst-container');
+      for (let i = 0; i < 48; i++) {
+        const sp = document.createElement('div');
+        sp.className = 'burst-spark';
+        const angle = (i / 48) * Math.PI * 2;
+        sp.dataset.angle = angle;
+        sp.dataset.distance = (350 + rand() * 300).toFixed(0);
+        sp.dataset.hue = [45, 55, 40, 50][i % 4]; // warm golds
+        burstContainer.appendChild(sp);
       }
 
-      // Generate sparks for burst
-      const burst = document.getElementById('burst');
-      for (let i = 0; i < 30; i++) {
-        const s = document.createElement('div');
-        s.className = 'spark';
-        const angle = (i / 30) * Math.PI * 2;
-        s.dataset.angle = angle;
-        s.dataset.distance = (400 + rand() * 200).toFixed(0);
-        burst.appendChild(s);
-      }
+      // --- Scene 5: Fireworks ---
+      const fwContainer = document.getElementById('fireworks-container');
+      const fireworkBursts = [
+        { cx: 25, cy: 30, delay: 30.2, color: '#ffd966' },
+        { cx: 72, cy: 25, delay: 30.8, color: '#9fc5ff' },
+        { cx: 48, cy: 20, delay: 32.0, color: '#fff' },
+        { cx: 18, cy: 45, delay: 33.5, color: '#ffb347' },
+        { cx: 80, cy: 42, delay: 34.2, color: '#9fc5ff' },
+        { cx: 38, cy: 28, delay: 36.0, color: '#ffd966' },
+      ];
+      fireworkBursts.forEach((b, idx) => {
+        for (let i = 0; i < 24; i++) {
+          const f = document.createElement('div');
+          f.className = 'firework';
+          f.style.left = b.cx + '%';
+          f.style.top = b.cy + '%';
+          f.style.background = b.color;
+          f.style.boxShadow = `0 0 8px ${b.color}`;
+          const angle = (i / 24) * Math.PI * 2 + rand() * 0.2;
+          f.dataset.angle = angle;
+          f.dataset.distance = (80 + rand() * 80).toFixed(0);
+          f.dataset.delay = b.delay;
+          fwContainer.appendChild(f);
+        }
+      });
 
       // === TIMELINE ===
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
 
-      // Framework handles clip show/hide via data-start / data-duration.
-      // We only animate content inside each clip.
-
-      // SCENE 1 (0-4.5s)
+      // SCENE 1 — שקט
       tl.to('.star', {
-        opacity: (i, el) => parseFloat(el.dataset.targetOpacity),
-        duration: 1.2,
-        stagger: 0.04,
+        opacity: (i, el) => parseFloat(el.dataset.opacity),
+        duration: 2.0,
+        stagger: 0.05,
         ease: 'power1.inOut'
       }, 0.2);
-      tl.from('.s1-he', { opacity: 0, y: 20, duration: 1.8, ease: 'power2.out' }, 0.8);
-      tl.to('.s1-line', { width: 340, duration: 1.2, ease: 'power2.out' }, 2.0);
-      tl.from('.s1-en', { opacity: 0, duration: 1.2 }, 2.2);
-
-      // SCENE 2 (4-10.5s)
-      tl.from('.candle', { opacity: 0, scale: 0.8, duration: 1.2, ease: 'power2.out' }, 4.2);
-      tl.from('.s2-he', { opacity: 0, y: 20, duration: 1.2 }, 5.2);
-      tl.from('.s2-en', { opacity: 0, duration: 1.0 }, 5.8);
-      tl.to('.year', { opacity: 1, duration: 0.4, stagger: 0.25, ease: 'power1.out' }, 6.6);
-
-      // SCENE 3 (10-14.5s)
-      const counterObj = { n: 0 };
-      tl.to(counterObj, {
-        n: 25040,
-        duration: 2.5,
-        ease: 'power2.out',
-        onUpdate: () => {
-          document.getElementById('counter').textContent =
-            Math.round(counterObj.n).toLocaleString('en-US');
-        }
-      }, 10.4);
-      tl.from('.s3-label', { opacity: 0, y: 16, duration: 0.8 }, 11.8);
-      tl.from('.s3-en', { opacity: 0, duration: 0.8 }, 12.4);
-
-      // SCENE 4 (14-18.5s)
-      tl.to('.dawn-glow', { opacity: 1, duration: 2.5, ease: 'power2.out' }, 14.2);
-      tl.from('.s4-he', { opacity: 0, y: 30, duration: 1.6, ease: 'power2.out' }, 14.6);
-      tl.from('.s4-en', { opacity: 0, duration: 1.2 }, 15.8);
-
-      // SCENE 5 (18-24.5s)
-      tl.from('.flag', { opacity: 0, scale: 0.85, duration: 1.2, ease: 'power2.out' }, 18.2);
-      tl.to('.stripe-top', { scaleX: 1, duration: 1.0, ease: 'power2.inOut' }, 18.8);
-      tl.to('.stripe-bot', { scaleX: 1, duration: 1.0, ease: 'power2.inOut' }, 19.0);
-      tl.to('.star-of-david', {
-        scale: 1,
-        rotation: 0,
-        duration: 1.4,
-        ease: 'back.out(1.4)'
-      }, 19.6);
-      tl.to('.s5-badge', {
+      tl.to('.candle-flame', {
         opacity: 1,
-        y: -60,
-        duration: 1.0,
+        duration: 1.2,
         ease: 'power2.out'
-      }, 21.2);
+      }, 1.8);
+      tl.from('.candle-wrap', {
+        y: 10,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power2.out'
+      }, 1.5);
+      tl.from('.s1-title', {
+        opacity: 0,
+        y: 20,
+        duration: 2.0,
+        ease: 'power2.out'
+      }, 4.0);
 
-      // SCENE 6 (24-30s) — animate inner content; framework handles clip entry
+      // SCENE 2 — שיר הרעות
+      tl.to('.silhouette', {
+        opacity: (i) => 0.4 + (i % 3) * 0.1,
+        duration: 2.5,
+        stagger: 0.12,
+        ease: 'power1.inOut'
+      }, 7.2);
 
-      // Confetti fall (deterministic via dataset)
-      gsap.utils.toArray('.confetti').forEach((el, i) => {
-        tl.to(el, {
+      // Poem reveal — word by word, slow breath cadence
+      const lineStartTimes = [8.0, 10.2, 12.8, 15.4];
+      ['#line1', '#line2', '#line3', '#line4'].forEach((sel, lineIdx) => {
+        tl.to(`${sel} .poem-word`, {
           opacity: 1,
-          duration: 0.2
-        }, 24.2 + i * 0.02);
-        tl.to(el, {
-          y: 1200,
-          x: parseFloat(el.dataset.fallDx),
-          rotation: `+=${el.dataset.fallRot}`,
-          duration: parseFloat(el.dataset.fallDur),
-          ease: 'power1.in'
-        }, 24.2 + i * 0.02);
+          duration: 0.6,
+          stagger: 0.32,
+          ease: 'power1.out'
+        }, lineStartTimes[lineIdx]);
       });
 
-      // Spark burst
-      gsap.utils.toArray('.spark').forEach((el, i) => {
+      // Hold the poem visible, then gentle fade of silhouettes only
+      tl.to('.silhouette', {
+        opacity: 0,
+        duration: 1.5
+      }, 19.2);
+
+      // SCENE 3 — הצפירה
+      // Animate sine wave path amplitude via morph
+      tl.fromTo('.sine-wave', {
+        opacity: 0,
+        scaleY: 0.2
+      }, {
+        opacity: 1,
+        scaleY: 1,
+        duration: 1.5,
+        ease: 'power2.out'
+      }, 20.3);
+
+      // Animated sine wave — oscillate vertical center by animating path's d
+      const sinePath = document.getElementById('sine-path');
+      const sineObj = { phase: 0, amp: 0 };
+      function rebuildSine() {
+        const pts = [];
+        const segments = 28;
+        const w = 1400;
+        for (let i = 0; i <= segments; i++) {
+          const x = (i / segments) * w;
+          const y = 80 + Math.sin((i / segments) * Math.PI * 8 + sineObj.phase) * sineObj.amp;
+          pts.push(`${x} ${y}`);
+        }
+        sinePath.setAttribute('d', 'M ' + pts.join(' L '));
+      }
+      tl.to(sineObj, {
+        amp: 40,
+        duration: 1.2,
+        ease: 'power2.out',
+        onUpdate: rebuildSine
+      }, 20.5);
+      tl.to(sineObj, {
+        phase: Math.PI * 6,
+        duration: 5.0,
+        ease: 'none',
+        onUpdate: rebuildSine
+      }, 21.7);
+      tl.to(sineObj, {
+        amp: 0,
+        duration: 0.8,
+        ease: 'power2.in',
+        onUpdate: rebuildSine
+      }, 26.7);
+
+      tl.to('.siren-label', {
+        opacity: 1,
+        duration: 1.2,
+        ease: 'power1.out'
+      }, 22.0);
+      tl.to('.siren-label', {
+        opacity: 0,
+        duration: 0.8
+      }, 27.2);
+
+      // SCENE 4 — השנייה (the cut)
+      // Sudden white pulse then sparks fly outward
+      tl.fromTo('.burst-center',
+        { opacity: 0, scale: 1 },
+        { opacity: 1, scale: 8, duration: 0.2, ease: 'power4.out' },
+        28.0
+      );
+      tl.to('.burst-center', {
+        opacity: 0,
+        duration: 0.3
+      }, 28.2);
+
+      gsap.utils.toArray('.burst-spark').forEach((el) => {
         const angle = parseFloat(el.dataset.angle);
         const distance = parseFloat(el.dataset.distance);
+        tl.fromTo(el,
+          { opacity: 0, x: 0, y: 0 },
+          { opacity: 1, duration: 0.1 },
+          28.1
+        );
         tl.to(el, {
-          opacity: 1,
           x: Math.cos(angle) * distance,
           y: Math.sin(angle) * distance,
-          duration: 1.2,
+          duration: 1.4,
           ease: 'power2.out'
-        }, 24.8);
+        }, 28.1);
         tl.to(el, {
           opacity: 0,
-          duration: 0.8
-        }, 25.6);
+          duration: 0.5
+        }, 29.6);
       });
 
-      // Main text
-      tl.to('.s6-main', {
-        opacity: 1,
-        scale: 1,
-        duration: 1.0,
-        ease: 'back.out(1.6)'
-      }, 24.6);
-      tl.to('.s6-sub', { opacity: 1, duration: 0.8 }, 25.4);
-
-      // Final stamp — use fromTo so GSAP owns xPercent + scale
-      tl.fromTo('.s6-stamp',
-        { xPercent: -50, scale: 0 },
-        { xPercent: -50, scale: 1, duration: 0.6, ease: 'back.out(2)' },
-        27.0
+      // SCENE 5 — חגיגה מאופקת
+      // Flag fades in gently
+      tl.fromTo('.night-flag',
+        { opacity: 0, scale: 0.92 },
+        { opacity: 0.85, scale: 1, duration: 2.0, ease: 'power2.out' },
+        30.3
       );
-      tl.to('.s6-stamp', {
-        scale: 1.05,
-        duration: 0.3,
-        yoyo: true,
-        repeat: 3
-      }, 27.8);
+
+      // Fireworks — each burst expands then fades
+      gsap.utils.toArray('.firework').forEach((el) => {
+        const angle = parseFloat(el.dataset.angle);
+        const distance = parseFloat(el.dataset.distance);
+        const delay = parseFloat(el.dataset.delay);
+        tl.fromTo(el,
+          { opacity: 0, x: 0, y: 0 },
+          { opacity: 1, duration: 0.15 },
+          delay
+        );
+        tl.to(el, {
+          x: Math.cos(angle) * distance,
+          y: Math.sin(angle) * distance,
+          duration: 1.6,
+          ease: 'power2.out'
+        }, delay);
+        tl.to(el, {
+          opacity: 0,
+          duration: 0.9
+        }, delay + 1.0);
+      });
+
+      tl.fromTo('.s5-caption',
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 1.6, ease: 'power2.out' },
+        37.0
+      );
+
+      // SCENE 6 — המסר
+      tl.fromTo('.s6-flag-bg',
+        { opacity: 0 },
+        { opacity: 1, duration: 2.0, ease: 'power1.inOut' },
+        42.2
+      );
+      tl.fromTo('.s6-primary',
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 2.0, ease: 'power2.out' },
+        42.6
+      );
+      tl.to('.s6-divider', {
+        width: 500,
+        duration: 1.6,
+        ease: 'power2.out'
+      }, 44.4);
+      tl.fromTo('.s6-secondary',
+        { opacity: 0 },
+        { opacity: 1, duration: 1.8, ease: 'power2.out' },
+        45.2
+      );
+      tl.fromTo('.s6-candle',
+        { opacity: 0 },
+        { opacity: 1, duration: 1.6, ease: 'power2.out' },
+        46.2
+      );
 
       window.__timelines["main"] = tl;
     </script>
