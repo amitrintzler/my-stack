@@ -164,3 +164,102 @@ reviews:
 | LangSmith | Strong, but SaaS-only data |
 | Helicone | Simpler, good for cost tracking |
 | Arize Phoenix | OSS, heavier infra footprint |
+
+---
+
+### Karpathy Skills
+
+| Field | Value |
+|-------|-------|
+| **Radar** | 🟡 Trial |
+| **Status** | Exploring |
+| **Licence** | MIT |
+| **Website** | [github.com/forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) |
+| **Projects** | [GCP SaaS Platform](../projects/gcp-saas-platform.md) |
+
+**Why Evaluating:** Small, opinionated `CLAUDE.md` that codifies Andrej Karpathy's observations about common LLM coding failure modes into four rules — **Think Before Coding**, **Simplicity First**, **Surgical Changes**, **Goal-Driven Execution**. Installable as a Claude Code plugin or dropped straight into a repo. Low-cost way to reduce over-engineering and unrequested refactors in agentic edits. Pairs cleanly with our existing [Claude Code](#claude-code) + [CodeRabbit](#coderabbit) loop.
+
+**The Four Rules (at a glance):**
+
+| Rule | What it enforces |
+|------|------------------|
+| 1. Think Before Coding | State assumptions, surface ambiguity, ask before picking an interpretation |
+| 2. Simplicity First | No speculative abstractions, no unrequested flexibility, no error handling for impossible cases |
+| 3. Surgical Changes | Edit only what the task requires; don't "improve" adjacent code or delete pre-existing dead code |
+| 4. Goal-Driven Execution | Turn tasks into verifiable success criteria and loop until they pass (tests, checks) |
+
+**My Pattern:**
+- Use as a **baseline** `CLAUDE.md` on greenfield repos, then append project-specific conventions below it (stack, IaC, DB migration rules, etc.)
+- On existing repos with a curated `CLAUDE.md`, cherry-pick rules 3 (Surgical) and 4 (Goal-Driven) — the biggest wins in agentic PRs
+- Install as a plugin for **personal/exploratory repos** where pinning a file isn't worth it
+
+**Install — Option A: Claude Code plugin (reusable across repos):**
+```bash
+# Inside a Claude Code session
+/plugin marketplace add forrestchang/andrej-karpathy-skills
+/plugin install andrej-karpathy-skills@karpathy-skills
+```
+
+**Install — Option B: drop into a new repo:**
+```bash
+# From repo root
+curl -o CLAUDE.md https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md
+```
+
+**Install — Option C: append to an existing CLAUDE.md:**
+```bash
+echo "" >> CLAUDE.md
+curl https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
+```
+
+**Example — Goal-Driven rewrites in practice:**
+
+The skill reframes vague asks into verifiable loops. Instead of:
+
+> "Add validation to the signup endpoint."
+
+…Claude is nudged to plan as:
+
+```
+1. Write failing tests for invalid inputs (empty email, bad format, weak password) → verify: tests fail
+2. Add validator on POST /signup → verify: tests pass
+3. Run full test suite → verify: no regressions
+```
+
+**Example — composing with our stack:**
+
+```markdown
+<!-- CLAUDE.md (repo root) -->
+
+# (Contents of karpathy-skills CLAUDE.md pasted above this line)
+
+---
+
+## Project-Specific Guidelines
+
+## Stack
+- Language: Go / TypeScript
+- Platform: GCP (GKE Autopilot + Cloud Run)
+- IaC: OpenTofu + Terragrunt
+- DB migrations: Atlas (expand-contract pattern)
+
+## Conventions
+- All PRs require unit + integration tests
+- Use Workload Identity Federation — no static credentials
+- Secrets via Secret Manager CSI driver only
+- Follow trunk-based development — no long-lived branches
+```
+
+**Gotchas:**
+- The guidelines "bias toward caution over speed" (stated in the upstream README) — for trivial one-line fixes they can over-trigger clarifying questions. Tell Claude to skip Rule 1 for trivial tasks when needed.
+- Rule 3 (Surgical Changes) conflicts with `simplify` / cleanup-style skills that *want* to touch adjacent code. Don't load both at once — pick per task.
+- Upstream file is a living doc; pin a commit SHA in the `curl` URL if you need reproducible onboarding across a team.
+- Plugin install path (`@karpathy-skills`) is the marketplace slug, not a version — there's no semver yet. Re-install to pick up updates.
+
+**Alternatives Considered:**
+
+| Tool | Why I didn't choose it (yet) |
+|------|------------------------------|
+| Hand-rolled `CLAUDE.md` | What I use today — Karpathy Skills is a structured baseline on top of it, not a replacement |
+| Anthropic "Claude best practices" docs | More general; Karpathy Skills is tighter and enforcement-oriented |
+| Cursor Rules / `.cursorrules` | IDE-specific; Karpathy Skills is tool-agnostic Markdown |
