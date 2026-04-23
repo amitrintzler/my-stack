@@ -11,7 +11,7 @@ Full radar lists: [🟢 Adopt](radar/adopt.md) · [🟡 Trial](radar/trial.md) �
 
 | Domain | 🟢 Adopt | 🟡 Trial | 🔴 Hold |
 |--------|----------|---------|--------|
-| **AI / LLM** | Claude Code, GitHub Copilot, CodeRabbit | LangGraph, LangSmith, Braintrust | — |
+| **AI / LLM** | Claude Code, GitHub Copilot, CodeRabbit | LangGraph, LangSmith, Braintrust, Karpathy Skills | — |
 | **CI/CD** | GitHub Actions, Google Cloud Deploy | Flux v2, Cloud Build | Jenkins |
 | **GCP Infra** | GKE Autopilot, Cloud Run, OpenTofu, Secret Manager | Terragrunt, Atlas | Terraform, SA Key Files, VPC Connector |
 | **Code Quality & Security** | Semgrep, Trivy, Checkov, Gitleaks | Binary Authorization, Renovate | SonarQube |
@@ -23,7 +23,7 @@ Full radar lists: [🟢 Adopt](radar/adopt.md) · [🟡 Trial](radar/trial.md) �
 
 | Domain | File | Tool Count |
 |--------|------|-----------|
-| AI / LLM Tooling | [domains/ai-llm.md](domains/ai-llm.md) | 6 |
+| AI / LLM Tooling | [domains/ai-llm.md](domains/ai-llm.md) | 7 |
 | CI/CD & DevOps | [domains/cicd-devops.md](domains/cicd-devops.md) | 4 |
 | GCP Infrastructure | [domains/gcp-infra.md](domains/gcp-infra.md) | 6 |
 | Code Quality & Security | [domains/code-quality-security.md](domains/code-quality-security.md) | 6 |

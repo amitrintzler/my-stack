@@ -7,6 +7,7 @@
 | [LangGraph](../domains/ai-llm.md#langgraph) | AI/LLM | Exploring | Multi-agent orchestration |
 | [LangSmith](../domains/ai-llm.md#langsmith) | AI/LLM | Exploring | LLM observability |
 | [Braintrust](../domains/ai-llm.md#braintrust) | AI/LLM | Exploring | Alt to LangSmith, better data residency |
+| [Karpathy Skills](../domains/ai-llm.md#karpathy-skills) | AI/LLM | Exploring | Opinionated CLAUDE.md baseline (MIT) |
 | [Flux v2](../domains/cicd-devops.md#flux-v2) | CI/CD | Exploring | GitOps for GKE |
 | [Cloud Build](../domains/cicd-devops.md#cloud-build) | CI/CD | Exploring | GCP-native builds alongside GHA |
 | [Terragrunt](../domains/gcp-infra.md#terragrunt) | GCP Infra | Exploring | DRY wrapper for OpenTofu |
