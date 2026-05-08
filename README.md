@@ -16,6 +16,7 @@ Full radar lists: [🟢 Adopt](radar/adopt.md) · [🟡 Trial](radar/trial.md) �
 | **GCP Infra** | GKE Autopilot, Cloud Run, OpenTofu, Secret Manager | Terragrunt, Atlas | Terraform, SA Key Files, VPC Connector |
 | **Code Quality & Security** | Semgrep, Trivy, Checkov, Gitleaks | Binary Authorization, Renovate | SonarQube |
 | **Video / Media** | FFmpeg, PyAV, MoviePy, Manim CE, Motion Canvas, Three.js, fluent-ffmpeg, D3.js, Anime.js, PixiJS, Video.js | Plyr, Shaka, MediaPipe, Revideo, **HyperFrames**, Skia-Python, GStreamer, Vispy, Movis, Matplotlib Animation, Lottie, p5.js, Rive, Editly | Remotion, LibOpenShot, ProjectM, Pytoon |
+| **Game Engines** | — | Unity, Godot, O3DE, Stride, Flax | — |
 
 ---
 
@@ -28,6 +29,7 @@ Full radar lists: [🟢 Adopt](radar/adopt.md) · [🟡 Trial](radar/trial.md) �
 | GCP Infrastructure | [domains/gcp-infra.md](domains/gcp-infra.md) | 6 |
 | Code Quality & Security | [domains/code-quality-security.md](domains/code-quality-security.md) | 6 |
 | Video & Media | [domains/video-media.md](domains/video-media.md) | 29 |
+| Game Engines | [domains/game-engines.md](domains/game-engines.md) | 5 |
 | Frontend & UI _(scaffolding)_ | [frontend-ui.md](frontend-ui.md) | 7 |
 
 ---
@@ -63,4 +65,4 @@ Use [TEMPLATE.md](TEMPLATE.md) to add a new tool entry in the appropriate [domai
 
 ---
 
-*Last updated: 2026-04*
+*Last updated: 2026-05*

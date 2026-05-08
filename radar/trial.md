@@ -28,3 +28,8 @@
 | [p5.js](../domains/video-media.md#p5js) | Video/Media | Exploring | Creative coding (LGPL — check licence) |
 | [Rive](../domains/video-media.md#rive) | Video/Media | Exploring | State-machine animations |
 | [Editly](../domains/video-media.md#editly) | Video/Media | Exploring | JSON-defined clip assembly |
+| [Unity](../domains/game-engines.md#unity) | Game Engines | Exploring | Industry-standard, mobile/AR/VR, free under $200k/yr |
+| [Godot](../domains/game-engines.md#godot) | Game Engines | Exploring | MIT, best-in-class 2D, growing 3D |
+| [O3DE](../domains/game-engines.md#o3de-open-3d-engine) | Game Engines | Exploring | Apache 2.0 AAA renderer, Linux Foundation |
+| [Stride](../domains/game-engines.md#stride-formerly-xenko) | Game Engines | Exploring | MIT pure-C# engine, Unity-like API |
+| [Flax](../domains/game-engines.md#flax-engine) | Game Engines | Exploring | Source-available, Unreal-tier visuals |
