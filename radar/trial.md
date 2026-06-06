@@ -33,3 +33,6 @@
 | [O3DE](../domains/game-engines.md#o3de-open-3d-engine) | Game Engines | Exploring | Apache 2.0 AAA renderer, Linux Foundation |
 | [Stride](../domains/game-engines.md#stride-formerly-xenko) | Game Engines | Exploring | MIT pure-C# engine, Unity-like API |
 | [Flax](../domains/game-engines.md#flax-engine) | Game Engines | Exploring | Source-available, Unreal-tier visuals |
+| [Phaser](../domains/web-games.md#phaser) | Web Games | Exploring | MIT, 2D HTML5 standard, 2000+ examples |
+| [PlayCanvas](../domains/web-games.md#playcanvas) | Web Games | Exploring | MIT engine, ~300KB runtime, WebGL2/WebGPU |
+| [Babylon.js](../domains/web-games.md#babylonjs) | Web Games | Exploring | Apache 2.0, MS-backed, WebGPU-first |

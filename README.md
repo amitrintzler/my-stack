@@ -17,6 +17,7 @@ Full radar lists: [🟢 Adopt](radar/adopt.md) · [🟡 Trial](radar/trial.md) �
 | **Code Quality & Security** | Semgrep, Trivy, Checkov, Gitleaks | Binary Authorization, Renovate | SonarQube |
 | **Video / Media** | FFmpeg, PyAV, MoviePy, Manim CE, Motion Canvas, Three.js, fluent-ffmpeg, D3.js, Anime.js, PixiJS, Video.js | Plyr, Shaka, MediaPipe, Revideo, **HyperFrames**, Skia-Python, GStreamer, Vispy, Movis, Matplotlib Animation, Lottie, p5.js, Rive, Editly | Remotion, LibOpenShot, ProjectM, Pytoon |
 | **Game Engines** | — | Unity, Godot, O3DE, Stride, Flax | — |
+| **Web Games** | — | Phaser, PlayCanvas, Babylon.js | — |
 
 ---
 
@@ -30,6 +31,7 @@ Full radar lists: [🟢 Adopt](radar/adopt.md) · [🟡 Trial](radar/trial.md) �
 | Code Quality & Security | [domains/code-quality-security.md](domains/code-quality-security.md) | 6 |
 | Video & Media | [domains/video-media.md](domains/video-media.md) | 29 |
 | Game Engines | [domains/game-engines.md](domains/game-engines.md) | 5 |
+| Web Games | [domains/web-games.md](domains/web-games.md) | 3 |
 | Frontend & UI _(scaffolding)_ | [frontend-ui.md](frontend-ui.md) | 7 |
 
 ---

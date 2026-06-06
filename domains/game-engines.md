@@ -75,6 +75,13 @@
 - [itch.io — Made With Godot](https://itch.io/games/made-with-godot) — playable browser demos
 - [Steam growth report 2026](https://www.explosion.com/183705/godot-engine-shows-exponential-growth-on-steam-in-2026/) — exponential review-count growth
 
+**Playable web samples (HTML5 export):**
+- [itch.io — HTML5 games made with Godot](https://itch.io/games/html5/made-with-godot) — biggest browser-playable collection
+- [itch.io — Godot-tagged HTML5](https://itch.io/games/html5/tag-godot)
+- Notable browser-playable: **Dynamine**, **Welcome, Dear Human (Demo)**, **BACKSTORY**, **Sinner Maker**
+- [Godot web export docs](https://docs.godotengine.org/en/latest/tutorials/export/exporting_for_web.html) — WebAssembly + WebGL2 pipeline
+- For web-first engines see [domains/web-games.md](web-games.md)
+
 **Gotchas:**
 - Console export requires third-party publishers (W4 Games, Pineapple Works) — not direct
 - C# support is solid but smaller community than GDScript — most tutorials assume GDScript
