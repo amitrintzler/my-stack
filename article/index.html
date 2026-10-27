@@ -1,0 +1,781 @@
+<title>Shnitzel Mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+:root{
+  --paper:#F6F6F4; --card:#FFFFFF; --ink:#15181C; --ink-2:#474D55; --ink-3:#7B838C;
+  --rule:#E1E2DF; --rule-2:#EDEEEB;
+  --accent:#1F3D6E; --accent-2:#E8EDF5;
+  --flag:#96271F; --flag-2:#F7E7E4;
+  --term:#1A1D21; --term-ink:#D8DAD6; --term-dim:#7E858D;
+  --display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --text:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#111316; --card:#181B1F; --ink:#E9EAE6; --ink-2:#AFB5BC; --ink-3:#7C848D;
+    --rule:#2A2F35; --rule-2:#1F242A;
+    --accent:#93B4E6; --accent-2:#1B2634;
+    --flag:#E9897E; --flag-2:#2E1D1B;
+    --term:#0B0D0F; --term-ink:#D8DAD6; --term-dim:#767D85;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111316; --card:#181B1F; --ink:#E9EAE6; --ink-2:#AFB5BC; --ink-3:#7C848D;
+  --rule:#2A2F35; --rule-2:#1F242A;
+  --accent:#93B4E6; --accent-2:#1B2634;
+  --flag:#E9897E; --flag-2:#2E1D1B;
+  --term:#0B0D0F; --term-ink:#D8DAD6; --term-dim:#767D85;
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--text);font-size:19px;line-height:1.68;margin:0;padding:0 20px 120px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto}
+.col{max-width:660px;margin-left:auto;margin-right:auto}
+
+header.top{border-bottom:1px solid var(--rule);padding:34px 0 0;margin-bottom:44px}
+.kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:0 0 26px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(42px,7.2vw,78px);line-height:1.02;letter-spacing:-.015em;text-wrap:balance;margin:0 0 22px}
+.deck{font-size:clamp(20px,2.4vw,23px);line-height:1.5;color:var(--ink-2);margin:0 0 30px;max-width:600px}
+.byline{font-family:var(--mono);font-size:12px;color:var(--ink-3);border-top:1px solid var(--rule-2);padding:16px 0 26px;display:flex;flex-wrap:wrap;gap:8px 22px}
+
+h2{font-family:var(--display);font-weight:400;font-size:clamp(29px,3.6vw,37px);line-height:1.14;letter-spacing:-.01em;text-wrap:balance;margin:64px 0 4px}
+h2 + p{margin-top:14px}
+h3{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin:34px 0 10px}
+p{margin:0 0 22px}
+a{color:var(--accent);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.82em;background:var(--rule-2);padding:2px 6px;border-radius:3px;white-space:nowrap}
+.lead::first-letter{font-family:var(--display);float:left;font-size:4.15em;line-height:.82;padding:6px 10px 0 0;color:var(--accent)}
+
+blockquote{margin:44px 0;padding:0 0 0 26px;border-left:2px solid var(--accent);font-family:var(--display);font-size:clamp(24px,3vw,30px);line-height:1.26;color:var(--ink)}
+blockquote p{margin:0}
+
+.standout{background:var(--card);border:1px solid var(--rule);border-radius:2px;padding:26px 28px;margin:40px 0}
+.standout p:last-child{margin-bottom:0}
+.standout.flagged{background:var(--flag-2);border-color:var(--flag)}
+.standout.flagged h3{color:var(--flag)}
+
+ul,ol{margin:0 0 22px;padding-left:22px}
+li{margin-bottom:11px}
+li::marker{color:var(--ink-3)}
+
+/* stat strip */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 34px}
+.stat{background:var(--paper);padding:18px 20px}
+.stat .n{font-family:var(--display);font-size:clamp(32px,4.4vw,44px);line-height:1;letter-spacing:-.02em;display:block;margin-bottom:8px}
+.stat .l{font-family:var(--mono);font-size:11px;line-height:1.45;letter-spacing:.04em;color:var(--ink-3);display:block}
+.stat.bad .n{color:var(--flag)}
+.stat.good .n{color:var(--accent)}
+
+/* terminal */
+.term{background:var(--term);border-radius:3px;padding:20px 22px;margin:30px 0;overflow-x:auto;border:1px solid var(--rule)}
+.term pre{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.65;color:var(--term-ink);white-space:pre}
+.term .c{color:var(--term-dim)}
+.term .p{color:#8FB3E8}
+.term .r{color:#E9897E}
+.term-cap{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin:-20px 0 30px;padding-left:2px}
+
+figure{margin:52px auto;max-width:960px}
+figure svg{display:block;width:100%;height:auto;color:var(--ink-2)}
+.scroll{overflow-x:auto;padding-bottom:4px}
+.scroll > svg{min-width:640px}
+figcaption{font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-3);margin:16px auto 0;max-width:660px;padding-top:12px;border-top:1px solid var(--rule)}
+
+.bx{fill:var(--card);stroke:var(--rule);stroke-width:1.25}
+.bx-a{fill:var(--accent-2);stroke:var(--accent);stroke-width:1.5}
+.bx-f{fill:var(--flag-2);stroke:var(--flag);stroke-width:1.5}
+.tt{font-family:var(--mono);font-size:13px;font-weight:500;fill:var(--ink)}
+.ta{font-family:var(--mono);font-size:13px;font-weight:500;fill:var(--accent)}
+.tf{font-family:var(--mono);font-size:13px;font-weight:500;fill:var(--flag)}
+.mm{font-family:var(--mono);font-size:10.5px;fill:var(--ink-3)}
+.ma{font-family:var(--mono);font-size:10.5px;fill:var(--accent)}
+.mf{font-family:var(--mono);font-size:10.5px;fill:var(--flag)}
+.ln{stroke:var(--ink-3);stroke-width:1.25;fill:none}
+.ln-a{stroke:var(--accent);stroke-width:1.5;fill:none}
+.ln-f{stroke:var(--flag);stroke-width:1.75;fill:none}
+.ln-d{stroke:var(--ink-3);stroke-width:1.25;fill:none;stroke-dasharray:4 4}
+
+hr.sep{border:0;border-top:1px solid var(--rule);margin:64px auto;max-width:660px}
+.end{font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--ink-3)}
+.end a{color:var(--ink-3)}
+</style>
+
+<div class="wrap">
+
+<header class="top col">
+  <p class="kicker">Engineering notes</p>
+  <h1>Shnitzel mode</h1>
+  <p class="deck">I built a watchdog for my own engineering work. Then I audited it and found it had been telling me to merge a build that was failing. Here is the whole thing, including the parts that broke.</p>
+  <p class="byline"><span>2026-08-26</span><span>About 17 minutes</span><span>MIT</span></p>
+</header>
+
+<div class="col">
+<div class="stats">
+  <div class="stat"><span class="n">4</span><span class="l">layers, each with one job</span></div>
+  <div class="stat"><span class="n">6</span><span class="l">collectors with no mutating command in them</span></div>
+  <div class="stat bad"><span class="n">3</span><span class="l">defects found by review</span></div>
+  <div class="stat good"><span class="n">0</span><span class="l">found by a user first</span></div>
+</div>
+</div>
+
+<div class="col">
+
+<p class="lead">There is no potato mode. The thing I went looking for is <strong>poteto mode</strong>, the entry command of a plugin called pstack, written by Lauren Tan, whose handle is poteto. It gets misheard constantly. I misheard it myself, spent an afternoon searching for a plugin that does not exist, and eventually found the real one.</p>
+
+<p>The mishearing turned out to be useful. Because I arrived with no preconceptions, I read pstack as an artifact rather than as something to install, and what struck me was not any individual skill. It was the structure. A router that copies a playbook's steps verbatim into the todo list before the agent reasons about the task. Principles kept as separate files, loaded only when they apply. Four models spawned in parallel and made to argue before a design is accepted.</p>
+
+<p>Those are context window design decisions dressed as documentation, and they are mostly right. What followed was a week of building an overlay on top, and the useful output is not the code. It is a handful of decisions that generalise, and three defects that only turned up because I went looking. The defects are the more interesting half, so they get their own section rather than a footnote.</p>
+
+<h2>The four layers</h2>
+
+<p>Start here, because almost every complaint about agent tooling turns out to be one layer being asked to do another layer's job.</p>
+
+<p>The runtime supplies the hands: shell, files, git, the network, subagents where it has them, and MCP servers. Above it sits engineering craft, which is what pstack is: opinionated about how to think about code, deliberately silent about your organisation. Above that sit your constraints: your git rules, your clouds, your approval boundaries, your accumulated knowledge about your own repositories. And above all of it, you, deciding what is worth building at all.</p>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 900 400" role="img" aria-label="Four layers stacked. The runtime supplies tools and files. pstack supplies engineering craft. The overlay supplies constraints, platforms and memory. The human supplies judgment. Each row names what breaks if it is removed.">
+    <defs><marker id="ar1" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><polygon points="0,0 10,4 0,8" fill="currentColor"/></marker></defs>
+    <text x="14" y="16" class="mm">LAYER</text><text x="200" y="16" class="mm">DELIVERS</text><text x="612" y="16" class="mm">REMOVE IT AND</text>
+
+    <rect x="14" y="26" width="176" height="76" rx="2" class="bx"/>
+    <text x="102" y="60" class="tt" text-anchor="middle">you</text>
+    <text x="102" y="80" class="mm" text-anchor="middle">the only layer that can</text>
+    <text x="102" y="93" class="mm" text-anchor="middle">carry accountability</text>
+    <rect x="200" y="26" width="396" height="76" rx="2" class="bx"/>
+    <text x="216" y="50" class="mm">signs the gates: worth building, criteria testable</text>
+    <text x="216" y="68" class="mm">approves the irreversible: merge, apply, deploy, delete</text>
+    <text x="216" y="86" class="mm">decides what gets dropped to make room for it</text>
+    <rect x="612" y="26" width="274" height="76" rx="2" class="bx-f"/>
+    <text x="628" y="56" class="mf">an agent with authority and no</text>
+    <text x="628" y="74" class="mf">accountability, which is the one</text>
+    <text x="628" y="92" class="mf">configuration nobody should ship</text>
+
+    <rect x="14" y="112" width="176" height="86" rx="2" class="bx-a"/>
+    <text x="102" y="146" class="ta" text-anchor="middle">your overlay</text>
+    <text x="102" y="166" class="ma" text-anchor="middle">constraints, platforms,</text>
+    <text x="102" y="179" class="ma" text-anchor="middle">recurring work, memory</text>
+    <rect x="200" y="112" width="396" height="86" rx="2" class="bx-a"/>
+    <text x="216" y="136" class="ma">the stop list: what an agent may never do without you</text>
+    <text x="216" y="154" class="ma">model roles, so no instruction names a vendor</text>
+    <text x="216" y="172" class="ma">platform cards: the real command, rollback, failure mode</text>
+    <text x="216" y="190" class="ma">the watch loop, the feature ledger, scoped lessons</text>
+    <rect x="612" y="112" width="274" height="86" rx="2" class="bx-f"/>
+    <text x="628" y="142" class="mf">competent work that breaks your git</text>
+    <text x="628" y="160" class="mf">rules, pins you to one vendor, forgets</text>
+    <text x="628" y="178" class="mf">last week, and asks the same four</text>
+    <text x="628" y="192" class="mf">questions about CI every morning</text>
+
+    <rect x="14" y="208" width="176" height="86" rx="2" class="bx"/>
+    <text x="102" y="242" class="tt" text-anchor="middle">pstack</text>
+    <text x="102" y="262" class="mm" text-anchor="middle">engineering craft</text>
+    <text x="102" y="275" class="mm" text-anchor="middle">MIT, optional</text>
+    <rect x="200" y="208" width="396" height="86" rx="2" class="bx"/>
+    <text x="216" y="232" class="mm">23 principles as leaf files, loaded only when they apply</text>
+    <text x="216" y="250" class="mm">16 playbooks: investigation, bug fix, refactor, perf</text>
+    <text x="216" y="268" class="mm">multi-model panels that argue before a design lands</text>
+    <text x="216" y="286" class="mm">a genuinely good phased plan spec</text>
+    <rect x="612" y="208" width="274" height="86" rx="2" class="bx-f"/>
+    <text x="628" y="244" class="mf">the guardrails still hold, but the</text>
+    <text x="628" y="262" class="mf">code work gets shallower: fewer</text>
+    <text x="628" y="280" class="mf">rejected alternatives, weaker review</text>
+
+    <rect x="14" y="304" width="176" height="76" rx="2" class="bx"/>
+    <text x="102" y="338" class="tt" text-anchor="middle">the runtime</text>
+    <text x="102" y="358" class="mm" text-anchor="middle">Claude Code, Codex,</text>
+    <text x="102" y="371" class="mm" text-anchor="middle">Gemini, local models</text>
+    <rect x="200" y="304" width="396" height="76" rx="2" class="bx"/>
+    <text x="216" y="328" class="mm">the hands: shell, files, git, the network</text>
+    <text x="216" y="346" class="mm">subagents, where the runtime has them</text>
+    <text x="216" y="364" class="mm">MCP servers, where the shell-level guards do not reach</text>
+    <rect x="612" y="304" width="274" height="76" rx="2" class="bx-f"/>
+    <text x="628" y="342" class="mf">nothing runs. every row above</text>
+    <text x="628" y="360" class="mf">this one is text on a disk</text>
+
+    <path d="M102 102 L102 112" class="ln-a" marker-end="url(#ar1)" color="var(--accent)"/>
+    <path d="M102 198 L102 208" class="ln" marker-end="url(#ar1)" color="var(--ink-3)"/>
+    <path d="M102 294 L102 304" class="ln" marker-end="url(#ar1)" color="var(--ink-3)"/>
+  </svg>
+  </div>
+  <figcaption>Each layer constrains the one below it, and when they disagree the higher row wins. pstack will not enforce your approval rules. Your overlay will not make the code good. Neither will decide what is worth building.</figcaption>
+</figure>
+
+<h2>Overlay, not fork</h2>
+
+<p>The first real decision was whether to copy pstack and edit it, or leave it installed and build alongside.</p>
+
+<p>Forking is tempting because it is total. It is also a permanent tax. pstack is 47 skills, so every upstream release becomes a manual three-way merge across 47 files, forever, and the merge is prose rather than code, so no tool helps you. An overlay costs you the ability to rewrite what upstream wrote. In exchange, upstream updates itself and you own eight files instead of fifty-five.</p>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 900 280" role="img" aria-label="Fork versus overlay. Under a fork, every upstream release forces a manual re-merge across 47 copied files. Under an overlay, upstream updates with one command and your own files are never touched.">
+    <defs><marker id="ar2" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><polygon points="0,0 10,4 0,8" fill="currentColor"/></marker></defs>
+    <line x1="450" y1="10" x2="450" y2="270" class="ln-d" color="var(--ink-3)"/>
+    <text x="14" y="22" class="mm">FORK</text>
+    <rect x="14" y="32" width="170" height="44" rx="2" class="bx"/>
+    <text x="99" y="52" class="tt" text-anchor="middle">upstream</text><text x="99" y="68" class="mm" text-anchor="middle">ships a release</text>
+    <path d="M99 76 L99 120" class="ln-f" marker-end="url(#ar2)" color="var(--flag)"/>
+    <text x="110" y="102" class="mf">every time</text>
+    <rect x="14" y="122" width="380" height="50" rx="2" class="bx-f"/>
+    <text x="204" y="144" class="tf" text-anchor="middle">re-apply your edits by hand</text>
+    <text x="204" y="161" class="mf" text-anchor="middle">a three-way merge across 47 files of prose</text>
+    <path d="M204 172 L204 210" class="ln-f" marker-end="url(#ar2)" color="var(--flag)"/>
+    <rect x="14" y="212" width="380" height="46" rx="2" class="bx"/>
+    <text x="204" y="233" class="tt" text-anchor="middle">your copy of everything</text>
+    <text x="204" y="249" class="mm" text-anchor="middle">total control, permanent maintenance</text>
+
+    <text x="506" y="22" class="mm">OVERLAY</text>
+    <rect x="506" y="32" width="170" height="44" rx="2" class="bx"/>
+    <text x="591" y="52" class="tt" text-anchor="middle">upstream</text><text x="591" y="68" class="mm" text-anchor="middle">ships a release</text>
+    <path d="M591 76 L591 210" class="ln-a" marker-end="url(#ar2)" color="var(--accent)"/>
+    <text x="602" y="132" class="ma">one update command</text>
+    <text x="602" y="148" class="ma">nothing to merge</text>
+    <rect x="716" y="120" width="170" height="52" rx="2" class="bx-a"/>
+    <text x="801" y="142" class="ta" text-anchor="middle">your eight files</text>
+    <text x="801" y="159" class="ma" text-anchor="middle">untouched by a release</text>
+    <path d="M801 172 L801 194 L660 194 L660 210" class="ln-a" marker-end="url(#ar2)" color="var(--accent)"/>
+    <rect x="506" y="212" width="380" height="46" rx="2" class="bx"/>
+    <text x="696" y="233" class="tt" text-anchor="middle">upstream as-is, yours on top</text>
+    <text x="696" y="249" class="mm" text-anchor="middle">coupled only by name, with a fallback</text>
+  </svg>
+  </div>
+  <figcaption>The red edge on the left is the entire cost difference. Fork when you disagree with the upstream content. Overlay when you agree with it and need to add to it.</figcaption>
+</figure>
+
+<p>The rule that keeps an overlay honest is that you have to actually delete. When upstream ships something covering ground you covered worse, remove yours. Refusing to delete is how an overlay quietly becomes a fork with extra steps.</p>
+
+<h2>Roles, not vendors</h2>
+
+<p>pstack names Anthropic model slugs inline. Correct for its author, wrong for anyone running several vendors.</p>
+
+<p>The fix is small and worth stealing. No instruction file names a model. It names a role: the judgment model, the instruction-follower, the cheap one, and the review panel. Roles resolve through a single file the human fills in once per machine. A skill that hardcodes a slug is a defect, because the failure is invisible: everything works until you switch runtimes, and then it works worse for reasons nobody traces back.</p>
+
+<blockquote><p>A review panel that spans one vendor is a panel that agrees with itself. That is the same failure as a single-cloud architecture, and it deserves the same flag.</p></blockquote>
+
+<h2>The line an agent does not cross</h2>
+
+<p>Every framework has an autonomy section. pstack's says proceed on reversible work and stop for force-push, deploys, data deletion and customer messages. Reasonable, and looser than most organisations can accept.</p>
+
+<p>Mine is longer: no push, no merge, no pull request, no comment posted, no apply, no deploy, no deletion of data, no credential rotation, no access revocation, no message that leaves the machine, no commit to a protected branch, nothing installed on the host.</p>
+
+<p>The important property is not the list. It is that no instruction inside a session widens it. "Run until done", "be fully autonomous", "I am going to bed" all widen the reversible set and none of them unlock the list. An autonomy override that can be granted by the text being processed is not an override.</p>
+
+<div class="standout flagged">
+  <h3>Break 1, by design rather than by code</h3>
+  <p>I wrote that list in terms of shell commands. No <code>git push</code>, no <code>terraform apply</code>. Then I noticed a connected GitHub MCP server can open a pull request without touching a shell at all. The stop list does not see it, nothing blocks it, and the report still says drafts only, because as far as the instructions are concerned it was.</p>
+  <p>Write the list in terms of <strong>effects</strong>, not commands. Then do not rely on it: scope the token. A read-only credential turns a paragraph of good intentions into something the platform enforces.</p>
+</div>
+
+<h2>The deterministic half</h2>
+
+<p>This is the idea I would keep if I had to throw everything else away.</p>
+
+<p>Much of what people ask agents to do daily is not judgment. It is gathering. Is CI green, what needs my review, has anyone commented, is anything stuck. Asking a model means it issues a dozen API calls, burns context on the responses, and produces a slightly different shape every time.</p>
+
+<p>Split it. Gathering goes into plain shell scripts that make every query themselves and emit one compact JSON document. Judgment reads that document. The scripts contain no mutating command at all, which is why they are safe to run hourly with nobody watching, and they cost nothing because no model is attached until something is worth reading.</p>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 900 300" role="img" aria-label="Deterministic shell collectors query GitHub, feature ledgers, scope files and platforms, emit one ranked digest, and only then does a model read it. The path back to those systems is blocked.">
+    <defs><marker id="ar3" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><polygon points="0,0 10,4 0,8" fill="currentColor"/></marker></defs>
+    <text x="14" y="18" class="mm">SOURCES</text>
+    <rect x="14" y="28" width="150" height="34" rx="2" class="bx"/><text x="89" y="49" class="mm" text-anchor="middle">GitHub API</text>
+    <rect x="14" y="68" width="150" height="34" rx="2" class="bx"/><text x="89" y="89" class="mm" text-anchor="middle">feature ledgers</text>
+    <rect x="14" y="108" width="150" height="34" rx="2" class="bx"/><text x="89" y="129" class="mm" text-anchor="middle">lessons and profiles</text>
+    <rect x="14" y="148" width="150" height="34" rx="2" class="bx"/><text x="89" y="169" class="mm" text-anchor="middle">argo, k8s, vault, CI</text>
+    <path d="M164 45 L214 45 L214 100" class="ln" color="var(--ink-3)"/>
+    <path d="M164 85 L214 85" class="ln" color="var(--ink-3)"/>
+    <path d="M164 125 L214 125" class="ln" color="var(--ink-3)"/>
+    <path d="M164 165 L214 165 L214 112" class="ln" color="var(--ink-3)"/>
+    <line x1="214" y1="106" x2="256" y2="106" class="ln" marker-end="url(#ar3)" color="var(--ink-3)"/>
+    <text x="200" y="96" class="mm">read only</text>
+    <rect x="262" y="76" width="240" height="60" rx="2" class="bx-a"/>
+    <text x="382" y="100" class="ta" text-anchor="middle">shell collectors</text>
+    <text x="382" y="118" class="ma" text-anchor="middle">no model, no token cost</text>
+    <text x="382" y="131" class="ma" text-anchor="middle">no mutating command exists in them</text>
+    <line x1="502" y1="106" x2="546" y2="106" class="ln-a" marker-end="url(#ar3)" color="var(--accent)"/>
+    <rect x="552" y="76" width="150" height="60" rx="2" class="bx"/>
+    <text x="627" y="100" class="tt" text-anchor="middle">one digest</text>
+    <text x="627" y="118" class="mm" text-anchor="middle">ranked, deduped</text>
+    <text x="627" y="131" class="mm" text-anchor="middle">only what changed</text>
+    <line x1="702" y1="106" x2="746" y2="106" class="ln-a" marker-end="url(#ar3)" color="var(--accent)"/>
+    <rect x="752" y="76" width="134" height="60" rx="2" class="bx-a"/>
+    <text x="819" y="100" class="ta" text-anchor="middle">the model</text>
+    <text x="819" y="118" class="ma" text-anchor="middle">judgment only,</text>
+    <text x="819" y="131" class="ma" text-anchor="middle">and only now</text>
+    <path d="M819 136 L819 196 L100 196" class="ln-f" color="var(--flag)"/>
+    <line x1="172" y1="188" x2="188" y2="204" class="ln-f" color="var(--flag)"/>
+    <line x1="188" y1="188" x2="172" y2="204" class="ln-f" color="var(--flag)"/>
+    <text x="230" y="222" class="mf">nothing flows back. no post, no push, no merge, no apply, no re-run.</text>
+    <text x="230" y="240" class="mf">drafts are written to disk and a human sends them.</text>
+    <text x="230" y="266" class="mm">that holds in scheduled runs too, where nobody is present to object.</text>
+  </svg>
+  </div>
+  <figcaption>Gathering is deterministic, judgment is not. Separating them makes an hourly check cost nothing, makes the output reproducible, and makes read-only a structural property rather than an instruction.</figcaption>
+</figure>
+
+<h2>A simulation: three runs, one morning</h2>
+
+<p>The second half of making this survivable is dedupe. Every finding carries an identifier and a fingerprint, where the fingerprint is whatever should make it feel new again: the head commit for a pull request, the run SHA for a failed build, the thread count for review comments.</p>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 900 330" role="img" aria-label="Three triggers feed one collector set that reads sources, deduplicates against a state file, emits a digest, and splits it into severity lanes. Nothing writes back.">
+    <defs><marker id="ar7" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><polygon points="0,0 10,4 0,8" fill="currentColor"/></marker></defs>
+    <text x="14" y="16" class="mm">TRIGGERS</text>
+    <rect x="14" y="26" width="200" height="44" rx="2" class="bx"/>
+    <text x="114" y="46" class="tt" text-anchor="middle">scheduled task</text>
+    <text x="114" y="62" class="mm" text-anchor="middle">hourly, daily, weekly</text>
+    <rect x="228" y="26" width="200" height="44" rx="2" class="bx"/>
+    <text x="328" y="46" class="tt" text-anchor="middle">a local timer</text>
+    <text x="328" y="62" class="mm" text-anchor="middle">digest only, zero tokens</text>
+    <rect x="442" y="26" width="200" height="44" rx="2" class="bx"/>
+    <text x="542" y="46" class="tt" text-anchor="middle">on demand</text>
+    <text x="542" y="62" class="mm" text-anchor="middle">any runtime, any time</text>
+    <path d="M114 70 L114 88 L328 88" class="ln" color="var(--ink-3)"/>
+    <path d="M542 70 L542 88 L328 88" class="ln" color="var(--ink-3)"/>
+    <line x1="328" y1="88" x2="328" y2="112" class="ln" marker-end="url(#ar7)" color="var(--ink-3)"/>
+
+    <rect x="188" y="114" width="280" height="52" rx="2" class="bx-a"/>
+    <text x="328" y="136" class="ta" text-anchor="middle">the collectors</text>
+    <text x="328" y="153" class="ma" text-anchor="middle">deterministic shell, no model attached</text>
+
+    <line x1="468" y1="140" x2="512" y2="140" class="ln-d" color="var(--ink-3)"/>
+    <line x1="512" y1="140" x2="474" y2="140" class="ln" marker-end="url(#ar7)" color="var(--ink-3)"/>
+    <rect x="518" y="114" width="368" height="52" rx="2" class="bx"/>
+    <text x="702" y="136" class="tt" text-anchor="middle">the state file</text>
+    <text x="702" y="153" class="mm" text-anchor="middle">id plus fingerprint, suppresses what did not change</text>
+
+    <line x1="328" y1="166" x2="328" y2="192" class="ln-a" marker-end="url(#ar7)" color="var(--accent)"/>
+    <rect x="228" y="194" width="200" height="44" rx="2" class="bx"/>
+    <text x="328" y="214" class="tt" text-anchor="middle">one digest</text>
+    <text x="328" y="230" class="mm" text-anchor="middle">only what is new</text>
+    <line x1="328" y1="238" x2="328" y2="262" class="ln-a" marker-end="url(#ar7)" color="var(--accent)"/>
+
+    <rect x="14" y="264" width="290" height="46" rx="2" class="bx-f"/>
+    <text x="159" y="284" class="tf" text-anchor="middle">severity 1 and 2 interrupt</text>
+    <text x="159" y="300" class="mf" text-anchor="middle">main red, my build failing, a human waiting</text>
+    <rect x="318" y="264" width="270" height="46" rx="2" class="bx"/>
+    <text x="453" y="284" class="tt" text-anchor="middle">3 and 4 today</text>
+    <text x="453" y="300" class="mm" text-anchor="middle">conflicts, SLA breach, ready to merge</text>
+    <rect x="602" y="264" width="284" height="46" rx="2" class="bx"/>
+    <text x="744" y="284" class="tt" text-anchor="middle">5 and 6 grouped</text>
+    <text x="744" y="300" class="mm" text-anchor="middle">one line each, never expanded</text>
+  </svg>
+  </div>
+  <figcaption>The state file is the part that decides whether anyone still reads the output in week three. Without it the same six findings arrive sixty times a day.</figcaption>
+</figure>
+
+<p>Here is what that actually looks like. This is real output from the test fixtures, not an illustration. First run, cold state:</p>
+
+<div class="term"><pre><span class="c">$</span> bin/digest.sh --pretty --all
+
+shnitzel watch  2026-08-25T17:40:48Z
+  github: 9 new of 9, 0 already seen. features: 7. scope: 5.
+
+  <span class="r">[1]</span> main_red             acme/api
+      main is red: deploy
+  <span class="r">[2]</span> my_pr_ci_red         acme/api
+      PR #41 checks failing: Add retry to poller
+  <span class="r">[2]</span> my_pr_unanswered     acme/api
+      PR #41 has 1 unresolved review threads
+  [3] my_pr_conflict       acme/api
+      PR #41 has conflicts
+  [3] feature_no_review    acme-api
+      007-multi-region-failover has an HLD whose review section is empty
+  [4] my_pr_ready          acme/api
+      PR #42 approved and green, waiting on you
+  [6] my_pr_stale          acme/api
+      PR #41 idle over 5 days
+</pre></div>
+<p class="term-cap">Twenty-one findings across four collectors, ranked, first action per item.</p>
+
+<p>Ten minutes later, nothing has changed. This is the run that decides whether the tool survives contact with a real week:</p>
+
+<div class="term"><pre><span class="c">$</span> bin/digest.sh --pretty
+
+shnitzel watch  2026-08-25T17:50:12Z
+  <span class="p">new 0 of 9</span>, 9 already seen
+</pre></div>
+<p class="term-cap">Two lines. No list. Silence is the correct output.</p>
+
+<p>Now someone pushes a commit to pull request 41. The head SHA moves, so its fingerprint changes, so it becomes new again. Everything else stays suppressed:</p>
+
+<div class="term"><pre><span class="c">$</span> bin/digest.sh --pretty
+
+shnitzel watch  2026-08-25T18:12:44Z
+  <span class="p">new 3 of 9</span>, 6 already seen
+
+  <span class="r">[2]</span> my_pr_ci_red         acme/api
+      PR #41 checks failing: Add retry to poller
+  <span class="r">[2]</span> my_pr_unanswered     acme/api
+      PR #41 has 1 unresolved review threads
+  [3] my_pr_conflict       acme/api
+      PR #41 has conflicts
+</pre></div>
+<p class="term-cap">Exactly the three findings attached to the changed pull request. Not the other six.</p>
+
+<p>Without that, an hourly check tells you the same six things sixty times a day and you stop reading it inside a week. With it, an empty report is genuinely information.</p>
+
+<h2>Features: the ends matter more than the middle</h2>
+
+<p>pstack begins at the engineering plan. It assumes the feature is decided and you are the senior engineer executing it, which is exactly true for the person who wrote it.</p>
+
+<p>If you run a team, the expensive mistakes sit earlier and later than that. Building the wrong thing. An acceptance criterion nobody can test, discovered in week three. A design nobody argued with. A shipped feature nobody ever compared against the number that justified building it.</p>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 900 270" role="img" aria-label="Seven stages from idea to retro, each ending at a named gate. The overlay owns idea through design and shipped through retro; pstack owns plan and build. Two dashed arrows return work to earlier stages.">
+    <defs><marker id="ar4" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><polygon points="0,0 10,4 0,8" fill="currentColor"/></marker></defs>
+    <text x="128" y="20" class="mf" text-anchor="middle">worth building</text>
+    <text x="252" y="20" class="mf" text-anchor="middle">criteria testable</text>
+    <text x="376" y="20" class="mf" text-anchor="middle">design argued with</text>
+    <text x="500" y="20" class="mf" text-anchor="middle">phases shippable</text>
+    <text x="624" y="20" class="mf" text-anchor="middle">verified for real</text>
+    <text x="748" y="20" class="mf" text-anchor="middle">metric measured</text>
+    <rect x="14"  y="32" width="110" height="48" rx="2" class="bx-a"/>
+    <text x="69" y="52" class="ta" text-anchor="middle">idea</text><text x="69" y="69" class="ma" text-anchor="middle">a paragraph</text>
+    <rect x="138" y="32" width="110" height="48" rx="2" class="bx-a"/>
+    <text x="193" y="52" class="ta" text-anchor="middle">requirements</text><text x="193" y="69" class="ma" text-anchor="middle">one metric</text>
+    <rect x="262" y="32" width="110" height="48" rx="2" class="bx-a"/>
+    <text x="317" y="52" class="ta" text-anchor="middle">design</text><text x="317" y="69" class="ma" text-anchor="middle">data shape first</text>
+    <rect x="386" y="32" width="110" height="48" rx="2" class="bx"/>
+    <text x="441" y="52" class="tt" text-anchor="middle">plan</text><text x="441" y="69" class="mm" text-anchor="middle">phased</text>
+    <rect x="510" y="32" width="110" height="48" rx="2" class="bx"/>
+    <text x="565" y="52" class="tt" text-anchor="middle">build</text><text x="565" y="69" class="mm" text-anchor="middle">pull requests</text>
+    <rect x="634" y="32" width="110" height="48" rx="2" class="bx-a"/>
+    <text x="689" y="52" class="ta" text-anchor="middle">shipped</text><text x="689" y="69" class="ma" text-anchor="middle">a release</text>
+    <rect x="758" y="32" width="128" height="48" rx="2" class="bx-a"/>
+    <text x="822" y="52" class="ta" text-anchor="middle">retro</text><text x="822" y="69" class="ma" text-anchor="middle">what was missed</text>
+    <g class="ln-f" color="var(--flag)">
+      <line x1="124" y1="56" x2="134" y2="56" marker-end="url(#ar4)"/>
+      <line x1="248" y1="56" x2="258" y2="56" marker-end="url(#ar4)"/>
+      <line x1="372" y1="56" x2="382" y2="56" marker-end="url(#ar4)"/>
+      <line x1="496" y1="56" x2="506" y2="56" marker-end="url(#ar4)"/>
+      <line x1="620" y1="56" x2="630" y2="56" marker-end="url(#ar4)"/>
+      <line x1="744" y1="56" x2="754" y2="56" marker-end="url(#ar4)"/>
+    </g>
+    <line x1="14" y1="96" x2="372" y2="96" class="ln-a" color="var(--accent)"/>
+    <text x="193" y="112" class="ma" text-anchor="middle">your overlay owns this</text>
+    <line x1="386" y1="96" x2="620" y2="96" class="ln" color="var(--ink-3)"/>
+    <text x="503" y="112" class="mm" text-anchor="middle">pstack owns this</text>
+    <line x1="634" y1="96" x2="886" y2="96" class="ln-a" color="var(--accent)"/>
+    <text x="760" y="112" class="ma" text-anchor="middle">and this</text>
+    <path d="M565 80 L565 146 L317 146 L317 86" class="ln-d" marker-end="url(#ar4)" color="var(--ink-3)"/>
+    <text x="441" y="140" class="mm" text-anchor="middle">design fell apart, go back and record why</text>
+    <path d="M822 80 L822 192 L193 192 L193 86" class="ln-d" marker-end="url(#ar4)" color="var(--ink-3)"/>
+    <text x="503" y="186" class="mm" text-anchor="middle">what the estimate missed, applied to the next one</text>
+    <text x="14" y="230" class="mm">Every gate is one written line: the date, the decision, who made it. A stage that advanced with nothing written down is itself a reported finding.</text>
+    <text x="14" y="250" class="mm">The ledger lives in the repository, not in a chat session, so it survives a compaction, a runtime switch, or a handover to someone else.</text>
+  </svg>
+  </div>
+  <figcaption>The two dashed arrows are the point. Most feature processes only run forwards, which is why the design that fell apart and the estimate that was wrong teach nobody anything.</figcaption>
+</figure>
+
+<p>So the overlay owns the ends and hands the middle back. What makes it tracking rather than paperwork is that the ledger is a directory in the repository, on the branch, and a gate is one line appended to a file. Ten seconds. A scanner then reads those ledgers and reports a stage that advanced with no gate recorded, which is exactly what happens under pressure.</p>
+
+<h2>What broke</h2>
+
+<p>I set aside a session to attack my own work rather than extend it, using the harshest review standard I had. It found three real defects. All three were silent, which is the worst class for anything whose job is to tell you when something is wrong.</p>
+
+<h3>Break 2: it told me to merge a failing build</h3>
+
+<p>GitHub's <code>statusCheckRollup</code> returns two different node types in one array. A modern CheckRun carries a <code>conclusion</code> field. A legacy StatusContext, which is what you get when Jenkins or an older CI posts commit statuses, carries <code>state</code> and has no <code>conclusion</code> at all.</p>
+
+<p>My filter read only <code>conclusion</code>. In any repository whose CI posts statuses rather than checks, every failing run was invisible.</p>
+
+<p>That alone would be a bad miss. What makes it worse is what happened next. With zero failures seen, an approving review and no conflicts, the very same pull request matched the next rule down: approved, green, waiting only on your merge.</p>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 900 330" role="img" aria-label="One pull request with a passing check run and a failing status context. The old filter read only the conclusion field, saw zero failures, and reported the pull request as approved and ready to merge. The new filter reads whichever field is present and reports the failure.">
+    <defs><marker id="ar6" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><polygon points="0,0 10,4 0,8" fill="currentColor"/></marker></defs>
+    <text x="14" y="18" class="mm">ONE PULL REQUEST, TWO NODE TYPES IN ONE ARRAY</text>
+    <rect x="14" y="30" width="250" height="46" rx="2" class="bx"/>
+    <text x="30" y="50" class="mm">CheckRun</text>
+    <text x="30" y="66" class="mm">{ conclusion: "SUCCESS" }</text>
+    <rect x="14" y="84" width="250" height="46" rx="2" class="bx-f"/>
+    <text x="30" y="104" class="mf">StatusContext</text>
+    <text x="30" y="120" class="mf">{ state: "FAILURE" }   no conclusion field</text>
+
+    <path d="M264 53 L316 53 L316 118 L340 118" class="ln" marker-end="url(#ar6)" color="var(--ink-3)"/>
+    <path d="M264 107 L292 107 L292 200 L340 200" class="ln-f" marker-end="url(#ar6)" color="var(--flag)"/>
+
+    <rect x="346" y="96" width="230" height="46" rx="2" class="bx"/>
+    <text x="461" y="116" class="tt" text-anchor="middle">old filter</text>
+    <text x="461" y="132" class="mm" text-anchor="middle">reads .conclusion only</text>
+    <rect x="346" y="178" width="230" height="46" rx="2" class="bx-a"/>
+    <text x="461" y="198" class="ta" text-anchor="middle">new filter</text>
+    <text x="461" y="214" class="ma" text-anchor="middle">reads .conclusion // .state</text>
+
+    <line x1="576" y1="119" x2="616" y2="119" class="ln" marker-end="url(#ar6)" color="var(--ink-3)"/>
+    <line x1="576" y1="201" x2="616" y2="201" class="ln-a" marker-end="url(#ar6)" color="var(--accent)"/>
+
+    <rect x="622" y="82" width="264" height="74" rx="2" class="bx-f"/>
+    <text x="638" y="104" class="tf">0 failures seen</text>
+    <text x="638" y="124" class="mf">approved + green + not draft, so:</text>
+    <text x="638" y="142" class="mf">"waiting on you, only the merge is left"</text>
+
+    <rect x="622" y="178" width="264" height="46" rx="2" class="bx-a"/>
+    <text x="638" y="198" class="ta">1 failure seen</text>
+    <text x="638" y="216" class="ma">"PR #51 checks failing", severity 2</text>
+
+    <text x="14" y="266" class="mf">The failure mode was not a missed alert. It was a confident wrong recommendation on a build that was red.</text>
+    <text x="14" y="288" class="mm">Found by reading the API shape rather than by a user hitting it. Fixed, with a regression fixture that carries both node types.</text>
+    <text x="14" y="310" class="mm">Any repository still posting commit statuses was affected, which for most organisations means the older half of the estate.</text>
+  </svg>
+  </div>
+  <figcaption>The defect I would least like to have found in production. A monitoring tool that misses something is annoying. One that recommends the wrong action with confidence is worse than not having it.</figcaption>
+</figure>
+
+<h3>Break 3: a stall that never existed</h3>
+
+<p>Feature ledgers record a <code>stage_since</code> date. My age calculation appended a time to it, so a value already written as a full timestamp became unparseable, fell through a catch, and returned 9999 days. Any feature whose date was written with a time reported a permanent stall at severity 4, forever, and no amount of updating the ledger would clear it.</p>
+
+<div class="term"><pre><span class="c">$</span> <span class="c"># the same field, written two ways</span>
+  2026-08-05           -> <span class="p">22 days</span>     correct
+  2026-08-05T14:30:00Z -> <span class="r">9999 days</span>   permanent false stall
+</pre></div>
+
+<p>Fixed by normalising the value first. And a second change that matters more than the fix: a date that is genuinely unreadable now reports as <code>feature_bad_date</code> rather than as very old. Absence of data and a real finding should never look the same, and in the original they did.</p>
+
+<h3>Break 4: an empty fingerprint on one platform</h3>
+
+<p>The scope checker hashed its findings with <code>md5sum</code>, which does not exist on macOS. The fallback produced an empty string rather than an error, so every scope finding carried the same empty fingerprint, which the dedupe layer read as unchanged. On a Mac, each of those findings would have been reported exactly once and then suppressed permanently, including when the underlying leak got worse.</p>
+
+<p>Fixed with a portable hash that falls through <code>md5sum</code>, then <code>md5</code>, then <code>cksum</code>, and verified on all three branches in isolation rather than assumed.</p>
+
+<div class="standout">
+  <h3>The pattern in all three</h3>
+  <p>Every one of them failed by producing plausible output rather than an error. A missing field became zero failures. An unparseable date became a very old date. A missing binary became an empty hash. In each case the system carried on and said something reasonable.</p>
+  <p>The lesson I am taking forward is narrow and testable: <strong>absence of data must never be representable as a value</strong>. If a probe cannot answer, it has to say so, and the report has to distinguish "nothing is wrong" from "I could not look".</p>
+</div>
+
+<h3>Why the fixtures did not catch them</h3>
+
+<p>Because I wrote the fixtures. Every mock returned the shape I expected, so every mock-shaped assumption was confirmed rather than tested. The first two defects only appeared when I went looking at the API documentation for shapes I had not handled, and the third only when I asked which of my dependencies do not exist on the platform I actually run.</p>
+
+<p>That is a general result and not a flattering one. Self-authored fixtures verify that your code matches your beliefs. They say nothing about whether your beliefs match the system.</p>
+
+<h2>Knowledge has exactly one home</h2>
+
+<p>Once an agent writes things down and reads them back, you have built a memory, and memories leak. A constraint learned on one project turns up as an assumption on the next. It arrives phrased as knowledge, so nobody questions it. If your projects belong to different clients, this stops being a quality problem.</p>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 900 308" role="img" aria-label="Three knowledge tiers. Project knowledge stays in its own directory, repository knowledge in a scoped file, and only rules proven in a second named repository reach global. Promotion upward requires evidence; sideways movement is blocked.">
+    <defs><marker id="ar5" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><polygon points="0,0 10,4 0,8" fill="currentColor"/></marker></defs>
+    <text x="240" y="16" class="mm">GLOBAL</text>
+    <rect x="240" y="24" width="420" height="44" rx="2" class="bx-a"/>
+    <text x="450" y="44" class="ta" text-anchor="middle">rules proven in a second, named repository</text>
+    <text x="450" y="60" class="ma" text-anchor="middle">and nowhere else</text>
+    <text x="40" y="112" class="mm">REPOSITORY</text>
+    <rect x="40" y="120" width="380" height="46" rx="2" class="bx"/>
+    <text x="230" y="141" class="tt" text-anchor="middle">repo A</text>
+    <text x="230" y="157" class="mm" text-anchor="middle">profile and lessons, scoped by a header matching its path</text>
+    <rect x="480" y="120" width="380" height="46" rx="2" class="bx"/>
+    <text x="670" y="141" class="tt" text-anchor="middle">repo B</text>
+    <text x="670" y="157" class="mm" text-anchor="middle">its own profile and lessons, read only when you are in it</text>
+    <text x="40" y="208" class="mm">PROJECT</text>
+    <rect x="40" y="216" width="180" height="44" rx="2" class="bx"/><text x="130" y="243" class="mm" text-anchor="middle">feature 007</text>
+    <rect x="240" y="216" width="180" height="44" rx="2" class="bx"/><text x="330" y="243" class="mm" text-anchor="middle">feature 012</text>
+    <rect x="480" y="216" width="180" height="44" rx="2" class="bx"/><text x="570" y="243" class="mm" text-anchor="middle">feature 003</text>
+    <rect x="680" y="216" width="180" height="44" rx="2" class="bx"/><text x="770" y="243" class="mm" text-anchor="middle">feature 009</text>
+    <line x1="330" y1="216" x2="330" y2="172" class="ln-a" marker-end="url(#ar5)" color="var(--accent)"/>
+    <text x="342" y="196" class="ma">promote: a second instance here</text>
+    <line x1="150" y1="120" x2="150" y2="88" class="ln-a" color="var(--accent)"/>
+    <path d="M150 88 L280 88 L280 72" class="ln-a" marker-end="url(#ar5)" color="var(--accent)"/>
+    <text x="162" y="108" class="ma">promote: a second named repo</text>
+    <g class="ln-f" color="var(--flag)">
+      <line x1="222" y1="238" x2="238" y2="238"/><line x1="222" y1="230" x2="238" y2="246"/><line x1="238" y1="230" x2="222" y2="246"/>
+      <line x1="442" y1="238" x2="458" y2="238"/><line x1="442" y1="230" x2="458" y2="246"/><line x1="458" y1="230" x2="442" y2="246"/>
+      <line x1="662" y1="238" x2="678" y2="238"/><line x1="662" y1="230" x2="678" y2="246"/><line x1="678" y1="230" x2="662" y2="246"/>
+      <line x1="442" y1="143" x2="458" y2="143"/><line x1="442" y1="135" x2="458" y2="151"/><line x1="458" y1="135" x2="442" y2="151"/>
+    </g>
+    <text x="40" y="280" class="mf">Never sideways, not even between two projects in the same repository:</text>
+    <text x="40" y="296" class="mf">acceptance criteria, metrics, target dates, rejected alternatives, customer detail.</text>
+  </svg>
+  </div>
+  <figcaption>Promotion is upward and costs evidence. Sideways is the leak, and it is the dangerous direction precisely because it looks harmless: a criterion borrowed from the neighbouring project always reads plausible.</figcaption>
+</figure>
+
+<p>A checker then looks for the four ways this leaks. I want to be precise about what that buys, because the name oversells it. It is a smoke detector, not a firewall. It finds a lesson naming a foreign repository after it has been written. Real prevention comes from the filesystem: one project per worktree, so the other material is not on disk at all.</p>
+
+<div class="term"><pre><span class="c">$</span> bin/scope-check.sh --pretty
+
+  [3] scope_foreign_repo    lesson scoped to acme/api names acme/billing, acme/web
+  [3] scope_mismatch        file declares global but sits at a path meaning repo:acme/web
+  [3] scope_missing         lessons file has no scope header
+  [3] scope_cross_feature   feature 007 references 008-audit-log
+  [3] scope_foreign_draft   drafts in acme-api reference acme/web
+</pre></div>
+<p class="term-cap">All four leak classes, proven against deliberately planted fixtures.</p>
+
+<h2>Playbooks stay neutral, cards carry the specifics</h2>
+
+<p>A playbook that says <code>terraform plan</code> stops working the moment the task is a Helm chart. A playbook that says "dry run first" and nothing else is useless at three in the morning.</p>
+
+<p>The resolution is to make the playbook step a slot and put the specifics in a per-platform card. Same step, seventeen resolutions.</p>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 900 350" role="img" aria-label="A vendor-neutral playbook step is a slot. The domain card for the platform in hand fills it with a concrete command, so the same step resolves to terraform plan, helm diff, argocd app diff or an OpenShift server-side dry run.">
+    <defs><marker id="ar8" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><polygon points="0,0 10,4 0,8" fill="currentColor"/></marker></defs>
+    <text x="14" y="16" class="mm">THE PLAYBOOK, VENDOR NEUTRAL</text>
+    <rect x="14" y="26" width="230" height="116" rx="2" class="bx-a"/>
+    <text x="129" y="50" class="ta" text-anchor="middle">platform change</text>
+    <text x="30" y="72" class="ma">1. blast radius</text>
+    <text x="30" y="88" class="ma">2. read the live state</text>
+    <text x="30" y="104" class="ma">3. name the rollback</text>
+    <text x="30" y="120" class="ma">5. dry run</text>
+    <text x="30" y="136" class="ma">7. stop for approval</text>
+    <line x1="244" y1="84" x2="300" y2="84" class="ln-a" marker-end="url(#ar8)" color="var(--accent)"/>
+    <text x="272" y="76" class="ma" text-anchor="middle">slot</text>
+    <text x="306" y="16" class="mm">THE CARD, SIX SECTIONS EVERY TIME</text>
+    <rect x="306" y="26" width="240" height="116" rx="2" class="bx"/>
+    <text x="426" y="50" class="tt" text-anchor="middle">one platform card</text>
+    <text x="322" y="72" class="mm">read only commands</text>
+    <text x="322" y="88" class="mm">signals and their severity</text>
+    <text x="322" y="104" class="mm">the dry run, the exact rollback</text>
+    <text x="322" y="120" class="mm">never without approval</text>
+    <text x="322" y="136" class="mm">failure modes, lock-in class</text>
+    <line x1="546" y1="84" x2="602" y2="84" class="ln" marker-end="url(#ar8)" color="var(--ink-3)"/>
+    <text x="574" y="76" class="mm" text-anchor="middle">fills it</text>
+    <text x="608" y="16" class="mm">RESOLVED</text>
+    <rect x="608" y="26" width="278" height="26" rx="2" class="bx"/><text x="620" y="44" class="mm">terraform plan -detailed-exitcode</text>
+    <rect x="608" y="56" width="278" height="26" rx="2" class="bx"/><text x="620" y="74" class="mm">helm diff upgrade</text>
+    <rect x="608" y="86" width="278" height="26" rx="2" class="bx"/><text x="620" y="104" class="mm">argocd app diff</text>
+    <rect x="608" y="116" width="278" height="26" rx="2" class="bx"/><text x="620" y="134" class="mm">oc apply --dry-run=server</text>
+
+    <line x1="14" y1="168" x2="886" y2="168" class="ln-d" color="var(--ink-3)"/>
+    <text x="14" y="192" class="mm">SEVENTEEN CARDS</text>
+    <rect x="14" y="202" width="212" height="52" rx="2" class="bx"/>
+    <text x="120" y="222" class="tt" text-anchor="middle">gitops and clusters</text>
+    <text x="120" y="240" class="mm" text-anchor="middle">argocd, k8s, openshift, helm</text>
+    <rect x="238" y="202" width="212" height="52" rx="2" class="bx"/>
+    <text x="344" y="222" class="tt" text-anchor="middle">infra and CI</text>
+    <text x="344" y="240" class="mm" text-anchor="middle">terraform, vault, jenkins, CI</text>
+    <rect x="462" y="202" width="212" height="52" rx="2" class="bx"/>
+    <text x="568" y="222" class="tt" text-anchor="middle">registries</text>
+    <text x="568" y="240" class="mm" text-anchor="middle">nexus, artifactory, OCI images</text>
+    <rect x="686" y="202" width="200" height="52" rx="2" class="bx"/>
+    <text x="786" y="222" class="tt" text-anchor="middle">clouds and signals</text>
+    <text x="786" y="240" class="mm" text-anchor="middle">aws, azure, gcp, oracle, prom</text>
+
+    <text x="14" y="288" class="mm">Two facts that belong on a card rather than in someone&#8217;s memory. OpenShift does not support version rollback once an upgrade has begun.</text>
+    <text x="14" y="306" class="mm">And OCI means both the Open Container Initiative image spec and Oracle Cloud Infrastructure.</text>
+    <text x="14" y="332" class="ma">Clouds are deliberately not polled. Cost, IAM and quota are cadence questions, not hourly ones.</text>
+  </svg>
+  </div>
+  <figcaption>The playbook never names a vendor, which is what keeps it portable. The card names everything, which is what makes it usable at three in the morning.</figcaption>
+</figure>
+
+<h2>Measure what you ignore</h2>
+
+<p>Any system that reports to a human decays the same way. It surfaces something you have decided not to care about, you skim past it, and within a month you skim past everything.</p>
+
+<p>The usual fix is to ask whether the reports are useful, which produces polite and useless answers. The better fix is to measure. Record when each open finding was first seen, and log the mean age per category. Two categories in the fixture run came out like this:</p>
+
+<div class="col">
+<div class="stats">
+  <div class="stat bad"><span class="n">46</span><span class="l">mean days open, stale pull requests, never actioned</span></div>
+  <div class="stat bad"><span class="n">30</span><span class="l">mean days open, security advisories, never actioned</span></div>
+  <div class="stat"><span class="n">30</span><span class="l">day threshold above which a category is proposed for demotion</span></div>
+</div>
+</div>
+
+<blockquote><p>A check you ignore is not a safety net. It is a habit of ignoring, and it generalises to the checks that matter.</p></blockquote>
+
+<p>Those two numbers drive a weekly proposal: here are the categories you have not acted on in a month, here is a config change, with the figure behind each line. It proposes and stops. Config that quietly tunes itself is config you can no longer reason about, and the first time it hides something real you will have no idea why.</p>
+
+<h2>Absorbing upstream without becoming a fork</h2>
+
+<p>An overlay only stays cheap if you run a ritual when upstream ships. Quarterly, not per release, because upstream ships more often than your workflow changes.</p>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 900 240" role="img" aria-label="A quarterly ritual: update and read the changes, check the skill names this overlay references, check for hardcoded model slugs, try one new skill on real work, then delete yours or keep yours, and write down the decision.">
+    <defs><marker id="ar9" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><polygon points="0,0 10,4 0,8" fill="currentColor"/></marker></defs>
+    <text x="14" y="18" class="mm">EVERY QUARTER, NOT EVERY RELEASE</text>
+    <rect x="14" y="30" width="140" height="58" rx="2" class="bx"/>
+    <text x="84" y="52" class="tt" text-anchor="middle">update</text>
+    <text x="84" y="70" class="mm" text-anchor="middle">read the upstream</text>
+    <text x="84" y="82" class="mm" text-anchor="middle">changelog</text>
+    <line x1="154" y1="59" x2="176" y2="59" class="ln" marker-end="url(#ar9)" color="var(--ink-3)"/>
+    <rect x="182" y="30" width="150" height="58" rx="2" class="bx-f"/>
+    <text x="257" y="52" class="tf" text-anchor="middle">check the names</text>
+    <text x="257" y="70" class="mf" text-anchor="middle">a rename upstream breaks</text>
+    <text x="257" y="82" class="mf" text-anchor="middle">your routing silently</text>
+    <line x1="332" y1="59" x2="354" y2="59" class="ln" marker-end="url(#ar9)" color="var(--ink-3)"/>
+    <rect x="360" y="30" width="150" height="58" rx="2" class="bx-f"/>
+    <text x="435" y="52" class="tf" text-anchor="middle">check the slugs</text>
+    <text x="435" y="70" class="mf" text-anchor="middle">the one place a vendor</text>
+    <text x="435" y="82" class="mf" text-anchor="middle">name leaks back in</text>
+    <line x1="510" y1="59" x2="532" y2="59" class="ln" marker-end="url(#ar9)" color="var(--ink-3)"/>
+    <rect x="538" y="30" width="170" height="58" rx="2" class="bx"/>
+    <text x="623" y="52" class="tt" text-anchor="middle">try one for real</text>
+    <text x="623" y="70" class="mm" text-anchor="middle">on a task you understand,</text>
+    <text x="623" y="82" class="mm" text-anchor="middle">so better is distinguishable</text>
+    <line x1="708" y1="59" x2="730" y2="59" class="ln" marker-end="url(#ar9)" color="var(--ink-3)"/>
+    <rect x="736" y="30" width="150" height="58" rx="2" class="bx-a"/>
+    <text x="811" y="52" class="ta" text-anchor="middle">delete yours</text>
+    <text x="811" y="70" class="ma" text-anchor="middle">or keep yours, but</text>
+    <text x="811" y="82" class="ma" text-anchor="middle">decide, do not accumulate</text>
+    <path d="M811 88 L811 118 L450 118 L450 138" class="ln-a" marker-end="url(#ar9)" color="var(--accent)"/>
+    <rect x="300" y="140" width="300" height="46" rx="2" class="bx"/>
+    <text x="450" y="161" class="tt" text-anchor="middle">one line in the lessons file</text>
+    <text x="450" y="177" class="mm" text-anchor="middle">naming the version and the decision</text>
+    <text x="14" y="212" class="mm">Two skills covering the same ground is how routing degrades, so adopting upstream means deleting locally rather than accumulating.</text>
+    <text x="14" y="230" class="mm">Six months later you will not remember why you kept your version of one and dropped your version of another. The line costs ten seconds.</text>
+  </svg>
+  </div>
+  <figcaption>Refusing to delete is how an overlay quietly becomes a fork with extra steps. The ritual exists to force that decision on a schedule.</figcaption>
+</figure>
+
+<h2>What actually transfers</h2>
+
+<p>Strip away the implementation and five things are left that apply to any agent tooling, including tooling built on something other than what I used.</p>
+
+<p><strong>Separate gathering from judgment.</strong> Anything deterministic belongs in a script whose output a model reads. Highest leverage decision available, and it costs almost nothing.</p>
+
+<p><strong>Name roles, not vendors.</strong> One indirection file, and your instructions survive every model deprecation and every runtime switch.</p>
+
+<p><strong>Write the stop list in terms of effects.</strong> Then assume it will be circumvented and scope the credentials, so the important half is enforced somewhere other than in prose.</p>
+
+<p><strong>Give knowledge exactly one home, and make promotion cost evidence.</strong> Memory without scope is contamination with extra steps.</p>
+
+<p><strong>Make absence of data unrepresentable as a value.</strong> This is the one I learned the hard way, three times in one week. Zero failures, a very old date and an empty hash were all the system saying "I could not look" while sounding like it had looked.</p>
+
+<p>None of that is about any particular framework, which is convenient, because the frameworks will keep changing. The mishearing was the best part of the exercise. I went looking for a potato and found a set of questions instead, and then found three bugs by taking the questions seriously.</p>
+
+<hr class="sep">
+
+<h2>The figures</h2>
+
+<p>All nine are inline in the article above and also sit in <code>article/images/</code> as 1200 by 1200 pixel images, in case you want to reuse one. The same set is in <code>article/social/</code> sized for posting.</p>
+
+<div class="term"><pre><span class="c">article/images/</span>
+  01-four-layers.png          who delivers what, and what breaks without each layer
+  02-overlay-not-fork.png     the one edge that separates the two options
+  03-deterministic-half.png   gathering split from judgment, and the blocked return path
+  04-watch-harness.png        triggers, state file, digest, severity lanes
+  05-feature-stages.png       seven stages, six gates, two arrows that run backwards
+  <span class="r">06-what-broke.png</span>           the failing build reported as ready to merge
+  07-knowledge-scope.png      three tiers, upward promotion, sideways blocked
+  08-domain-cards.png         a neutral step, seventeen concrete resolutions
+  09-upstream-ritual.png      absorbing a release without becoming a fork
+</pre></div>
+
+<hr class="sep">
+
+<p class="end">
+Built as an overlay on <a href="https://github.com/cursor/plugins/tree/main/pstack">pstack</a> by Lauren Tan, ported to Claude Code by <a href="https://github.com/michael-denyer/pstack-claude">michael-denyer</a>, both MIT. No pstack content is copied into it; the coupling is by skill name with a documented fallback for every reference. Thirty instruction files, seventeen platform cards, six collectors, five runtimes, and three defects that a review found before a user did.
+</p>
+
+</div>
+</div>

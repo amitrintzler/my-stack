@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "full_runtime_acceptance": false,
+  "overlay_router_sha256": "b36650c8f1d7b8d9af7ed69660b2017e16f8eb8d76f4e4c05a8b334f27fc382f",
+  "sources": {
+    "port": {
+      "repository": "michael-denyer/pstack-claude",
+      "tag": "v0.9.101",
+      "sha": "903e7385382389806c59d6989b6274e24165082b"
+    },
+    "original": {
+      "repository": "cursor/plugins",
+      "sha": "4ec7ffa173eaa70d3d9467a627baf0954645a353"
+    },
+    "original_version": "0.15.30"
+  },
+  "contract_tests": {
+    "passed": 25
+  },
+  "runtimes": {
+    "claude": {
+      "status": "blocked",
+      "reason": "weekly quota, actual HTTP 429"
+    },
+    "codex": {
+      "status": "partial",
+      "version": "0.163.0",
+      "observed": [
+        "direct-no-tools",
+        "choices",
+        "risk-diagnosis",
+        "focused-exact-artifact"
+      ]
+    },
+    "cowork": {
+      "status": "not_live_verified",
+      "reason": "Desktop weekly quota exhausted; connected-folder package built"
+    },
+    "gemini": {
+      "status": "blocked",
+      "version": "0.65.0",
+      "reason": "authentication not configured, actual exit 41"
+    },
+    "local": {
+      "status": "partial",
+      "model": "qwen/qwen3.8-27b",
+      "host": "Codex 0.163.0 + LM Studio",
+      "observed": [
+        "direct-answer",
+        "prompt-only-routing-comparison"
+      ],
+      "final_choice_words": 49,
+      "final_choice_no_fake_tools": true,
+      "final_choice_quality": "partial: recommended measurement but also offered an unsupported costly option"
+    }
+  },
+  "focused_single_fixture": {
+    "before": {
+      "input_tokens": 80620,
+      "cached_input_tokens": 65792,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 260,
+      "reasoning_output_tokens": 0
+    },
+    "after": {
+      "input_tokens": 51088,
+      "cached_input_tokens": 38528,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 155,
+      "reasoning_output_tokens": 0
+    },
+    "reduction_fraction": 0.36643175074183976,
+    "end_to_end_median_target_established": false
+  },
+  "native_hard_cap_enforcement": "unverified; strict requests rejected",
+  "upstream_statechart": {
+    "final_pass": 29,
+    "skipped_without_tlc": 38,
+    "earlier_intermittent_help_test_failure": true
+  }
+}

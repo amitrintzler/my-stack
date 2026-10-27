@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "approach_selection": "always_show_choices",
+  "choices_max_words": 120,
+  "verification_reserve": 0.2,
+  "reassess_after_failed_rounds": 2,
+  "hard_budget": "strict_when_requested",
+  "tiers": {
+    "direct": {
+      "delegates": 0,
+      "documents": false,
+      "full_router": false
+    },
+    "focused": {
+      "delegates": 0,
+      "documents": false,
+      "full_router": false
+    },
+    "standard": {
+      "delegates": "workflow_required",
+      "documents": "when_needed",
+      "full_router": true
+    },
+    "deep": {
+      "reviewers": 2,
+      "documents": true,
+      "full_router": true
+    }
+  },
+  "runtime_overrides": {},
+  "recommended_effort": {
+    "direct": "low",
+    "focused": "low",
+    "standard": "medium",
+    "deep": "high"
+  },
+  "choices_target_words": 80
+}

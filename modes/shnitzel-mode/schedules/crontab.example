@@ -1,0 +1,11 @@
+# shnitzel-mode local watch, for a Linux box or a Mac without launchd.
+# Times are the machine's local time. Israeli work week is Sunday to Thursday.
+# Collector only. No model, no tokens, no writes to GitHub.
+
+KIT=/ABSOLUTE/PATH/TO/shnitzel-mode
+
+# refresh the digest every hour during work hours
+0 9-19 * * 0-4  $KIT/bin/gh-collect.sh --all > $HOME/.agents/watch-digest.json 2>> $HOME/.agents/watch.err
+
+# a full unsuppressed snapshot every morning, kept for the day
+45 7 * * 0-4    $KIT/bin/gh-collect.sh --all --no-state > $HOME/.agents/watch-morning.json 2>> $HOME/.agents/watch.err

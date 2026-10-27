@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "runtimes": {
+    "claude": {"enforced_units": [], "reason": "Native print-mode dollar flag exists; delegated coverage and overshoot boundary are not verified."},
+    "codex": {"enforced_units": [], "reason": "Usage and Goal continuation limits do not prove an exact per-request total cap."},
+    "cowork": {"enforced_units": [], "reason": "No verified interception of all model calls or exact cap."},
+    "gemini": {"enforced_units": [], "reason": "Usage and turn limits are not a total token or dollar cap."},
+    "local": {"enforced_units": [], "reason": "Output limits alone do not cap total input plus output across a task."}
+  }
+}

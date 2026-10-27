@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "port": {
+    "repository": "michael-denyer/pstack-claude",
+    "tag": "v0.9.101",
+    "sha": "903e7385382389806c59d6989b6274e24165082b"
+  },
+  "original": {
+    "repository": "cursor/plugins",
+    "sha": "4ec7ffa173eaa70d3d9467a627baf0954645a353"
+  },
+  "original_version": "0.15.30",
+  "port_original_pin": "7b353f78f6ec193bdbe48ed8059444eb09b6878e",
+  "resolutions": [],
+  "port_adaptations": {
+    "reference_inventory": {
+      "added": [
+        "statechart"
+      ],
+      "refreshed": [
+        "poteto-help",
+        "sharpen"
+      ],
+      "skill_count": 66
+    }
+  },
+  "changed_files": [
+    {
+      "kind": "updated",
+      "rel": "skills/poteto-help/references/recipes.md"
+    },
+    {
+      "kind": "merged",
+      "rel": "skills/poteto-help/SKILL.md"
+    },
+    {
+      "kind": "updated",
+      "rel": "skills/sharpen/SKILL.md"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/chart-to-tla.mjs"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/compare-charts.mjs"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/lib.mjs"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/model/OutputFolder.cfg"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/model/OutputFolder.map.mjs"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/model/OutputFolder.tla"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/statechart.mjs"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/test/statechart.test.mjs"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/test/sync.mmd"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/test/upload.mmd"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/scripts/tlc-to-chart.mjs"
+    },
+    {
+      "kind": "added",
+      "rel": "skills/statechart/SKILL.md"
+    }
+  ],
+  "deleted_files": [],
+  "excluded_paths": [
+    ".cursor-plugin/",
+    ".gitignore",
+    "LICENSE",
+    "README.md",
+    "assets/",
+    "automations/",
+    "docs/",
+    "plugin.json",
+    "skills/make-bot-ui/",
+    "skills/poteto-mode/scripts/worktree-audit.sh"
+  ],
+  "excluded_reason": "Port runtime exclusions; original retained in pristine snapshot.",
+  "checks": [
+    "upstream-three-way-sync",
+    "generator",
+    "generator-check",
+    "project-playbooks"
+  ],
+  "policy": "Shnitzel admission precedes pstack; explicit poteto-mode retains full workflow."
+}

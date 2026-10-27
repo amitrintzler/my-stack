@@ -1,0 +1,52 @@
+<div id="sn-animation">
+ <h2>One request. Only the effort it needs.</h2>
+ <div class="viz-controls">
+  <label class="form-label">Follow a request<select id="sn-kind" class="form-select"><option value="direct">A simple question</option><option value="focused">A small code fix</option><option value="deep">A complex, risky change</option></select></label>
+  <button type="button" class="btn btn-primary" id="sn-play">Animate</button>
+ </div>
+ <div id="sn-stage"></div>
+ <div id="sn-caption" aria-live="polite"></div>
+ <div class="text-small text-muted">Workflow simulation • Shnitzel roles share the lead agent; independent review may use separate agents.</div>
+</div>
+<style>
+#sn-animation #sn-stage{position:relative;margin:12px 0;height:540px}
+#sn-animation .sn-graph{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#sn-animation .sn-node{position:absolute;transform:translate(-50%,-50%);width:142px;text-align:center;color:var(--foreground);padding:8px 2px;background:var(--background)}
+#sn-animation .sn-symbol{display:block;margin:auto auto 6px;width:38px;height:38px;border-radius:50%;background:var(--muted);padding:10px;box-sizing:border-box;color:var(--foreground)}
+#sn-animation .sn-node[data-active="true"] .sn-symbol{background:color-mix(in srgb,var(--viz-series-1) 23%,var(--background));outline:2px solid var(--viz-series-1)}
+#sn-animation .sn-node[data-used="false"]{opacity:.4}
+#sn-animation .sn-name{font-weight:500}
+#sn-animation .sn-label{position:absolute;transform:translate(-50%,-50%);background:var(--background);padding:2px 6px;color:var(--muted-foreground);text-align:center;max-width:145px}
+#sn-animation #sn-caption{min-height:3.5em}
+</style>
+<script>
+(()=>{
+ const r=document.getElementById('sn-animation'),stage=r.querySelector('#sn-stage'),select=r.querySelector('#sn-kind'),button=r.querySelector('#sn-play'),caption=r.querySelector('#sn-caption');
+ const ns='http://www.w3.org/2000/svg';let graph,packet,nodes={},edges={},points={},frame=null,start=0,playing=false,index=0;
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const defs={you:['You','Request','user'],route:['Shnitzel','Effort + risk','git-branch'],value:['Worth doing?','Simplest sufficient fix','scale'],engine:['One pstack engine','Port + upstream changes','layers'],lead:['Implementation','Lead + runtime tools','wrench'],review:['Independent review','When supported / required','users'],done:['Result','Verified answer or change','circle-check']};
+ const flows={direct:{path:['you','route','done'],notes:['You ask a question.','Shnitzel answers directly. No planning, documents or delegates.','Answer delivered. The heavier engine was never loaded.']},focused:{path:['you','route','value','lead','done'],notes:['You request a bounded fix.','Focused: one agent and targeted reads.','Compare the smallest sufficient solution; show brief choices unless already selected.','Make the selected change. Skip the full pstack workflow.','Verify the changed behavior and hand it back.']},deep:{path:['you','route','value','engine','lead','review','done'],notes:['You request a complex or risky change.','Risk sets the effort, even if the diff is small.','Check the premise, alternatives and total effort; select an approach.','Load the relevant workflow from the single derived pstack engine.','Implement the accepted scope in the chosen runtime.','Use two independent reviewers when supported and required.','Verify the outcome and report remaining limits.']}};
+ let saved=window.openai?.widgetState,key=saved?.modelContent?.request in flows?saved.modelContent.request:'direct';
+ function svg(tag,attrs){const el=document.createElementNS(ns,tag);for(const[k,v]of Object.entries(attrs))el.setAttribute(k,v);return el;}
+ function stop(){playing=false;cancelAnimationFrame(frame);button.textContent='Animate';}
+ function state(){const f=flows[key];Object.entries(nodes).forEach(([id,node])=>{node.dataset.active=String(id===f.path[index]);node.dataset.used=String(f.path.includes(id))});caption.textContent=f.notes[index];}
+ function paint(){
+  const w=stage.clientWidth,narrow=w<500;stage.style.height=narrow?'650px':'540px';const h=narrow?650:540;
+  points=narrow?{you:[w/2,40],route:[w/2,140],value:[w*.28,250],engine:[w*.72,350],lead:[w*.28,450],review:[w*.72,540],done:[w*.28,610]}:{you:[w*.16,50],route:[w*.50,50],value:[w*.50,190],engine:[w*.81,290],lead:[w*.50,390],review:[w*.81,460],done:[w*.16,460]};
+  stage.replaceChildren();graph=svg('svg',{viewBox:`0 0 ${w} ${h}`,class:'sn-graph',role:'img','aria-label':'Animated request routing: simple requests skip the pstack engine; complex work uses workflows and review.'});stage.append(graph);edges={};
+  const pairs=[['you','route'],['route','done'],['route','value'],['value','lead'],['value','engine'],['engine','lead'],['lead','review'],['review','done'],['lead','done']];
+  pairs.forEach(([a,b])=>{const p=points[a],q=points[b];let d;if(a==='route'&&b==='done')d=narrow?`M ${p[0]} ${p[1]} C ${w*.03} ${p[1]},${w*.03} ${q[1]},${q[0]} ${q[1]}`:`M ${p[0]} ${p[1]} C ${w*.03} ${p[1]},${w*.03} ${q[1]},${q[0]} ${q[1]}`;else d=`M ${p[0]} ${p[1]} L ${q[0]} ${q[1]}`;const line=svg('path',{d,fill:'none',stroke:'var(--border)','stroke-width':1.5});graph.append(line);edges[a+'-'+b]=line});
+  nodes={};Object.entries(defs).forEach(([id,[name,sub,icon]])=>{const node=document.createElement('div');node.className='sn-node';node.style.left=points[id][0]+'px';node.style.top=points[id][1]+'px';node.innerHTML=`<span class="sn-symbol"><i data-lucide="${icon}" aria-hidden="true"></i></span><div class="sn-name">${name}</div><div class="text-small">${sub}</div>`;stage.append(node);nodes[id]=node});
+  const f=flows[key];for(let i=0;i<f.path.length-1;i++){const line=edges[f.path[i]+'-'+f.path[i+1]];line.setAttribute('stroke','var(--viz-series-1)');line.setAttribute('stroke-width','2');}
+  packet=svg('circle',{cx:points[f.path[index]][0],cy:points[f.path[index]][1],r:7,fill:'var(--viz-series-1)'});graph.append(packet);
+  const label=document.createElement('span');label.className='sn-label text-small';label.textContent='Direct answer bypass';label.style.left=(narrow?w*.16:w*.14)+'px';label.style.top=(narrow?340:240)+'px';stage.append(label);
+  if(window.lucide)lucide.createIcons({attrs:{width:18,height:18}});state();
+ }
+ function save(){window.openai?.setWidgetState({modelContent:{request:key},privateContent:{}})?.catch(()=>{});}
+ function tick(t){if(!playing)return;if(!start)start=t;const f=flows[key],duration=2300,elapsed=t-start,segment=Math.floor(elapsed/duration);index=Math.min(segment,f.path.length-1);state();if(segment>=f.path.length-1){const p=points[f.path.at(-1)];packet.setAttribute('cx',p[0]);packet.setAttribute('cy',p[1]);stop();button.textContent='Replay';return}const line=edges[f.path[segment]+'-'+f.path[segment+1]],u=Math.max(0,Math.min(1,((elapsed%duration)-650)/1300)),v=u*u*(3-2*u),p=line.getPointAtLength(line.getTotalLength()*(reduced?(u===1?1:0):v));packet.setAttribute('cx',p.x);packet.setAttribute('cy',p.y);frame=requestAnimationFrame(tick);}
+ button.addEventListener('click',()=>{if(playing){stop();return}index=0;paint();start=0;playing=true;button.textContent='Pause';save();frame=requestAnimationFrame(tick)});
+ select.addEventListener('change',()=>{stop();key=select.value;index=0;paint();save()});
+ window.addEventListener('openai:set_globals',e=>{const s=e.detail?.globals?.widgetState;if(s?.modelContent?.request in flows){stop();key=s.modelContent.request;select.value=key;index=0;paint()}});
+ new ResizeObserver(()=>{stop();paint()}).observe(stage);select.value=key;paint();
+})();
+</script>

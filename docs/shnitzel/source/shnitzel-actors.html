@@ -1,0 +1,62 @@
+<div id="shnitzel-actors">
+  <div class="viz-controls">
+    <label class="form-label">Request
+      <select class="form-select" id="sa-request">
+        <option value="direct">Explain a concept</option>
+        <option value="focused">Fix a button label</option>
+        <option value="standard">Add a feature across interfaces</option>
+        <option value="deep">Change production authentication</option>
+        <option value="cap">Work under a hard token cap</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" id="sa-play" type="button">Play flow</button>
+    <button class="btn" id="sa-next" type="button">Next step</button>
+  </div>
+  <div class="viz-row text-small"><span>Illustrative simulation</span><span class="text-muted">• Roles are responsibilities; only reviewers may be separate agents.</span></div>
+  <div id="sa-flow" role="img" aria-label="Actors participating in the selected request"></div>
+  <div id="sa-detail" aria-live="polite"></div>
+  <hr>
+  <div class="sa-sources">
+    <div><strong>Original pstack 0.15.30</strong><div class="text-small">Upstream workflows and skills</div></div>
+    <span aria-hidden="true">＋</span>
+    <div><strong>pstack-claude 0.9.101</strong><div class="text-small">Runtime adaptations</div></div>
+    <span aria-hidden="true">→</span>
+    <div><strong>One active engine</strong><div class="text-small">Validated merge → Shnitzel routing</div></div>
+  </div>
+</div>
+<style>
+#shnitzel-actors #sa-flow{display:grid;gap:0;margin:20px 0 16px}
+#shnitzel-actors .sa-node{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;color:var(--muted-foreground);border-bottom:1px solid var(--border)}
+#shnitzel-actors .sa-node[data-state="current"]{color:var(--foreground)}
+#shnitzel-actors .sa-dot{width:18px;height:18px;border-radius:50%;background:var(--muted);display:block}
+#shnitzel-actors [data-state="current"] .sa-dot{background:var(--viz-series-1)}
+#shnitzel-actors [data-state="done"] .sa-dot{background:color-mix(in srgb,var(--viz-series-1) 35%,transparent)}
+#shnitzel-actors .sa-label{font-weight:500;color:var(--foreground)}
+#shnitzel-actors .sa-sources{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#shnitzel-actors #sa-detail{min-height:3em}
+@media(max-width:450px){#shnitzel-actors .sa-node{grid-template-columns:20px minmax(0,1fr);gap:8px}#shnitzel-actors .sa-status{grid-column:2}#shnitzel-actors .sa-sources{display:grid;gap:8px}}
+@media(prefers-reduced-motion:no-preference){#shnitzel-actors .sa-dot{transition:background .25s}}
+</style>
+<script>
+(()=>{
+ const root=document.getElementById('shnitzel-actors');
+ const select=root.querySelector('#sa-request'),flow=root.querySelector('#sa-flow'),detail=root.querySelector('#sa-detail'),play=root.querySelector('#sa-play'),next=root.querySelector('#sa-next');
+ const actors=[['You','Outcome and authorization'],['Shnitzel admission','Classifies effort and risk'],['Worth-doing check','Same lead agent checks simpler alternatives'],['pstack workflow','Relevant skills from one active engine'],['Implementation lead','Uses tools in the selected runtime'],['Independent reviewers','Separate agents only when supported and required'],['Verification & handoff','Checks behavior and reports limits']];
+ const scenarios={
+ direct:{path:[0,1,6],notes:['You ask for an explanation.','Direct → answer from relevant evidence; no planning menu or delegates.','The lead answers. No pstack workflow or feature documents are loaded.']},
+ focused:{path:[0,1,2,4,6],notes:['You request a bounded, reversible fix.','Focused → low effort; no full router, documents or delegates.','The lead compares the smallest sufficient fix and shows brief choices; an accepted plan already satisfies selection.','After selection: make the targeted edit with the tools available in this runtime.','Verify the changed behavior and hand back the result.']},
+ standard:{path:[0,1,2,3,4,5,6],notes:['You request a feature spanning behavior or interfaces.','Standard → relevant workflow and medium effort recommendation.','The lead checks existing capabilities, maintenance cost and verification; you select an approach.','Load only the matching pstack workflow and relevant domain guidance.','The implementation lead carries out the accepted scope.','Use independent review required by that workflow; model roles come from the runtime role sheet.','Verify behavior; report evidence and remaining limits. Reassess the premise after two failed rounds.']},
+ deep:{path:[0,1,2,3,4,5,6],notes:['You request a production authentication change.','Deep → risk overrides a small diff; high effort recommendation.','The lead checks the premise and safer sufficient alternatives, then obtains an approach selection.','Use the relevant pstack workflow and verifiable stages.','Implement within authorized scope and host permissions.','Two independent reviewers when supported and required; self-review does not count as independence.','Verify the security boundary and report remaining gates before any further action.']},
+ cap:{path:[0,1,2],notes:['You explicitly require a hard token cap.','Preflight must verify enforcement across every participating model call.','STOP: native runtime caps are currently unverified. Estimates cannot authorize execution under a hard cap.']}
+ };
+ let state=window.openai?.widgetState;let key=state?.modelContent?.request in scenarios?state.modelContent.request:'focused';let step=0,timer=null;
+ function save(){window.openai?.setWidgetState({modelContent:{request:key},privateContent:{step}})?.catch(()=>{});}
+ function stop(){clearInterval(timer);timer=null;play.textContent='Play flow';}
+ function draw(){const s=scenarios[key];select.value=key;flow.replaceChildren();actors.forEach((a,i)=>{const pos=s.path.indexOf(i),node=document.createElement('div');node.className='sa-node';node.dataset.state=pos===step?'current':pos>=0&&pos<step?'done':'idle';const dot=document.createElement('span');dot.className='sa-dot';dot.setAttribute('aria-hidden','true');const body=document.createElement('div');const label=document.createElement('div');label.className='sa-label';label.textContent=a[0];const sub=document.createElement('div');sub.className='text-small';sub.textContent=a[1];body.append(label,sub);const status=document.createElement('span');status.className='sa-status text-small';status.textContent=pos===step?(key==='cap'&&step===2?'Stopped':'Active'):pos>=0&&pos<step?'Done':pos<0?'Not invoked':'Waiting';node.append(dot,body,status);flow.append(node)});detail.textContent=`${step+1}/${s.path.length} · ${s.notes[step]}`;next.disabled=step===s.path.length-1;}
+ select.addEventListener('change',()=>{stop();key=select.value;step=0;draw();save()});
+ next.addEventListener('click',()=>{stop();step=Math.min(step+1,scenarios[key].path.length-1);draw();save()});
+ play.addEventListener('click',()=>{if(timer){stop();return}if(step===scenarios[key].path.length-1)step=0;draw();play.textContent='Pause';timer=setInterval(()=>{step++;draw();save();if(step>=scenarios[key].path.length-1)stop()},1900)});
+ window.addEventListener('openai:set_globals',e=>{const s=e.detail?.globals?.widgetState;if(s?.modelContent?.request in scenarios){stop();key=s.modelContent.request;step=Math.max(0,Math.min(s.privateContent?.step||0,scenarios[key].path.length-1));draw()}});
+ draw();
+})();
+</script>

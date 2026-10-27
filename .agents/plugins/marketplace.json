@@ -1,0 +1,28 @@
+{
+  "name": "my-stack",
+  "owner": {
+    "name": "Amit Rintzler"
+  },
+  "description": "A collection of agent modes. Each mode is a self-contained set of instructions, playbooks and read-only collectors that layers on top of whatever agent runtime you already use.",
+  "plugins": [
+    {
+      "name": "shnitzel-mode",
+      "source": "./modes/shnitzel-mode/plugins/shnitzel-mode",
+      "description": "Effort-aware admission, current pinned pstack, runtime-specific roles, read-only watch and explicit hard-budget capability checks.",
+      "version": "1.4.0",
+      "author": {
+        "name": "Amit Rintzler"
+      },
+      "license": "MIT",
+      "keywords": [
+        "devops",
+        "platform",
+        "sre",
+        "gitops",
+        "runtime-neutral",
+        "watch",
+        "guardrails"
+      ]
+    }
+  ]
+}

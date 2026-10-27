@@ -1,0 +1,48 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
+
+      - name: Check every mode
+        run: bash scripts/check-all.sh
+
+      - name: Behavior contracts
+        run: python3 -m unittest discover -s modes/shnitzel-mode/tests -v
+
+      - name: Collectors survive an empty config
+        run: |
+          # With nothing configured every collector must exit cleanly and emit
+          # valid JSON rather than failing. A watch that dies on a fresh machine
+          # is worse than no watch.
+          set -e
+          echo 'PROJECT_ROOTS=""' > /tmp/empty.conf
+          for mode in modes/*/; do
+            for c in feature-scan scope-check domain-scan; do
+              [ -x "$mode/bin/$c.sh" ] || continue
+              bash "$mode/bin/$c.sh" --config /tmp/empty.conf | jq -e 'type == "array"' > /dev/null
+            done
+          done
+          echo "collectors ok"
+
+      - name: Installer dry run writes nothing
+        run: |
+          set -e
+          mkdir -p "$HOME/.codex" "$HOME/.agents" && touch "$HOME/.codex/config.toml"
+          for mode in modes/*/; do
+            [ -x "$mode/install.sh" ] || continue
+            before="$(find "$HOME/.agents" -type f 2>/dev/null | wc -l)"
+            bash "$mode/install.sh" codex > /dev/null
+            after="$(find "$HOME/.agents" -type f 2>/dev/null | wc -l)"
+            [ "$before" = "$after" ] || { echo "dry run wrote files in $mode"; exit 1; }
+          done
+          echo "dry run clean"

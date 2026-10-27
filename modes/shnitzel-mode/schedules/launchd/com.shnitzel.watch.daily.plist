@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  shnitzel-mode local watch. Runs the collector only, with no model attached, so it
+  costs nothing and simply leaves a fresh digest on disk for the next session.
+
+  Install:
+    # edit the two paths below first, then:
+    cp com.shnitzel.watch.daily.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.shnitzel.watch.daily.plist
+  Remove:
+    launchctl unload ~/Library/LaunchAgents/com.shnitzel.watch.daily.plist
+
+  Edit the two paths below before installing. StartCalendarInterval is in
+  local time, unlike cron in the cloud schedulers, so no UTC conversion here.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.shnitzel.watch.daily</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>-lc</string>
+    <string>/ABSOLUTE/PATH/TO/shnitzel-mode/bin/gh-collect.sh --all &gt; "$HOME/.agents/watch-digest.json" 2&gt; "$HOME/.agents/watch-digest.err"</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>7</integer><key>Minute</key><integer>45</integer></dict>
+  </array>
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StandardErrorPath</key>
+  <string>/tmp/shnitzel-watch.err</string>
+</dict>
+</plist>

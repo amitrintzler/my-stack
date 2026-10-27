@@ -1,0 +1,19 @@
+{
+  "name": "shnitzel-mode",
+  "displayName": "shnitzel-mode",
+  "version": "1.4.0",
+  "description": "Effort-aware routing over a pinned current pstack engine, with runtime-specific model roles, observable collectors and strict budget capability checks.",
+  "author": {
+    "name": "Amit Rintzler"
+  },
+  "license": "MIT",
+  "keywords": [
+    "shnitzel-mode",
+    "pstack",
+    "poteto-mode",
+    "devops",
+    "platform",
+    "runtime-neutral",
+    "workflow"
+  ]
+}
