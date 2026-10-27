@@ -7,8 +7,8 @@ status: green
 owner: amit
 created: 2026-01-01
 stage_since: 2026-01-01
-target: 
-repos: 
-prs: 
+target:
+repos:
+prs:
 metric: the number that has to move, and by how much
 next: the single next action
