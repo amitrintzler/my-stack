@@ -8,7 +8,7 @@ Each mode lives in its own subfolder under `modes/` and can be installed on its 
 
 | Mode | For | Status |
 | --- | --- | --- |
-| [`shnitzel-mode`](../modes/shnitzel-mode/) | Platform engineering and DevOps. Runtime-neutral routing, model roles instead of vendor names, 17 platform domain cards, a read-only watch harness, a feature lifecycle from PRD to retro, and scoped knowledge that cannot leak between projects. | v1.4.0, MIT |
+| [`shnitzel-mode`](../modes/shnitzel-mode/) | Platform engineering and DevOps. Runtime-neutral routing, model roles instead of vendor names, 17 platform domain cards, a read-only watch harness, a feature lifecycle from PRD to retro, and scoped knowledge that cannot leak between projects. | v1.5.0, MIT |
 
 Adding one is a folder and a pull request. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 

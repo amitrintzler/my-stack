@@ -16,6 +16,14 @@ jobs:
       - name: Check every mode
         run: bash scripts/check-all.sh
 
+      - name: Plugin manifests validate strictly
+        run: |
+          npm install -g @anthropic-ai/claude-code@2.1.314 > /dev/null
+          for plugin in modes/*/plugins/*/; do
+            claude plugin validate --strict "$plugin"
+          done
+          claude plugin validate .
+
       - name: Behavior contracts
         run: python3 -m unittest discover -s modes/shnitzel-mode/tests -v
 

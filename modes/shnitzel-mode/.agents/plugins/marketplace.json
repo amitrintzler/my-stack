@@ -9,7 +9,7 @@
       "name": "shnitzel-mode",
       "source": "./plugins/shnitzel-mode",
       "description": "Effort-aware admission over pinned current pstack, runtime-specific model roles and observable budgets.",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "author": {
         "name": "Amit Rintzler"
       },

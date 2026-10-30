@@ -1,3 +1,7 @@
+# 1.5.0
+
+Public install. A marketplace install copies only the plugin folder, so the installer, collectors, budget checker and upstream lock were missing on a fresh machine. `scripts/bootstrap.sh` now resolves the distribution: the surrounding checkout when there is one, otherwise a cached copy, otherwise the tagged release matching the plugin version, fetched into `~/.agents/shnitzel/dist`. It never builds the engine or runs the installer; setup does both with consent. Both entry skills fall back to it when they are not inside a checkout. The plugin manifest gains homepage and repository, the plugin folder gains its own README, and `docs/publishing.md` holds the release checklist.
+
 # 1.4.0
 
 Effort-aware admission, current original pstack over the released port, immutable candidate activation and rollback, owned installation, runtime-specific roles, atomic budget accounting and strict unsupported-cap rejection, collector coverage and completed-check readiness. See docs/acceptance.md for evidence and remaining runtime gaps.

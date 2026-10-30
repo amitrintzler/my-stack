@@ -5,6 +5,7 @@ description: Configure Shnitzel routing, effort choices and runtime-specific pst
 
 # Setup Shnitzel
 
+0. Resolve the distribution. From this plugin's folder run `scripts/bootstrap.sh --print`. If it exits 4, this is a marketplace install with no distribution yet: say that setup will fetch the release matching the plugin version from its repository, then run `scripts/bootstrap.sh` once the user agrees. Use the `dist` it prints as the root for every path below. On a fresh distribution, build and activate the locked engine with `bin/upstream-check.sh --locked --build`, then `--locked --apply`, and show the installer dry run before `./install.sh --apply`.
 1. Run `bin/doctor.py` under the Shnitzel distribution to discover the installed engine, runtime binaries and capability gaps. A directory's existence does not identify the current runtime.
 2. Read the active pstack setup-pstack skill and its mapping for the actual runtime. Enumerate reachable models and accepted effort levels there. Use its pstack-models.md sheet; do not create a universal model-roles.md.
 3. Preserve existing model choices. If a legacy model-roles.md exists, show the installer's migration proposal and confirm reachable models before adopting any mapping. Keep the legacy file intact.

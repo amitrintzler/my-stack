@@ -5,7 +5,7 @@ description: Choose a proportionate approach to engineering work, then use pstac
 
 # Shnitzel mode
 
-Start with the outcome, not a playbook. Resolve this skill's real path; the distribution root is four directories above its folder. All bin/config paths below are relative to that root. Resolve policy from `config/effort-policy.json` under the installed Shnitzel distribution. Apply runtime_overrides for the actual runtime over shared defaults. Task-specific instructions override its defaults. Runtime and repository permissions always apply.
+Start with the outcome, not a playbook. Resolve this skill's real path; the distribution root is four directories above its folder when that root holds `install.sh`. Otherwise this is a marketplace install: the root is the `dist` printed by `scripts/bootstrap.sh --print` in the plugin folder, and if it reports none, run setup-shnitzel-mode first. All bin/config paths below are relative to that root. Resolve policy from `config/effort-policy.json` under the installed Shnitzel distribution. Apply runtime_overrides for the actual runtime over shared defaults. Task-specific instructions override its defaults. Runtime and repository permissions always apply.
 
 ## Admission
 

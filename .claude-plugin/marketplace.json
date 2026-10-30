@@ -9,7 +9,7 @@
       "name": "shnitzel-mode",
       "source": "./modes/shnitzel-mode/plugins/shnitzel-mode",
       "description": "Effort-aware admission, current pinned pstack, runtime-specific roles, read-only watch and explicit hard-budget capability checks.",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "author": {
         "name": "Amit Rintzler"
       },
