@@ -19,7 +19,7 @@ The design stage exists to be attacked. A design nobody argued with is a first d
 
 ## Argue with it
 
-Explore in parallel rather than iterating one idea. With pstack installed, run **pstack:architect** for parallel design exploration, and **pstack:interrogate** for adversarial multi-model review, using a panel that spans at least two vendors. A panel that agrees with itself has told you nothing.
+Explore in parallel rather than iterating one idea. With pstack installed, run **pstack:architect** for parallel design exploration, and **pstack:interrogate** to have adversaries try to break the design. Interrogate runs them through arena worktrees and keeps a finding only when a run proves it, such as a failing test, a repro or a probe of the current tree, so an unproven objection is dropped, not debated. Where the override sheet allows it, give the `interrogate reviewers` role models from at least two vendors. A panel that agrees with itself has told you nothing.
 
 Without pstack, write two designs yourself, then attack the one you prefer with the sharpest model available, and say in the reply that the review was single-model.
 

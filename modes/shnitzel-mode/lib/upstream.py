@@ -13,6 +13,8 @@ import tarfile
 import tempfile
 import urllib.request
 
+import install
+
 ROOT = Path(__file__).resolve().parents[1]
 PORT = 'michael-denyer/pstack-claude'
 ORIGINAL = 'cursor/plugins'
@@ -115,6 +117,10 @@ def validate(candidate):
         for name in set(re.findall(r'pstack:([a-z][a-z-]+)', skill.read_text())):
             if not (plugin / 'skills' / name / 'SKILL.md').is_file():
                 raise ValueError('Shnitzel references missing upstream skill: ' + name)
+    roles = {entry['role'] for entry in json.loads((plugin / 'models.json').read_text())['roles']}
+    unmanaged = sorted(roles - set(install.ROLES) - set(install.PANELS))
+    if unmanaged:
+        raise ValueError('upstream model roles missing from Shnitzel default sheet: ' + ', '.join(unmanaged))
     run([bun(), 'tools/generate.mjs'], candidate)
     run([bun(), 'tools/generate.mjs', '--check'], candidate)
     run(['node', str(plugin / 'skills/poteto-mode/scripts/check-playbooks.mjs'), str(ROOT.parents[1])])
