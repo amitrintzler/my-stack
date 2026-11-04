@@ -11,7 +11,7 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 BEGIN, END = '<!-- shnitzel-mode:begin -->', '<!-- shnitzel-mode:end -->'
-ROLES = ['feature, refactoring', 'bug-fix', 'perf-issue', 'hillclimb', 'judgment and prose', 'strongest judgment', 'how explorer', 'how explainer', 'why investigators', 'why synthesizer', 'reflect tooling', 'reflect judgment, divergent, synthesizer', 'swarm workers']
+ROLES = ['feature, refactoring', 'bug-fix', 'perf-issue', 'hillclimb', 'judgment and prose', 'strongest judgment', 'how explorer', 'how explainer', 'why investigators', 'why synthesizer', 'reflect tooling', 'reflect judgment, divergent, synthesizer', 'swarm workers', 'thermos reviewers', 'no-comments reviewer']
 PANELS = ['arena runners', 'arena cross-judge pool', 'architect runners', 'interrogate reviewers']
 
 

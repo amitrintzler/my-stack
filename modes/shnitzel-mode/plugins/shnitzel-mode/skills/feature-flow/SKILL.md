@@ -49,7 +49,7 @@ Stages can go backwards. A design that falls apart during build returns to `hld`
 
 Four loops run at different speeds. Naming them separately matters, because "get feedback" without a cadence means feedback at the end, which is too late.
 
-**Per gate.** Record the authorized decision maker. Require another human only where the project or user requires that gate. For the PRD that is whoever asked for the feature. For the HLD it is a senior engineer plus a multi-model panel if pstack is installed (`interrogate`, `arena`). Record who, and what they changed.
+**Per gate.** Record the authorized decision maker. Require another human only where the project or user requires that gate. For the PRD that is whoever asked for the feature. For the HLD it is a senior engineer plus the run-proven findings of a pstack `interrogate` pass if pstack is installed. Record who, and what they changed.
 
 **Per phase.** A PR, verified on the real surface, reviewed. The **watch** harness already reports failing checks and unanswered review threads on it. That is your build-time feedback and it needs no new machinery.
 
@@ -61,7 +61,7 @@ Four loops run at different speeds. Naming them separately matters, because "get
 
 Install pstack and this skill hands off rather than reimplements.
 
-- `hld` routes into **pstack:architect** for parallel design exploration and **pstack:interrogate** for the adversarial multi-model review.
+- `hld` routes into **pstack:architect** for parallel design exploration and **pstack:interrogate**, whose adversaries run through arena and report only findings a run proves.
 - `plan` uses **pstack:poteto-mode**'s plan reference, which is a genuinely good phased-plan spec. Do not rewrite it.
 - `build` uses **pstack:poteto-mode**'s feature playbook, including its throughput checkpoint.
 - Long autonomous stretches use **pstack:show-me-your-work** for the decision trail, written into `04-progress.md`.

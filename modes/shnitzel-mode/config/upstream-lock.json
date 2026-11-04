@@ -2,90 +2,24 @@
   "version": 1,
   "port": {
     "repository": "michael-denyer/pstack-claude",
-    "tag": "v0.9.101",
-    "sha": "903e7385382389806c59d6989b6274e24165082b"
+    "tag": "v0.9.117",
+    "sha": "8ecae6893912d2bbb3b841c09a8d76e61a4d708b"
   },
   "original": {
     "repository": "cursor/plugins",
-    "sha": "4ec7ffa173eaa70d3d9467a627baf0954645a353"
+    "sha": "ab1f702ce8e8b6557edb56b09f52cde8bfb83f17"
   },
-  "original_version": "0.15.30",
-  "port_original_pin": "7b353f78f6ec193bdbe48ed8059444eb09b6878e",
+  "original_version": "0.15.35",
+  "port_original_pin": "ab1f702ce8e8b6557edb56b09f52cde8bfb83f17",
   "resolutions": [],
   "port_adaptations": {
     "reference_inventory": {
-      "added": [
-        "statechart"
-      ],
-      "refreshed": [
-        "poteto-help",
-        "sharpen"
-      ],
-      "skill_count": 66
+      "added": [],
+      "refreshed": [],
+      "skill_count": 67
     }
   },
-  "changed_files": [
-    {
-      "kind": "updated",
-      "rel": "skills/poteto-help/references/recipes.md"
-    },
-    {
-      "kind": "merged",
-      "rel": "skills/poteto-help/SKILL.md"
-    },
-    {
-      "kind": "updated",
-      "rel": "skills/sharpen/SKILL.md"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/chart-to-tla.mjs"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/compare-charts.mjs"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/lib.mjs"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/model/OutputFolder.cfg"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/model/OutputFolder.map.mjs"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/model/OutputFolder.tla"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/statechart.mjs"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/test/statechart.test.mjs"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/test/sync.mmd"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/test/upload.mmd"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/scripts/tlc-to-chart.mjs"
-    },
-    {
-      "kind": "added",
-      "rel": "skills/statechart/SKILL.md"
-    }
-  ],
+  "changed_files": [],
   "deleted_files": [],
   "excluded_paths": [
     ".cursor-plugin/",

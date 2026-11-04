@@ -1,3 +1,15 @@
+# 1.5.0
+
+Engine moved to pstack-claude v0.9.117 (8ecae68), built on original pstack 0.15.35, the port's own pin. Clean three-way sync with no conflicts or resolutions, and the generator, generator check and playbook check pass. Original pstack 0.15.36 is not taken yet: it rewrites Orchestrate and deletes the orch scripts, which conflicts with the port's fork of `orchestrate.md`, `scripts/package.json` and the orch scripts. It comes in when the port absorbs it.
+
+The `hld` and `feature-flow` skills now describe `interrogate` as it works since port 0.9.112: adversaries run through arena worktrees and only findings a run proves survive.
+
+The default model sheet now carries `thermos reviewers` and `no-comments reviewer` (new roles in port 0.9.115 and 0.9.117) as `inherit-parent`. Without those lines both skills fell back to their stamped default and could spawn reviewers on a higher tier than the session. An existing sheet is left untouched; add the two lines by hand to get the same behaviour. `bin/upstream-check.sh` now refuses a candidate whose `models.json` names a role the default sheet does not cover, so the next new role is caught at sync time.
+
+Direct and Focused tiers are unchanged: both allow zero delegates, so neither the two thermos reviewers nor the comment-sicko subagent start there. Deep's two reviewers match thermos.
+
+`docs/acceptance.md` and `evals/acceptance.json` still record the 1.4 run on v0.9.101; they are evidence of that run, not of this engine.
+
 # 1.4.0
 
 Effort-aware admission, current original pstack over the released port, immutable candidate activation and rollback, owned installation, runtime-specific roles, atomic budget accounting and strict unsupported-cap rejection, collector coverage and completed-check readiness. See docs/acceptance.md for evidence and remaining runtime gaps.
