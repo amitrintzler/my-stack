@@ -68,7 +68,14 @@ def install(home, targets, apply=False, uninstall=False, engine=None, local_root
         else:
             defaults = '# pstack model configuration\n\n' + '\n'.join(r + ': inherit-parent' for r in ROLES)
             defaults += '\n' + '\n'.join(r + ': inherit-parent, inherit-parent' for r in PANELS) + '\ndefault effort: session\n'
-            after = re.sub(r'^session hook:.*(?:\n|$)', '', before or defaults, flags=re.M).rstrip() + '\nsession hook: off\n'
+            after = re.sub(r'^session hook:.*(?:\n|$)', '', before or defaults, flags=re.M).rstrip()
+            # Roles added upstream after a sheet was written fall back to their stamped
+            # model (often opus). Add only the missing lines; never change a user's choice.
+            missing = [r + ': inherit-parent' for r in ROLES
+                       if not re.search(r'^' + re.escape(r) + r'\s*:', after, flags=re.M)]
+            missing += [r + ': inherit-parent, inherit-parent' for r in PANELS
+                        if not re.search(r'^' + re.escape(r) + r'\s*:', after, flags=re.M)]
+            after += ''.join('\n' + line for line in missing) + '\nsession hook: off\n'
             if before != after:
                 writes[sheet] = after
                 if str(sheet) not in own['sheets']:

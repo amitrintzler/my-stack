@@ -122,6 +122,24 @@ class InstallerTests(unittest.TestCase):
         self.assertNotIn(install.BEGIN, rules.read_text())
         self.assertEqual(sheet.read_text(), 'judgment and prose: chosen-model\nsession hook: on\n')
 
+    def test_existing_sheet_gains_missing_roles_without_changing_choices(self):
+        sheet = self.home / '.claude/pstack-models.md'
+        sheet.parent.mkdir()
+        lines = [r + ': chosen-model' for r in install.ROLES if r not in ('thermos reviewers', 'no-comments reviewer')]
+        lines += [p + ': chosen-model, other-model' for p in install.PANELS]
+        original = '\n'.join(lines) + '\n'
+        sheet.write_text(original)
+        install.install(self.home, ['claude'], apply=True)
+        text = sheet.read_text()
+        self.assertIn('thermos reviewers: inherit-parent\n', text)
+        self.assertIn('no-comments reviewer: inherit-parent\n', text)
+        self.assertNotIn('feature, refactoring: inherit-parent', text)
+        self.assertEqual(text.count('arena runners:'), 1)
+        self.assertTrue(text.startswith(original))
+        self.assertEqual(install.install(self.home, ['claude'], apply=True)['writes'], [])
+        install.install(self.home, ['claude'], apply=True, uninstall=True)
+        self.assertEqual(sheet.read_text(), original)
+
     def test_collision_does_not_partially_modify_rules(self):
         collision = self.home / '.agents/skills/shnitzel-mode'
         collision.mkdir(parents=True)
