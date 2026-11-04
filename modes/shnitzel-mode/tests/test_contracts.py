@@ -3,6 +3,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -120,6 +121,24 @@ class InstallerTests(unittest.TestCase):
         self.assertIn('Later unrelated rule', rules.read_text())
         self.assertNotIn(install.BEGIN, rules.read_text())
         self.assertEqual(sheet.read_text(), 'judgment and prose: chosen-model\nsession hook: on\n')
+
+    def test_existing_sheet_gains_missing_roles_without_changing_choices(self):
+        sheet = self.home / '.claude/pstack-models.md'
+        sheet.parent.mkdir()
+        lines = [r + ': chosen-model' for r in install.ROLES if r not in ('thermos reviewers', 'no-comments reviewer')]
+        lines += [p + ': chosen-model, other-model' for p in install.PANELS]
+        original = '\n'.join(lines) + '\n'
+        sheet.write_text(original)
+        install.install(self.home, ['claude'], apply=True)
+        text = sheet.read_text()
+        self.assertIn('thermos reviewers: inherit-parent\n', text)
+        self.assertIn('no-comments reviewer: inherit-parent\n', text)
+        self.assertNotIn('feature, refactoring: inherit-parent', text)
+        self.assertEqual(text.count('arena runners:'), 1)
+        self.assertTrue(text.startswith(original))
+        self.assertEqual(install.install(self.home, ['claude'], apply=True)['writes'], [])
+        install.install(self.home, ['claude'], apply=True, uninstall=True)
+        self.assertEqual(sheet.read_text(), original)
 
     def test_collision_does_not_partially_modify_rules(self):
         collision = self.home / '.agents/skills/shnitzel-mode'
@@ -310,6 +329,88 @@ class UpstreamTests(unittest.TestCase):
             upstream.activate(previous, state)
             self.assertEqual((state / 'active').resolve(), old.resolve())
             self.assertEqual((state / 'previous').resolve(), new.resolve())
+
+
+class BootstrapTests(unittest.TestCase):
+    PLUGIN = ROOT / 'plugins/shnitzel-mode'
+    SCRIPT = 'scripts/bootstrap.sh'
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.base = Path(self.temp.name)
+        self.version = json.loads((self.PLUGIN / '.claude-plugin/plugin.json').read_text())['version']
+        # A marketplace install is the plugin folder alone, with no checkout around it.
+        self.alone = self.base / 'cache/shnitzel-mode'
+        shutil.copytree(self.PLUGIN, self.alone)
+        self.home = self.base / 'dist'
+
+    def run_bootstrap(self, plugin, *args, **env):
+        return subprocess.run(['bash', str(plugin / self.SCRIPT), *args], capture_output=True, text=True,
+                              env={**os.environ, 'SHNITZEL_DIST_HOME': str(self.home), **env})
+
+    def fake_dist(self, root, version):
+        dist = root / 'modes/shnitzel-mode'
+        for name in ['install.sh', 'bin/doctor.py', 'config/upstream-lock.json']:
+            (dist / name).parent.mkdir(parents=True, exist_ok=True)
+            (dist / name).write_text('')
+        manifest = dist / 'plugins/shnitzel-mode/.claude-plugin/plugin.json'
+        manifest.parent.mkdir(parents=True)
+        manifest.write_text(json.dumps({'name': 'shnitzel-mode', 'version': version}))
+        return dist
+
+    def tagged_repo(self, version):
+        repo = self.base / 'origin'
+        self.fake_dist(repo, version)
+        git = ['git', '-C', str(repo), '-c', 'user.name=t', '-c', 'user.email=t']
+        for cmd in [['init', '-q'], ['add', '-A'], ['commit', '-qm', 'release'], ['tag', 'shnitzel-mode--v' + self.version]]:
+            subprocess.run(git + cmd, check=True, capture_output=True)
+        return repo
+
+    def test_checkout_resolves_without_network(self):
+        result = self.run_bootstrap(self.PLUGIN, '--print')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual((report['source'], Path(report['dist'])), ('checkout', ROOT))
+
+    def test_marketplace_install_without_distribution_reports_missing(self):
+        result = self.run_bootstrap(self.alone, '--print')
+        self.assertEqual(result.returncode, 4)
+        self.assertFalse(self.home.exists())
+
+    def test_cached_distribution_is_reused(self):
+        dist = self.fake_dist(self.home / self.version, self.version)
+        report = json.loads(self.run_bootstrap(self.alone, '--print').stdout)
+        self.assertEqual((report['source'], Path(report['dist'])), ('cached', dist))
+
+    def test_fetches_the_tag_matching_the_plugin_version(self):
+        repo = self.tagged_repo(self.version)
+        result = self.run_bootstrap(self.alone, SHNITZEL_REPO=str(repo))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report['source'], 'fetched')
+        self.assertTrue((Path(report['dist']) / 'install.sh').is_file())
+        self.assertFalse((self.home / self.version / '.git').exists())
+        self.assertEqual(json.loads(self.run_bootstrap(self.alone, '--print').stdout)['source'], 'cached')
+
+    def test_refuses_a_tag_holding_another_version(self):
+        repo = self.tagged_repo('0.0.1')
+        result = self.run_bootstrap(self.alone, SHNITZEL_REPO=str(repo))
+        self.assertEqual(result.returncode, 5)
+        self.assertFalse((self.home / self.version).exists())
+
+
+class ManifestTests(unittest.TestCase):
+    def test_every_manifest_and_marketplace_entry_agree_on_version(self):
+        plugin = ROOT / 'plugins/shnitzel-mode'
+        versions = {str(path): json.loads(path.read_text())['version']
+                    for path in [plugin / '.claude-plugin/plugin.json', plugin / '.codex-plugin/plugin.json']}
+        for catalog in [ROOT, ROOT.parents[1]]:
+            for path in [catalog / '.claude-plugin/marketplace.json', catalog / '.agents/plugins/marketplace.json']:
+                if path.exists():
+                    entry = next(p for p in json.loads(path.read_text())['plugins'] if p['name'] == 'shnitzel-mode')
+                    versions[str(path)] = entry['version']
+        self.assertEqual(len(set(versions.values())), 1, versions)
 
 
 if __name__ == '__main__':

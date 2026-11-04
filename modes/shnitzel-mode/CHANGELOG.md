@@ -1,3 +1,16 @@
+# 1.7.0
+
+Engine moved to pstack-claude v0.9.128 (79b36d9), built on original pstack 0.15.36 (c742dd6), the port's own pin. The port absorbed the Orchestrate rewrite that 1.5.0 held back, so the three-way sync is clean with no conflicts or resolutions, and the generator, generator check and playbook check pass. Upstream changes that arrive with it: Orchestrate is an agentic playbook and the orch scripts and the `preferences.md` register are gone (no Shnitzel file used them), `notes.md` records the objective, the desktop app shows `todo.md` as a checklist, the Codex prompt stubs are removed, and code shapes flagged as forwarding credentials are removed. `models.json` names no new role, so the default sheet already covers every role.
+
+The installer now adds any role line missing from an existing `pstack-models.md` as `inherit-parent` (panels as `inherit-parent, inherit-parent`). It never changes a line the user wrote, and uninstall still restores the original sheet. This replaces the manual step from 1.5.0: an install from before 1.5.0 gains `thermos reviewers` and `no-comments reviewer` on the next `install.sh --apply`, so those reviewers stop falling back to their stamped default.
+
+Direct and Focused tiers are unchanged: zero delegates and no full router, so the agentic Orchestrate never starts there.
+# 1.6.0
+
+Public install. A marketplace install copies only the plugin folder, so the installer, collectors, budget checker and upstream lock were missing on a fresh machine. `scripts/bootstrap.sh` now resolves the distribution: the surrounding checkout when there is one, otherwise a cached copy, otherwise the tagged release matching the plugin version, fetched into `~/.agents/shnitzel/dist`. It never builds the engine or runs the installer; setup does both with consent. Both entry skills fall back to it when they are not inside a checkout. The plugin manifest gains homepage and repository, the plugin folder gains its own README, and `docs/publishing.md` holds the release checklist.
+
+The repository-root marketplace files had stayed at 1.4.0 through the 1.5.0 release. A new contract test now fails when any manifest or marketplace entry disagrees on the version, and CI validates every plugin and the marketplace with `claude plugin validate --strict`.
+
 # 1.5.0
 
 Engine moved to pstack-claude v0.9.117 (8ecae68), built on original pstack 0.15.35, the port's own pin. Clean three-way sync with no conflicts or resolutions, and the generator, generator check and playbook check pass. Original pstack 0.15.36 is not taken yet: it rewrites Orchestrate and deletes the orch scripts, which conflicts with the port's fork of `orchestrate.md`, `scripts/package.json` and the orch scripts. It comes in when the port absorbs it.
