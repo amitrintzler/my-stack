@@ -1,6 +1,8 @@
-# Claude Code benchmark plan: pstack vs Shnitzel 1.4
+# Claude Code benchmark plan: pstack vs Shnitzel
 
-Status: plan only. Nothing here has been run. Task specs live in `evals/benchmark/tasks.json`.
+Status: plan only. Nothing here has been run, and running it waits for the owner's explicit go. Task specs live in `evals/benchmark/tasks.json`.
+
+Target build: the Shnitzel release and engine lock on `main` when the run starts. Main is on 1.5.0 (port v0.9.117) as of this revision; the v0.9.128 engine pull is expected first, and the benchmark should run on that lock, not on 1.4 or v0.9.101. Whatever the lock is, it is recorded in the results and frozen for the whole run.
 
 ## Why
 
@@ -20,6 +22,8 @@ Both arms run the same Claude Code version, the same locked engine (record `conf
 | `shnitzel` | Isolated `CLAUDE_CONFIG_DIR`. `./install.sh --apply claude` into that directory (managed CLAUDE.md block, session hook off, Shnitzel owns routing). |
 
 Identical for both arms:
+
+- The same `pstack-models.md` role sheet, differing only in the `session hook` line. Since 1.5.0 that includes `thermos reviewers` and `no-comments reviewer` as `inherit-parent`; if the pstack arm used a sheet without them, its reviewers could run on a higher model tier and the token comparison would be skewed.
 
 - `--model "$BENCH_MODEL"` with a full model id, never an alias. Recorded per run.
 - Effort fixed per task from `recommended_effort` in `config/effort-policy.json` (low, low, low, medium, high), applied identically to both arms through the same settings file. The pilot must confirm the effort actually took effect; if Claude Code cannot confirm it, run both arms at the host default and record that.
@@ -69,16 +73,18 @@ From the stream-json `result` event and the per-message events:
 
 ## Repeats and order
 
-- Default: 5 repeats for T1 to T3 (cheap, most variance relative to size) and 3 for T4 and T5. That is 2 × (15 + 6) = 42 scored runs.
+Lean budget, chosen to keep the benchmark's own token use low:
+
+- 3 repeats for T1 to T3, which carry the 30% claim, and 2 for T4 and T5, which only check parity. That is 2 × (9 + 4) = 26 scored runs.
 - For each repeat, tasks run in manifest order and the two arms in a seeded random order per task. The seed is recorded.
-- Inconclusive rule: if the 90% bootstrap interval of a task's median ratio crosses the threshold, add 2 repeats for that task only, once.
+- Extra runs only for borderline results: if the 90% bootstrap interval of a task's median ratio crosses its threshold, or a heavy task's two runs disagree on pass/fail, add 2 repeats for that task only, once.
 
 ## Token budget for the benchmark itself
 
-Rough per-run guesses until the pilot replaces them: T1 50k, T2 60k, T3 150k, T4 500k, T5 400k total tokens, most of it cached input. Default plan is about 2.6M (T1 to T3) plus 5.4M (T4, T5), roughly 8M tokens. The previous attempt hit the weekly Claude Code quota (HTTP 429), so:
+Rough per-run guesses until the pilot replaces them: T1 50k, T2 60k, T3 150k, T4 500k, T5 400k total tokens, most of it cached input. The lean plan is about 1.6M (T1 to T3) plus 3.6M (T4, T5), roughly 5.2M tokens, plus about 0.25M for the pilot. The previous attempt hit the weekly Claude Code quota (HTTP 429), so:
 
-- Phase 0 pilot measures the real per-run size first.
-- The runner stops before any run that would push the cumulative total past `--budget-tokens` (default 10M), records the remaining runs as not executed, and never treats a 429 as a result. A 429 run is retried later, not scored.
+- Phase 0 pilot measures the real per-run size first. If the pilot puts the full matrix above 6M, the plan is resized before phase 2, not mid-run.
+- The runner stops before any run that would push the cumulative total past `--budget-tokens` (default 6M), records the remaining runs as not executed, and never treats a 429 as a result. A 429 run is retried later, not scored.
 
 ## Verdict
 
@@ -91,6 +97,8 @@ The 30% claim is **confirmed** only when all of these hold:
 3. Zero safety-gate violations in Shnitzel runs.
 4. Standard and deep parity: on T4 and T5, Shnitzel median tokens at most 1.10 × pstack and passes at least pstack's.
 5. Speed: simple-set aggregate wall-time ratio at most 1.0, and at most 1.10 on T4 and T5.
+
+With 3 runs a task can trail by at most 1 pass under rule 2. On T4 and T5 Shnitzel may not trail at all.
 
 **Not confirmed** if 1 fails with its interval entirely above 0.70, or if any of 2 to 5 fails. **Inconclusive** if the interval still straddles 0.70 after the one extra round. Every outcome is recorded; none is presented as acceptance unless confirmed.
 
