@@ -67,4 +67,4 @@ Use [TEMPLATE.md](TEMPLATE.md) to add a new tool entry in the appropriate [domai
 
 ## Agent modes and Shnitzel
 
-[Shnitzel 1.5](modes/shnitzel-mode/) adds proportionate effort routing over a pinned pstack engine, budget accounting, runtime setup and read-only collectors. See the [mode guide](docs/agent-modes.md), [validation and limitations](modes/shnitzel-mode/docs/acceptance.md), and [animated workflow](docs/shnitzel/shnitzel-animation.html). The [actor step-through](docs/shnitzel/shnitzel-actors.html) offers additional scenarios. Both visuals simulate routing rather than monitoring live agents.
+[Shnitzel 1.7](modes/shnitzel-mode/) adds proportionate effort routing over a pinned pstack engine, budget accounting, runtime setup and read-only collectors. See the [mode guide](docs/agent-modes.md), [validation and limitations](modes/shnitzel-mode/docs/acceptance.md), and [animated workflow](docs/shnitzel/shnitzel-animation.html). The [actor step-through](docs/shnitzel/shnitzel-actors.html) offers additional scenarios. Both visuals simulate routing rather than monitoring live agents.
