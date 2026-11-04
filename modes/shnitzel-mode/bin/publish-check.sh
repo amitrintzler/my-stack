@@ -42,8 +42,9 @@ if [ -n "$hits" ]; then bad "credential shaped strings"; say "$hits" | head -5; 
 hits="$(grep -rIn -E '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' $(scan) 2>/dev/null | grep -v LICENSE || true)"
 if [ -n "$hits" ]; then bad "email addresses"; say "$hits" | head -5; else ok "no email addresses"; fi
 
-# 4. hardcoded model slugs in skills. roles only.
-hits="$(grep -rIn -E '\b(claude|gpt|gemini|llama|mistral|grok)-[0-9a-z.-]+' "$ROOT/plugins" 2>/dev/null | grep -v 'references/model-roles.md' || true)"
+# 4. hardcoded model slugs in skills. roles only. A leading dot is a manifest
+# directory such as .claude-plugin, not a model.
+hits="$(grep -rIn -E '(^|[^.[:alnum:]_])(claude|gpt|gemini|llama|mistral|grok)-[0-9a-z.-]+' "$ROOT/plugins" 2>/dev/null | grep -v 'references/model-roles.md' || true)"
 if [ -n "$hits" ]; then bad "hardcoded model slugs in skills, use a role"; say "$hits" | head -5; else ok "no hardcoded model slugs"; fi
 
 # 5. the banned long dash

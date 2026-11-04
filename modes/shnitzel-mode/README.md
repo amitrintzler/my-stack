@@ -6,7 +6,17 @@ Only the two Shnitzel entry skills and explicit poteto-mode are linked for disco
 
 The 30 optional skills and 17 domain cards remain available, loaded only when relevant. Deterministic collectors gather state before a model interprets it. Unavailable data is reported explicitly. Hard-budget requests stop before execution when the runtime cannot enforce the requested unit across every call.
 
-## Setup
+## Install from a marketplace
+
+```bash
+claude plugin marketplace add amitrintzler/my-stack
+claude plugin install shnitzel-mode@my-stack
+codex plugin marketplace add amitrintzler/my-stack   # Codex
+```
+
+Then run setup-shnitzel-mode in each runtime. It fetches the matching tagged distribution with `scripts/bootstrap.sh` and continues with the steps below. Publishing a new version is covered in [docs/publishing.md](docs/publishing.md).
+
+## Setup from a checkout
 
 ```bash
 bin/upstream-check.sh --check

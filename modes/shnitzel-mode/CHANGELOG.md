@@ -1,3 +1,9 @@
+# 1.6.0
+
+Public install. A marketplace install copies only the plugin folder, so the installer, collectors, budget checker and upstream lock were missing on a fresh machine. `scripts/bootstrap.sh` now resolves the distribution: the surrounding checkout when there is one, otherwise a cached copy, otherwise the tagged release matching the plugin version, fetched into `~/.agents/shnitzel/dist`. It never builds the engine or runs the installer; setup does both with consent. Both entry skills fall back to it when they are not inside a checkout. The plugin manifest gains homepage and repository, the plugin folder gains its own README, and `docs/publishing.md` holds the release checklist.
+
+The repository-root marketplace files had stayed at 1.4.0 through the 1.5.0 release. A new contract test now fails when any manifest or marketplace entry disagrees on the version, and CI validates every plugin and the marketplace with `claude plugin validate --strict`.
+
 # 1.5.0
 
 Engine moved to pstack-claude v0.9.117 (8ecae68), built on original pstack 0.15.35, the port's own pin. Clean three-way sync with no conflicts or resolutions, and the generator, generator check and playbook check pass. Original pstack 0.15.36 is not taken yet: it rewrites Orchestrate and deletes the orch scripts, which conflicts with the port's fork of `orchestrate.md`, `scripts/package.json` and the orch scripts. It comes in when the port absorbs it.
