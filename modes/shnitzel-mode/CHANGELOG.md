@@ -1,3 +1,11 @@
+# 1.8.0
+
+Engine moved to pstack-claude v0.9.133 (8074b9f), still on original pstack 0.15.36 (c742dd6), the port's own pin and the latest upstream. The three-way sync is clean with no conflicts or resolutions, the generator, generator check and playbook check pass, and `models.json` names no new role.
+
+Upstream changes that arrive with it: `setup-pstack`'s SKILL.md now describes Claude Code only and moves other runtimes' sheet paths to `references/runtimes.md` (13.4 KB to 9.0 KB, about 1,100 fewer tokens each time setup runs). `setup-shnitzel-mode` still reads it as before, and the skill itself points other runtimes to the new reference. `deslop` compares against the branch base and reverts edits that fail checks, the session-pickup playbook verifies inherited claims before routing, `how` has a fixed simple path, and the worktree audit no longer calls a worktree safe to delete while another PR from its branch is open. Antigravity, Kimi, Grok Build, OMP and OpenCode 2 runtime support arrives too; none touches Shnitzel.
+
+Token impact: across all 67 skill bodies the engine is 720 bytes smaller and the always-listed skill descriptions are unchanged. The Antigravity pointer adds one line (146 bytes, about 35 tokens) to 20 skills, and `poteto-mode` grows by about 100 tokens, so Standard and Deep pay slightly more when they open those skills. Direct and Focused are unchanged: they read no pstack skill and start no delegates.
+
 # 1.7.0
 
 Engine moved to pstack-claude v0.9.128 (79b36d9), built on original pstack 0.15.36 (c742dd6), the port's own pin. The port absorbed the Orchestrate rewrite that 1.5.0 held back, so the three-way sync is clean with no conflicts or resolutions, and the generator, generator check and playbook check pass. Upstream changes that arrive with it: Orchestrate is an agentic playbook and the orch scripts and the `preferences.md` register are gone (no Shnitzel file used them), `notes.md` records the objective, the desktop app shows `todo.md` as a checklist, the Codex prompt stubs are removed, and code shapes flagged as forwarding credentials are removed. `models.json` names no new role, so the default sheet already covers every role.
