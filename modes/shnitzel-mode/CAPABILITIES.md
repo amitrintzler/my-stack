@@ -1,6 +1,6 @@
 # Capabilities and limits
 
-Shnitzel 1.4 adds effort admission, meaningful approach selection, isolated upstream updates and explicit budget capability checks. Thirty optional operational skills and seventeen domain cards remain available. Ordinary questions and focused edits bypass the full pstack router.
+Shnitzel 1.8.0 provides effort admission, meaningful approach selection, isolated upstream updates and explicit budget capability checks, introduced in 1.4 and kept since. Twenty-eight optional operational skills and seventeen domain cards remain available. See [architecture](docs/architecture.md). Ordinary questions and focused edits bypass the full pstack router.
 
 The engine lock records exact released-port and original-pstack revisions, included upstream changes and runtime exclusions. Updates validate before activation and retain the previous engine. Runtime model choices use pstack's per-runtime sheets.
 

@@ -24,4 +24,4 @@ Every collector emits the same item shape: `id`, `kind`, `severity`, `repo`, `ti
 
 ## Testing
 
-There is no test framework and it would be overkill for markdown and shell. What there is: `bash -n` on every script, the publish check, the frontmatter and command parity check, and fixtures. If you change a collector, exercise it against a fixture and say in the pull request what you observed.
+What runs: `bash -n` on every script, the publish check, the frontmatter and command parity check, fixtures, and the contract tests in `tests/` (`python3 -m unittest discover -s tests -v`). CI runs all of them plus strict plugin validation. If you change a collector, exercise it against a fixture and say in the pull request what you observed.

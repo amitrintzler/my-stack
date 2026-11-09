@@ -1,6 +1,6 @@
 # Architecture review
 
-Historical review of version 1.3. Current changes and verification are recorded in docs/acceptance.md.
+Historical review of version 1.3. The current design is in [architecture.md](architecture.md); release changes are in the CHANGELOG.
 
 A review of this kit by the person who built it, written to the standard the `thermo-nuclear-code-quality-review` skill asks for rather than to make the thing look good. Findings are ordered by how much they should change your decisions, not by how easy they are to fix.
 
