@@ -1,5 +1,7 @@
 # Acceptance evidence, 2026-10-22
 
+Historical: this records the 1.4 run on an older engine and has not been repeated for 1.8.0. The current design is in [architecture.md](architecture.md).
+
 Shnitzel 1.4 is installed locally with a three-skill discovery surface. The active engine combines pstack-claude v0.9.101 at 903e7385382389806c59d6989b6274e24165082b with original pstack v0.15.30 at 4ec7ffa173eaa70d3d9467a627baf0954645a353. The tracked lock records included files, exclusions and port documentation adaptations. No remote publication was performed.
 
 ## Deterministic checks

@@ -2,9 +2,11 @@
 
 An effort-aware overlay around a current, pinned pstack engine. Ordinary questions get direct answers. Engineering requests get brief approach choices, then the smallest selected workflow that meets the acceptance criteria. Focused edits do not trigger PRDs, HLDs, review panels or the full pstack router.
 
+Version 1.8.0, engine pinned to pstack-claude v0.9.133 on original pstack 0.15.36. **[Architecture](docs/architecture.md)** explains how it layers on pstack and poteto-mode, effort routing, what loads when, the engine lock, install and the hook, in a few minutes.
+
 Only the two Shnitzel entry skills and explicit poteto-mode are linked for discovery by default. The other skills remain available by path and are loaded on demand. `--all-skills` enables full discovery at the cost of additional standing metadata.
 
-The 30 optional skills and 17 domain cards remain available, loaded only when relevant. Deterministic collectors gather state before a model interprets it. Unavailable data is reported explicitly. Hard-budget requests stop before execution when the runtime cannot enforce the requested unit across every call.
+The 28 optional skills and 17 domain cards remain available, loaded only when relevant. A marketplace plugin install also lists the plugin's own 30 skills to the runtime; see [what is loaded, and when](docs/architecture.md#what-is-loaded-and-when). Deterministic collectors gather state before a model interprets it. Unavailable data is reported explicitly. Hard-budget requests stop before execution when the runtime cannot enforce the requested unit across every call.
 
 ## Install from a marketplace
 
@@ -14,7 +16,7 @@ claude plugin install shnitzel-mode@my-stack
 codex plugin marketplace add amitrintzler/my-stack   # Codex
 ```
 
-Then run setup-shnitzel-mode in each runtime. It fetches the matching tagged distribution with `scripts/bootstrap.sh` and continues with the steps below. Publishing a new version is covered in [docs/publishing.md](docs/publishing.md).
+Then run setup-shnitzel-mode in each runtime. It fetches the distribution tagged `shnitzel-mode--v<version>` with `scripts/bootstrap.sh` and continues with the steps below; each release needs that tag pushed. Publishing a new version is covered in [docs/publishing.md](docs/publishing.md).
 
 ## Setup from a checkout
 
@@ -48,7 +50,7 @@ Before implementation, show meaningful alternatives in at most 120 words and wai
 
 `--locked --build` rebuilds recorded source revisions. `--rollback` restores the previous engine. Failed candidates never replace the working engine. [Upstream procedure](docs/upstream-sync.md) explains temporary upstream adaptations, policy differences and provenance.
 
-Run `python3 -m unittest discover -s tests -v` and `bin/publish-check.sh`. Contract tests do not prove that a model follows a skill. Behavioral acceptance and token comparisons are recorded separately, including failures and missing telemetry. The [earlier architecture review](docs/architecture-review.md) is a historical review of 1.3, not a current verification report.
+Run `python3 -m unittest discover -s tests -v` and `bin/publish-check.sh`. Contract tests do not prove that a model follows a skill. Behavioral acceptance and token comparisons are recorded separately, including failures and missing telemetry. The [current architecture](docs/architecture.md) describes 1.8.0. The [earlier architecture review](docs/architecture-review.md) is a historical review of 1.3, not a current verification report, and [acceptance evidence](docs/acceptance.md) records the 1.4 live run.
 
 ## Collectors
 
