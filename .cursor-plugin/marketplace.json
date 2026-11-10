@@ -1,0 +1,16 @@
+{
+  "name": "my-stack",
+  "owner": {
+    "name": "Amit Rintzler"
+  },
+  "metadata": {
+    "description": "A collection of agent modes. Each mode is a self-contained set of instructions, playbooks and read-only collectors that layers on top of whatever agent runtime you already use."
+  },
+  "plugins": [
+    {
+      "name": "shnitzel-mode",
+      "source": "modes/shnitzel-mode/plugins/shnitzel-mode",
+      "description": "Effort-aware admission over the pstack plugin, runtime-specific model roles and observable budgets."
+    }
+  ]
+}

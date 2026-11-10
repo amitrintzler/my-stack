@@ -1,0 +1,24 @@
+{
+  "name": "shnitzel-mode",
+  "displayName": "shnitzel-mode",
+  "version": "1.9.0",
+  "description": "Effort-aware routing in front of Cursor's pstack plugin: direct answers, focused edits without the router, and pstack workflows only when the work needs them.",
+  "author": {
+    "name": "Amit Rintzler"
+  },
+  "homepage": "https://github.com/amitrintzler/my-stack/tree/main/modes/shnitzel-mode",
+  "repository": "https://github.com/amitrintzler/my-stack",
+  "license": "MIT",
+  "keywords": [
+    "shnitzel-mode",
+    "pstack",
+    "poteto-mode",
+    "devops",
+    "platform",
+    "runtime-neutral",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "rules": "./rules/"
+}

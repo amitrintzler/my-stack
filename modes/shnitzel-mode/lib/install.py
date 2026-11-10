@@ -15,6 +15,26 @@ ROLES = ['feature, refactoring', 'bug-fix', 'perf-issue', 'hillclimb', 'judgment
 PANELS = ['arena runners', 'arena cross-judge pool', 'architect runners', 'interrogate reviewers']
 
 
+CURSOR_PLUGIN = ROOT / 'plugins/shnitzel-mode'
+CURSOR_RULE = CURSOR_PLUGIN / 'rules/shnitzel-mode.mdc'
+
+
+def admission(skill, workflows, sheet):
+    """The standing Shnitzel instruction. One text for every runtime; only the references differ."""
+    return ('Shnitzel admission: answer ordinary questions directly. '
+            'For implementation show brief meaningful approaches unless the user already selected one. '
+            'For a clear bounded reversible change this paragraph is sufficient: after the approach is selected, make the smallest change and verify its behavior. Do not read the full router or config for such focused work. Use no feature documents, delegates or unrequested commits. Risk overrides diff size. '
+            'Honor explicit task authorization and host/repository permissions. Explicit hard caps require verified enforcement.\n'
+            f'For standard/deep, uncertain or capped work read {skill}, then use relevant workflows {workflows}. Read model roles from {sheet} only when dispatching. '
+            'Read only relevant references. Explicit poteto-mode selects the full upstream workflow.')
+
+
+def cursor_rule():
+    """The always-applied rule the Cursor plugin ships. Cursor supplies pstack natively."""
+    return ('---\ndescription: Shnitzel admission, decides how much process a request gets before pstack runs\nalwaysApply: true\n---\n'
+            + admission('the shnitzel-mode skill', "from Cursor's pstack plugin", '~/.cursor/rules/pstack-models.mdc') + '\n')
+
+
 def block(text, body):
     replacement = BEGIN + '\n' + body.strip() + '\n' + END if body else ''
     if text.count(BEGIN) != text.count(END) or text.count(BEGIN) > 1:
@@ -42,16 +62,16 @@ def install(home, targets, apply=False, uninstall=False, engine=None, local_root
              'local': (local_root or Path.cwd()) / 'AGENTS.md'}
     sheets = {k: p.parent / 'pstack-models.md' for k, p in rules.items()}
     sheets['local'] = (local_root or Path.cwd()) / '.agents/pstack-models.md'
+    cursor_link = home / '.cursor/plugins/local/shnitzel-mode'
     writes, links, removes = {}, {}, []
     for target in targets:
+        if target == 'cursor':
+            # Cursor's own pstack plugin supplies the engine and owns pstack-models.mdc.
+            # The Shnitzel plugin carries its admission as an always-applied rule.
+            continue
         path, sheet = rules[target], sheets[target]
         before = path.read_text() if path.exists() else ''
-        instruction = (f'Shnitzel admission: answer ordinary questions directly. '
-                       'For implementation show brief meaningful approaches unless the user already selected one. '
-                       'For a clear bounded reversible change this paragraph is sufficient: after the approach is selected, make the smallest change and verify its behavior. Do not read the full router or config for such focused work. Use no feature documents, delegates or unrequested commits. Risk overrides diff size. '
-                       'Honor explicit task authorization and host/repository permissions. Explicit hard caps require verified enforcement.\n'
-                       f'For standard/deep, uncertain or capped work read {skills}/shnitzel-mode/SKILL.md, then use relevant workflows at {engine}/plugins/pstack. Read model roles from {sheet} only when dispatching. '
-                       'Read only relevant references. Explicit poteto-mode selects the full upstream workflow.')
+        instruction = admission(f'{skills}/shnitzel-mode/SKILL.md', f'at {engine}/plugins/pstack', sheet)
         after = block(before, '' if uninstall else instruction)
         if before != after:
             writes[path] = after
@@ -90,13 +110,27 @@ def install(home, targets, apply=False, uninstall=False, engine=None, local_root
             removable_roots.append(rules['claude'].parent / 'skills')
         if 'gemini' in targets:
             removable_roots.append(home / '.gemini/skills')
+        if 'cursor' in targets:
+            removable_roots.append(cursor_link.parent)
         for name, dest in own['links'].items():
             link = Path(name)
             if link.parent in removable_roots and link.is_symlink() and os.readlink(link) == dest:
                 removes.append(link)
     elif not uninstall:
-        sources = list((ROOT / 'plugins/shnitzel-mode/skills').iterdir())
-        if (engine / 'plugins/pstack/skills').exists():
+        if 'cursor' in targets:
+            dest = str(CURSOR_PLUGIN)
+            if cursor_link.exists() or cursor_link.is_symlink():
+                owned = cursor_link.is_symlink() and own['links'].get(str(cursor_link)) == os.readlink(cursor_link)
+                if not (cursor_link.is_symlink() and os.readlink(cursor_link) == dest) and not owned:
+                    raise ValueError('plugin collision; refusing to replace ' + str(cursor_link))
+            if not (cursor_link.is_symlink() and os.readlink(cursor_link) == dest):
+                links[str(cursor_link)] = dest
+            own['links'][str(cursor_link)] = dest
+        # Cursor also scans ~/.agents/skills and ~/.claude/skills, so a Cursor-only
+        # install links no skills there: the plugin already lists them.
+        skill_targets = [t for t in targets if t != 'cursor']
+        sources = list((ROOT / 'plugins/shnitzel-mode/skills').iterdir()) if skill_targets else []
+        if skill_targets and (engine / 'plugins/pstack/skills').exists():
             sources += list((engine / 'plugins/pstack/skills').iterdir())
         planned_names = {}
         for source in sources:
@@ -150,7 +184,8 @@ def install(home, targets, apply=False, uninstall=False, engine=None, local_root
             path.unlink(missing_ok=True)
         if uninstall:
             for target in targets:
-                own['sheets'].pop(str(sheets[target]), None)
+                if target in sheets:
+                    own['sheets'].pop(str(sheets[target]), None)
             own['links'] = {n: d for n, d in own['links'].items() if Path(n).is_symlink() and os.readlink(n) == d}
         state.mkdir(parents=True, exist_ok=True)
         own['runtimes'] = sorted(remaining_targets)
@@ -162,7 +197,8 @@ def install(home, targets, apply=False, uninstall=False, engine=None, local_root
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('runtime', nargs='?', choices=['all', 'claude', 'codex', 'gemini', 'cowork', 'local'], default='all')
+    p.add_argument('runtime', nargs='?', choices=['all', 'claude', 'codex', 'gemini', 'cowork', 'local', 'cursor'], default='all',
+                   help='all = claude, codex, gemini, cowork; cursor and local are explicit')
     p.add_argument('--apply', action='store_true')
     p.add_argument('--uninstall', action='store_true')
     p.add_argument('--home', type=Path, default=Path.home())

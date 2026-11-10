@@ -1,3 +1,17 @@
+# 1.9.0
+
+Official Cursor support. Original pstack is itself a Cursor plugin, so Cursor uses Cursor's own pstack plugin as the engine: no port, no engine build, and pstack's skills keep their native Cursor tool names. Shnitzel joins as a second Cursor plugin.
+
+- `plugins/shnitzel-mode/.cursor-plugin/plugin.json` declares the skills, `shnitzel-agent` and one always-applied rule. No commands (Cursor offers skills in its `/` menu) and no hook. The repository root and the mode folder each gain a `.cursor-plugin/marketplace.json` for team imports.
+- `rules/shnitzel-mode.mdc` carries the same admission text as every managed block. Both now come from one function, `admission()` in `lib/install.py`, and a contract test fails if the shipped rule drifts. The Claude Code, Codex, Gemini and Cowork output is byte-identical to 1.8.0.
+- `install.sh --apply cursor` links the plugin folder to `~/.cursor/plugins/local/shnitzel-mode` with the usual ownership rules. It is explicit, not part of `all`, writes no model sheet (pstack's setup-pstack owns `~/.cursor/rules/pstack-models.mdc`) and links nothing into `~/.agents/skills`, which Cursor also scans.
+- `bin/doctor.py` reports Cursor: the `cursor-agent` binary, the plugin link, whether pstack's model rule exists, and any `shnitzel-mode` or port `poteto-mode` in `~/.agents/skills` or `~/.claude/skills` that Cursor would list beside the plugin's.
+- `setup-shnitzel-mode` skips the engine build in Cursor (one sentence), and `references/runtimes.md` gains one Cursor sentence.
+
+Token impact: none for Claude Code, Codex, Gemini or Cowork. In Cursor the always-on cost is the rule (975 bytes, roughly 220 tokens, the same text as other runtimes) plus the plugin's 30 skill descriptions, as with a Claude Code marketplace install. Direct and Focused read nothing else.
+
+Verified: five new contract tests (37 in total), `claude plugin validate --strict`, and Cursor's own `validate-plugins.mjs` with its schemas from cursor/plugins, run by hand against both marketplaces. Not verified: a live Cursor session. Cursor's marketplace keeps pstack current on its own schedule, so in Cursor the engine is not pinned by the lock.
+
 # 1.8.0
 
 Engine moved to pstack-claude v0.9.133 (8074b9f), still on original pstack 0.15.36 (c742dd6), the port's own pin and the latest upstream. The three-way sync is clean with no conflicts or resolutions, the generator, generator check and playbook check pass, and `models.json` names no new role.
