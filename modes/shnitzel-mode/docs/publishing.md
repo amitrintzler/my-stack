@@ -4,7 +4,7 @@ How to release a version that other people can install, and how to list it in th
 
 ## Every release
 
-1. Bump `version` in the plugin's `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json`, in all four marketplace files, in `docs/agent-modes.md`, and add a CHANGELOG entry. Claude Code keeps users on the old copy when the version does not change.
+1. Bump `version` in the plugin's `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json` and `.cursor-plugin/plugin.json`, in all four versioned marketplace files (the two `.cursor-plugin/marketplace.json` files carry no version), in `docs/agent-modes.md`, and add a CHANGELOG entry. Claude Code keeps users on the old copy when the version does not change.
 2. Run the checks locally:
 
    ```bash
@@ -41,4 +41,4 @@ How to release a version that other people can install, and how to list it in th
 
 - Anthropic: submit from the developer portal at claude.ai/directory/manage. It needs a paid claude.ai plan and reviews every version. A listing also reaches claude.ai and Cowork, where only some plugin components load; Shnitzel's scripts and managed instruction block work in Claude Code. The official marketplace takes no open submissions.
 - OpenAI: the plugin submission portal publishes to the directory shared by ChatGPT and Codex. Plugins with lifecycle hooks are not eligible, so keep `hooks/hooks.json.disabled` disabled.
-- Cursor: cursor.directory is the community route. Confirm the current official route before submitting, because Cursor has changed it.
+- Cursor: the plugin carries `.cursor-plugin/plugin.json` and the repository root `.cursor-plugin/marketplace.json`, both checked with Cursor's own validator (`scripts/validate-plugins.mjs` and its schemas in cursor/plugins). The official Cursor Marketplace lists manually reviewed plugins; Teams and Enterprise admins can import the repository under Dashboard, Plugins. cursor.directory is the community route. Confirm the current submission route before submitting, because Cursor has changed it.

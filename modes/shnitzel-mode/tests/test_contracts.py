@@ -196,6 +196,43 @@ class InstallerTests(unittest.TestCase):
         self.assertIn(install.BEGIN, (second / 'AGENTS.md').read_text())
 
 
+    def test_cursor_links_only_the_plugin_folder(self):
+        install.install(self.home, ['cursor'])
+        self.assertEqual(list(self.home.iterdir()), [])
+        install.install(self.home, ['cursor'], apply=True)
+        link = self.home / '.cursor/plugins/local/shnitzel-mode'
+        self.assertEqual(os.readlink(link), str(install.CURSOR_PLUGIN))
+        self.assertFalse((self.home / '.agents/skills').exists())
+        self.assertFalse((self.home / '.cursor/rules').exists())
+        again = install.install(self.home, ['cursor'], apply=True)
+        self.assertEqual((again['writes'], again['links']), ([], {}))
+
+    def test_cursor_refuses_a_foreign_plugin(self):
+        foreign = self.home / '.cursor/plugins/local/shnitzel-mode'
+        foreign.mkdir(parents=True)
+        with self.assertRaisesRegex(ValueError, 'plugin collision'):
+            install.install(self.home, ['cursor'], apply=True)
+        self.assertTrue(foreign.is_dir() and not foreign.is_symlink())
+
+    def test_cursor_uninstall_leaves_other_runtimes_and_foreign_links(self):
+        install.install(self.home, ['claude', 'cursor'], apply=True)
+        link = self.home / '.cursor/plugins/local/shnitzel-mode'
+        install.install(self.home, ['cursor'], apply=True, uninstall=True)
+        self.assertFalse(link.is_symlink())
+        self.assertTrue((self.home / '.claude/skills/shnitzel-mode').is_symlink())
+        self.assertIn(install.BEGIN, (self.home / '.claude/CLAUDE.md').read_text())
+        link.symlink_to(self.home / 'foreign')
+        install.install(self.home, ['cursor'], apply=True, uninstall=True)
+        self.assertEqual(os.readlink(link), str(self.home / 'foreign'))
+
+    def test_cursor_rule_is_the_installer_admission(self):
+        self.assertEqual(install.CURSOR_RULE.read_text(), install.cursor_rule())
+        install.install(self.home, ['claude'], apply=True)
+        block = (self.home / '.claude/CLAUDE.md').read_text()
+        shared = install.admission('', '', '').split('\n')[0]
+        self.assertIn(shared, block)
+        self.assertIn(shared, install.cursor_rule())
+
 class CollectorTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -404,13 +441,33 @@ class ManifestTests(unittest.TestCase):
     def test_every_manifest_and_marketplace_entry_agree_on_version(self):
         plugin = ROOT / 'plugins/shnitzel-mode'
         versions = {str(path): json.loads(path.read_text())['version']
-                    for path in [plugin / '.claude-plugin/plugin.json', plugin / '.codex-plugin/plugin.json']}
+                    for path in [plugin / '.claude-plugin/plugin.json', plugin / '.codex-plugin/plugin.json',
+                                 plugin / '.cursor-plugin/plugin.json']}
         for catalog in [ROOT, ROOT.parents[1]]:
             for path in [catalog / '.claude-plugin/marketplace.json', catalog / '.agents/plugins/marketplace.json']:
                 if path.exists():
                     entry = next(p for p in json.loads(path.read_text())['plugins'] if p['name'] == 'shnitzel-mode')
                     versions[str(path)] = entry['version']
         self.assertEqual(len(set(versions.values())), 1, versions)
+
+
+    def test_cursor_manifest_and_marketplaces_resolve(self):
+        plugin = ROOT / 'plugins/shnitzel-mode'
+        manifest = json.loads((plugin / '.cursor-plugin/plugin.json').read_text())
+        self.assertEqual(manifest['name'], 'shnitzel-mode')
+        # Skills appear in Cursor's / menu, so no duplicate commands; the hook stays Claude Code only.
+        self.assertFalse({'commands', 'hooks', 'mcpServers'} & set(manifest))
+        for key in ('skills', 'agents', 'rules'):
+            self.assertTrue((plugin / manifest[key]).is_dir(), key)
+        self.assertFalse((plugin / 'hooks/hooks.json').exists())
+        rule = (plugin / 'rules/shnitzel-mode.mdc').read_text()
+        self.assertTrue(rule.startswith('---\n') and '\nalwaysApply: true\n' in rule.split('---')[1])
+        for catalog in [ROOT, ROOT.parents[1]]:
+            entry = next(p for p in json.loads((catalog / '.cursor-plugin/marketplace.json').read_text())['plugins']
+                         if p['name'] == 'shnitzel-mode')
+            # Cursor's schema allows only these keys on an entry; the version lives in plugin.json.
+            self.assertLessEqual(set(entry), {'name', 'source', 'description', 'minClientVersions'})
+            self.assertEqual((catalog / entry['source']).resolve(), plugin.resolve())
 
 
 if __name__ == '__main__':

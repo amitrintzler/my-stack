@@ -17,6 +17,8 @@ Codex:
 codex plugin marketplace add amitrintzler/my-stack
 ```
 
+Cursor: install Cursor's own pstack plugin from its marketplace first. Then, from a checkout of this repository, run `modes/shnitzel-mode/install.sh --apply cursor`, which links this folder to `~/.cursor/plugins/local/shnitzel-mode`, and reload the window. Teams and Enterprise can import the repository instead. In Cursor, admission comes from `rules/shnitzel-mode.mdc` and pstack's model choices from its own setup-pstack.
+
 Then run `/setup-shnitzel-mode` once in each runtime. A marketplace install copies only this plugin folder, so setup first runs `scripts/bootstrap.sh`, which fetches the matching tagged release of the distribution into `~/.agents/shnitzel/dist`. Setup then builds the locked pstack engine and shows the installer's dry run before it changes `CLAUDE.md` or `AGENTS.md`. Nothing is written without your go-ahead.
 
 Requires Python 3 and Git, plus Node and Bun to build the engine.

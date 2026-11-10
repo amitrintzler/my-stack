@@ -1,0 +1,16 @@
+{
+  "name": "shnitzel-mode",
+  "owner": {
+    "name": "Amit Rintzler"
+  },
+  "metadata": {
+    "description": "Effort-aware routing over pstack, with runtime-specific model roles, observable collectors and strict budget capability checks."
+  },
+  "plugins": [
+    {
+      "name": "shnitzel-mode",
+      "source": "plugins/shnitzel-mode",
+      "description": "Effort-aware admission over the pstack plugin, runtime-specific model roles and observable budgets."
+    }
+  ]
+}

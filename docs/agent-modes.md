@@ -8,7 +8,7 @@ Each mode lives in its own subfolder under `modes/` and can be installed on its 
 
 | Mode | For | Status |
 | --- | --- | --- |
-| [`shnitzel-mode`](../modes/shnitzel-mode/) | Platform engineering and DevOps. Runtime-neutral routing, model roles instead of vendor names, 17 platform domain cards, a read-only watch harness, a feature lifecycle from PRD to retro, and scoped knowledge that cannot leak between projects. | v1.8.0, MIT |
+| [`shnitzel-mode`](../modes/shnitzel-mode/) | Platform engineering and DevOps. Runtime-neutral routing, model roles instead of vendor names, 17 platform domain cards, a read-only watch harness, a feature lifecycle from PRD to retro, and scoped knowledge that cannot leak between projects. | v1.9.0, MIT |
 
 Adding one is a folder and a pull request. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
@@ -23,7 +23,7 @@ modes/shnitzel-mode/install.sh           # dry run, prints every planned change
 modes/shnitzel-mode/install.sh --apply    # do it
 ```
 
-The installer detects which runtimes you have (Claude Code, Codex, Gemini CLI, a local model with an `AGENTS.md`) and wires the mode into each one it finds. It is idempotent, it backs up any file before appending to it, and `--uninstall --apply` removes what it added.
+The installer detects which runtimes you have (Claude Code, Codex, Gemini CLI, a local model with an `AGENTS.md`) and wires the mode into each one it finds. Cursor is explicit: `install.sh --apply cursor` links the mode as a local Cursor plugin, next to Cursor's own pstack plugin. It is idempotent, it backs up any file before appending to it, and `--uninstall --apply` removes what it added.
 
 For Claude Code you can also register the whole repository as a plugin marketplace, which makes every mode installable by name and gives you slash commands:
 

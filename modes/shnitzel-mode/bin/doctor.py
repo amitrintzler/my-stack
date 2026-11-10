@@ -8,7 +8,7 @@ import subprocess
 home = Path.home()
 engine = home / '.agents/shnitzel/engines/active'
 report = {'version': 1, 'acceptance_report': str(Path(__file__).resolve().parents[1] / 'docs/acceptance.md'), 'engine': str(engine.resolve()) if engine.exists() else None, 'runtimes': {}}
-for runtime, binary in [('claude', 'claude'), ('codex', 'codex'), ('gemini', 'gemini'), ('local', 'lms')]:
+for runtime, binary in [('claude', 'claude'), ('codex', 'codex'), ('gemini', 'gemini'), ('cursor', 'cursor-agent'), ('local', 'lms')]:
     executable, version = shutil.which(binary), None
     if executable:
         try:
@@ -17,5 +17,15 @@ for runtime, binary in [('claude', 'claude'), ('codex', 'codex'), ('gemini', 'ge
         except (OSError, subprocess.TimeoutExpired):
             pass
     report['runtimes'][runtime] = {'binary': executable, 'version': version, 'live_verified': False}
+# Cursor: the engine is Cursor's own pstack plugin, so report what Shnitzel can see of it.
+# Cursor also scans ~/.agents/skills and ~/.claude/skills; a second shnitzel-mode or a
+# port-translated poteto-mode there is listed beside the plugin's copies.
+plugin = home / '.cursor/plugins/local/shnitzel-mode'
+report['runtimes']['cursor'].update({
+    'shnitzel_plugin': str(plugin.resolve()) if plugin.exists() else None,
+    'pstack_models_rule': (home / '.cursor/rules/pstack-models.mdc').is_file(),
+    'also_scanned_by_cursor': [str(d / name) for d in (home / '.agents/skills', home / '.claude/skills')
+                               for name in ('shnitzel-mode', 'poteto-mode') if (d / name).exists()],
+})
 report['runtimes']['cowork'] = {'app_installed': Path('/Applications/Claude.app').exists(), 'live_verified': False}
 print(json.dumps(report, indent=2))

@@ -1,7 +1,7 @@
 {
   "name": "shnitzel-mode",
   "displayName": "shnitzel-mode",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Effort-aware routing over a pinned current pstack engine, with runtime-specific model roles, observable collectors and strict budget capability checks.",
   "author": {
     "name": "Amit Rintzler"
