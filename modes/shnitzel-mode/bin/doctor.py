@@ -27,5 +27,16 @@ report['runtimes']['cursor'].update({
     'also_scanned_by_cursor': [str(d / name) for d in (home / '.agents/skills', home / '.claude/skills')
                                for name in ('shnitzel-mode', 'poteto-mode') if (d / name).exists()],
 })
+# Claude Code: pstack's hook reads a repository's committed .claude/pstack-models.md in place of
+# the user sheet. Without its own `session hook: off`, pstack's mandate returns in that repository.
+try:
+    top = subprocess.run(['git', 'rev-parse', '--show-toplevel'], capture_output=True, text=True, timeout=10).stdout.strip()
+except (OSError, subprocess.TimeoutExpired):
+    top = ''
+project_sheet = Path(top or Path.cwd()) / '.claude/pstack-models.md'
+if project_sheet.is_file():
+    lines = project_sheet.read_text(errors='replace').lstrip('﻿').splitlines()
+    report['runtimes']['claude'].update({'project_sheet': str(project_sheet),
+                                         'project_sheet_hook_off': 'session hook: off' in lines})
 report['runtimes']['cowork'] = {'app_installed': Path('/Applications/Claude.app').exists(), 'live_verified': False}
 print(json.dumps(report, indent=2))

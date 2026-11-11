@@ -2,7 +2,7 @@
 
 An effort-aware overlay around a current, pinned pstack engine. Ordinary questions get direct answers. Engineering requests get brief approach choices, then the smallest selected workflow that meets the acceptance criteria. Focused edits do not trigger PRDs, HLDs, review panels or the full pstack router.
 
-Version 1.9.0, engine pinned to pstack-claude v0.9.133 on original pstack 0.15.36. **[Architecture](docs/architecture.md)** explains how it layers on pstack and poteto-mode, effort routing, what loads when, the engine lock, install and the hook, in a few minutes.
+Version 1.10.0, engine pinned to pstack-claude v0.9.135 on original pstack 0.15.36. **[Architecture](docs/architecture.md)** explains how it layers on pstack and poteto-mode, effort routing, what loads when, the engine lock, install and the hook, in a few minutes.
 
 Only the two Shnitzel entry skills and explicit poteto-mode are linked for discovery by default. The other skills remain available by path and are loaded on demand. `--all-skills` enables full discovery at the cost of additional standing metadata.
 
@@ -52,7 +52,7 @@ Before implementation, show meaningful alternatives in at most 120 words and wai
 
 `--locked --build` rebuilds recorded source revisions. `--rollback` restores the previous engine. Failed candidates never replace the working engine. [Upstream procedure](docs/upstream-sync.md) explains temporary upstream adaptations, policy differences and provenance.
 
-Run `python3 -m unittest discover -s tests -v` and `bin/publish-check.sh`. Contract tests do not prove that a model follows a skill. Behavioral acceptance and token comparisons are recorded separately, including failures and missing telemetry. The [current architecture](docs/architecture.md) describes 1.9.0. The [earlier architecture review](docs/architecture-review.md) is a historical review of 1.3, not a current verification report, and [acceptance evidence](docs/acceptance.md) records the 1.4 live run.
+Run `python3 -m unittest discover -s tests -v` and `bin/publish-check.sh`. Contract tests do not prove that a model follows a skill. Behavioral acceptance and token comparisons are recorded separately, including failures and missing telemetry. The [current architecture](docs/architecture.md) describes 1.10.0. The [earlier architecture review](docs/architecture-review.md) is a historical review of 1.3, not a current verification report, and [acceptance evidence](docs/acceptance.md) records the 1.4 live run.
 
 ## Collectors
 

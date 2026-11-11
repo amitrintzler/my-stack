@@ -1,6 +1,6 @@
 # Capabilities and limits
 
-Shnitzel 1.9.0 provides effort admission, meaningful approach selection, isolated upstream updates and explicit budget capability checks, introduced in 1.4 and kept since. Twenty-eight optional operational skills and seventeen domain cards remain available. See [architecture](docs/architecture.md). Ordinary questions and focused edits bypass the full pstack router.
+Shnitzel 1.10.0 provides effort admission, meaningful approach selection, isolated upstream updates and explicit budget capability checks, introduced in 1.4 and kept since. Twenty-eight optional operational skills and seventeen domain cards remain available. See [architecture](docs/architecture.md). Ordinary questions and focused edits bypass the full pstack router.
 
 The engine lock records exact released-port and original-pstack revisions, included upstream changes and runtime exclusions. Updates validate before activation and retain the previous engine. Runtime model choices use pstack's per-runtime sheets. In Cursor, pstack is Cursor's own plugin and its sheet is `~/.cursor/rules/pstack-models.mdc`; that plugin follows Cursor's marketplace, not the lock. Cursor support is contract-tested and passes Cursor's plugin validator, but no live Cursor session has been run.
 
