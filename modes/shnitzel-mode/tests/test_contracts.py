@@ -233,6 +233,29 @@ class InstallerTests(unittest.TestCase):
         self.assertIn(shared, block)
         self.assertIn(shared, install.cursor_rule())
 
+class DoctorTests(unittest.TestCase):
+    def run_doctor(self, sheet_text=None):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+            (repo / 'sub').mkdir()
+            if sheet_text is not None:
+                (repo / '.claude').mkdir()
+                (repo / '.claude/pstack-models.md').write_text(sheet_text)
+            result = subprocess.run([sys.executable, str(ROOT / 'bin/doctor.py')], cwd=repo / 'sub', check=True,
+                                    capture_output=True, text=True, env=dict(os.environ, HOME=temp))
+            return json.loads(result.stdout)['runtimes']['claude']
+
+    def test_project_sheet_without_hook_off_is_reported(self):
+        claude = self.run_doctor('# pstack model configuration\r\nsession hook: on\r\n')
+        self.assertTrue(claude['project_sheet'].endswith('.claude/pstack-models.md'))
+        self.assertFalse(claude['project_sheet_hook_off'])
+
+    def test_project_sheet_with_hook_off_and_no_sheet(self):
+        self.assertTrue(self.run_doctor('\ufeffsession hook: off\r\n')['project_sheet_hook_off'])
+        self.assertNotIn('project_sheet', self.run_doctor())
+
+
 class CollectorTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

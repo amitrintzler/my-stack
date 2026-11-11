@@ -2,8 +2,8 @@
   "version": 1,
   "port": {
     "repository": "michael-denyer/pstack-claude",
-    "tag": "v0.9.133",
-    "sha": "8074b9fda33293b51844fbfc50e615df3729350b"
+    "tag": "v0.9.135",
+    "sha": "bc09365fe61c725c486ba95157fc4048bf8a0b99"
   },
   "original": {
     "repository": "cursor/plugins",

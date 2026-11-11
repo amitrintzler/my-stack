@@ -1,7 +1,7 @@
 {
   "name": "shnitzel-mode",
   "displayName": "shnitzel-mode",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Effort-aware routing in front of Cursor's pstack plugin: direct answers, focused edits without the router, and pstack workflows only when the work needs them.",
   "author": {
     "name": "Amit Rintzler"

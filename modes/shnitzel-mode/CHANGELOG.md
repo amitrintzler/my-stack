@@ -1,3 +1,19 @@
+# 1.10.0
+
+Engine moved to pstack-claude v0.9.135 (bc09365), still on original pstack 0.15.36 (c742dd6), the port's own pin and the latest upstream. The three-way sync is clean with no conflicts or resolutions, the generator, generator check and playbook check pass, and no new model role appears.
+
+Upstream changes that arrive with it: poteto-mode's bug-fix playbook gains a focused-fix exception that skips `how`, `why` and `architect` when runtime evidence pins the cause in one subsystem and the fix changes no interface, state, security, concurrency or deployment contract, and it names when `architect` and an independent correctness reviewer are required even for a one-function fix. On Claude Code, `setup-pstack` can write a project sheet, `.claude/pstack-models.md` at the repository root, which replaces the user sheet in that repository, and pstack's session hook reads it. The worktree audit reads compressed Codex sessions, Codex session effort comes from the selected session, and Pi runs Fable 5.2 with Pi 1.5.1 as its oldest supported version. Port v0.9.136 (project playbooks also read from `~/.agents/playbooks/`) is left for the next pull.
+
+Shnitzel adaptations:
+
+- Effort tiers and the focused-fix exception do not fight. A Focused fix never loads pstack, so nothing is skipped twice. At Standard and Deep the exception alone decides the skip; the tier neither forces `how`, `why` and `architect` back nor waives them, and the tier's required reviewers still apply. One sentence in `references/effort.md`, which only Standard and Deep read.
+- A project sheet would turn pstack's session mandate back on in its repository, because the installer's `session hook: off` lives in the user sheet. `setup-shnitzel-mode` now gives a project sheet `session hook: off` too, `references/effort.md` says the project sheet is the one to read in that repository, and `bin/doctor.py` reports a project sheet and whether its hook is off. The installer still never writes into a repository.
+- Cursor is unchanged: it runs Cursor's own pstack plugin, which the port does not touch.
+
+Token impact: none on the always-on text, and installer output for every runtime is byte-identical to 1.9.0. Standard and Deep read about 90 more tokens in `effort.md`. In pstack, `poteto-mode` grows by one line and the bug-fix playbook by about 550 tokens, read only when Standard or Deep opens it; the exception then saves whole `how`, `why` and `architect` fan-outs on qualifying fixes.
+
+Verified: 39 contract tests (two new for the doctor), `check-all`. Not verified: a live Claude Code session with a project sheet.
+
 # 1.9.0
 
 Official Cursor support. Original pstack is itself a Cursor plugin, so Cursor uses Cursor's own pstack plugin as the engine: no port, no engine build, and pstack's skills keep their native Cursor tool names. Shnitzel joins as a second Cursor plugin.

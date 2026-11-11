@@ -1,6 +1,6 @@
 # Architecture
 
-Current for Shnitzel 1.9.0. The engine is pinned to pstack-claude v0.9.133 (`8074b9f`) built on original pstack 0.15.36 (`c742dd6`); `config/upstream-lock.json` is the record. The [1.3 review](architecture-review.md) is historical.
+Current for Shnitzel 1.10.0. The engine is pinned to pstack-claude v0.9.135 (`bc09365`) built on original pstack 0.15.36 (`c742dd6`); `config/upstream-lock.json` is the record. The [1.3 review](architecture-review.md) is historical.
 
 ## In one paragraph
 
@@ -44,6 +44,8 @@ The standing instruction is the only always-on routing text. It is self-sufficie
 | Deep | 2 reviewers | yes | yes | high |
 
 Defaults come from [`config/effort-policy.json`](../config/effort-policy.json), with `runtime_overrides` for a specific runtime. Rules that hold at every tier: risk overrides diff size (auth, deletion, production, security get proper checks even for one line); about 20% of an estimated budget is reserved for verification and handoff; two failed rounds trigger a premise check; no tier removes a required correctness check; a sequential self-review is never called independent. The tier is a judgement, not a keyword classifier.
+
+Bug fixes: a Focused fix never loads pstack. At Standard or Deep, pstack's bug-fix playbook carries its own focused-fix exception (since port v0.9.135), which skips `how`, `why` and `architect` when runtime evidence pins one subsystem and the fix changes no interface, state, security, concurrency or deployment contract. The exception alone decides that skip; the tier neither forces those steps back nor waives them, and the tier's required reviewers still apply.
 
 ## What is loaded, and when
 
@@ -103,7 +105,7 @@ A marketplace install copies only the plugin folder. The installer, collectors, 
 
 - one marked block (`<!-- shnitzel-mode:begin/end -->`) in each runtime's rules file;
 - symlinks for the linked skills, refusing to replace a foreign skill of the same name;
-- in each runtime's `pstack-models.md`: `session hook: off`, plus any missing role as `inherit-parent`. User lines are never changed.
+- in each runtime's `pstack-models.md`: `session hook: off`, plus any missing role as `inherit-parent`. User lines are never changed. On Claude Code a repository may commit its own `.claude/pstack-models.md`, which replaces the user sheet there (port v0.9.135). The installer never writes into a repository, so that sheet needs its own `session hook: off`; `setup-shnitzel-mode` adds it and `bin/doctor.py` reports a project sheet without it.
 - an ownership record, so uninstall restores a model sheet only if it was not edited afterwards and never removes someone else's link.
 
 Runtimes: Claude Code, Codex, Gemini CLI, Cursor, a self-contained Cowork folder (`bin/cowork-package.py`) and a local project target. See [runtimes.md](runtimes.md).
