@@ -37,6 +37,18 @@ For Cursor use `./install.sh --apply cursor`; it is not part of the default targ
 
 The installer updates only its marked blocks, refuses foreign skill collisions and keeps backups outside working repositories. Uninstall restores owned model-sheet changes only if they have not been edited afterward, and never deletes somebody else's skill link. `./install.sh --uninstall --apply` removes the default runtime targets; local installations are removed explicitly from their project.
 
+## What each feature costs
+
+Claude Code records it on its own. The plugin (and `install.sh --apply` for `claude`) adds a Stop and SubagentStop hook that reads the token counts Claude Code already writes to the session transcript and appends them to `~/.agents/shnitzel/usage/ledger-YYYY-MM.jsonl`, tagged with the skill or command that was active, the pstack playbook, the effort tier the turn named, the model and whether a subagent made the call. Nothing to configure. It stores counts and those labels only, never prompts, code, tool output or reasoning, and it never blocks or fails a session.
+
+```bash
+bin/shnitzel-cost                       # last 30 days, per feature and per effort tier
+bin/shnitzel-cost --days 0 --by feature,model,playbook,subagent
+bin/shnitzel-cost --json                # the same, for scripts
+```
+
+In Claude Code, `/shnitzel-mode:shnitzel-cost` prints the same table. Tokens are measured. USD is an estimate from API list prices in [`plugins/shnitzel-mode/config/model-pricing.json`](plugins/shnitzel-mode/config/model-pricing.json), dated there, and is not a bill: on a Claude subscription you are not charged per token. A model missing from that file is counted in tokens and marked `*`. Work that no skill or command claimed shows as `unattributed`, and a turn that named no tier shows as `not stated`; neither is guessed. Turn recording off with `touch ~/.agents/shnitzel/usage.off` (or `install.sh --apply --no-usage-hook` for the installer's hook). Codex, Gemini, Cowork and Cursor are not covered: their hooks do not hand over token usage, so `bin/budget.py record` stays the manual path there.
+
 ## Choosing effort
 
 - Direct: questions, text work and status, with evidence when needed.
@@ -52,7 +64,7 @@ Before implementation, show meaningful alternatives in at most 120 words and wai
 
 `--locked --build` rebuilds recorded source revisions. `--rollback` restores the previous engine. Failed candidates never replace the working engine. [Upstream procedure](docs/upstream-sync.md) explains temporary upstream adaptations, policy differences and provenance.
 
-Run `python3 -m unittest discover -s tests -v` and `bin/publish-check.sh`. Contract tests do not prove that a model follows a skill. Behavioral acceptance and token comparisons are recorded separately, including failures and missing telemetry. The [current architecture](docs/architecture.md) describes 1.10.0. The [earlier architecture review](docs/architecture-review.md) is a historical review of 1.3, not a current verification report, and [acceptance evidence](docs/acceptance.md) records the 1.4 live run.
+Run `python3 -m unittest discover -s tests -v` and `bin/publish-check.sh`. Contract tests do not prove that a model follows a skill. Behavioral acceptance and token comparisons are recorded separately, including failures and missing telemetry. The [current architecture](docs/architecture.md) describes 1.11.0. The [earlier architecture review](docs/architecture-review.md) is a historical review of 1.3, not a current verification report, and [acceptance evidence](docs/acceptance.md) records the 1.4 live run.
 
 ## Collectors
 

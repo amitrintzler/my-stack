@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+"""Per-feature token usage and estimated cost, recorded by the Claude Code usage hook."""
+import runpy
+import sys
+from pathlib import Path
+sys.argv[1:1] = ['report']
+runpy.run_path(str(Path(__file__).resolve().parents[1] / 'plugins/shnitzel-mode/scripts/usage.py'), run_name='__main__')

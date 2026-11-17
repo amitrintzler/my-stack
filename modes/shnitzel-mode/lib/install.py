@@ -17,6 +17,36 @@ PANELS = ['arena runners', 'arena cross-judge pool', 'architect runners', 'inter
 
 CURSOR_PLUGIN = ROOT / 'plugins/shnitzel-mode'
 CURSOR_RULE = CURSOR_PLUGIN / 'rules/shnitzel-mode.mdc'
+USAGE_SCRIPT = CURSOR_PLUGIN / 'scripts/usage.py'
+USAGE_MARK = 'shnitzel-mode/scripts/usage.py'
+
+
+def usage_settings(text, add):
+    """Claude Code settings.json text with Shnitzel's usage hook added or removed. Touches no other entry."""
+    data = json.loads(text) if text.strip() else {}
+    if not isinstance(data, dict) or not isinstance(data.get('hooks', {}), dict):
+        raise ValueError('settings.json is not an object with a hooks object')
+    hooks = data.setdefault('hooks', {})
+    command = f'python3 "{USAGE_SCRIPT}" hook'
+    for event in ('Stop', 'SubagentStop'):
+        entries = hooks.get(event, [])
+        if not isinstance(entries, list):
+            raise ValueError('settings.json hooks.' + event + ' is not a list')
+        ours = [e for e in entries if isinstance(e, dict) and any(
+            isinstance(h, dict) and USAGE_MARK in str(h.get('command', '')) for h in e.get('hooks', []))]
+        current = [h.get('command') for e in ours for h in e.get('hooks', []) if isinstance(h, dict)]
+        if add and current == [command]:
+            continue
+        kept = [e for e in entries if e not in ours]
+        if add:
+            kept.append({'hooks': [{'type': 'command', 'command': command, 'timeout': 10}]})
+        if kept:
+            hooks[event] = kept
+        else:
+            hooks.pop(event, None)
+    if not hooks:
+        data.pop('hooks')
+    return json.dumps(data, indent=2) + '\n'
 
 
 def admission(skill, workflows, sheet):
@@ -48,7 +78,7 @@ def sha(text):
     return hashlib.sha256(text.encode()).hexdigest()
 
 
-def install(home, targets, apply=False, uninstall=False, engine=None, local_root=None, all_skills=False):
+def install(home, targets, apply=False, uninstall=False, engine=None, local_root=None, all_skills=False, usage=True):
     state, skills = home / '.agents/shnitzel', home / '.agents/skills'
     own_path = state / 'install-ownership.json'
     own = json.loads(own_path.read_text()) if own_path.exists() else {'version': 1, 'links': {}, 'sheets': {}}
@@ -63,12 +93,23 @@ def install(home, targets, apply=False, uninstall=False, engine=None, local_root
     sheets = {k: p.parent / 'pstack-models.md' for k, p in rules.items()}
     sheets['local'] = (local_root or Path.cwd()) / '.agents/pstack-models.md'
     cursor_link = home / '.cursor/plugins/local/shnitzel-mode'
-    writes, links, removes = {}, {}, []
+    writes, links, removes, warnings = {}, {}, [], []
     for target in targets:
         if target == 'cursor':
             # Cursor's own pstack plugin supplies the engine and owns pstack-models.mdc.
             # The Shnitzel plugin carries its admission as an always-applied rule.
             continue
+        if target == 'claude':
+            # Measured usage per feature: Claude Code's Stop and SubagentStop hooks append token counts
+            # to ~/.agents/shnitzel/usage. A marketplace install gets the same hook from plugin.json.
+            settings = rules['claude'].parent / 'settings.json'
+            before = settings.read_text() if settings.exists() else ''
+            try:
+                after = usage_settings(before, usage and not uninstall)
+                if (json.loads(before) if before.strip() else {}) != json.loads(after) and (before or usage and not uninstall):
+                    writes[settings] = after
+            except ValueError as error:
+                warnings.append('usage hook not changed: ' + str(error))
         path, sheet = rules[target], sheets[target]
         before = path.read_text() if path.exists() else ''
         instruction = admission(f'{skills}/shnitzel-mode/SKILL.md', f'at {engine}/plugins/pstack', sheet)
@@ -165,6 +206,8 @@ def install(home, targets, apply=False, uninstall=False, engine=None, local_root
     plan = {'writes': [str(p) for p in writes], 'links': dict(links),
             'removes': [str(p) for p in removes], 'engine_available': (engine / 'plugins/pstack/skills').is_dir(),
             'applied': apply, 'model_defaults': 'inherit parent, reduced diversity until configured'}
+    if warnings:
+        plan['warnings'] = warnings
     if apply:
         backups = state / 'backups' / datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
         for path, content in writes.items():
@@ -205,9 +248,11 @@ def main():
     p.add_argument('--engine', type=Path)
     p.add_argument('--local-root', type=Path)
     p.add_argument('--all-skills', action='store_true', help='discover every optional skill; increases standing metadata')
+    p.add_argument('--no-usage-hook', action='store_true',
+                   help='Claude Code: do not record per-feature token usage (removes the hook if present)')
     a = p.parse_args()
     targets = ['claude', 'codex', 'gemini', 'cowork'] if a.runtime == 'all' else [a.runtime]
-    print(json.dumps(install(a.home, targets, a.apply, a.uninstall, a.engine, a.local_root, a.all_skills), indent=2))
+    print(json.dumps(install(a.home, targets, a.apply, a.uninstall, a.engine, a.local_root, a.all_skills, not a.no_usage_hook), indent=2))
 
 
 if __name__ == '__main__':

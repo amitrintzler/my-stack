@@ -493,5 +493,183 @@ class ManifestTests(unittest.TestCase):
             self.assertEqual((catalog / entry['source']).resolve(), plugin.resolve())
 
 
+def load_usage():
+    spec = importlib.util.spec_from_file_location('shnitzel_usage', ROOT / 'plugins/shnitzel-mode/scripts/usage.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+usage = load_usage()
+
+
+def line(**entry):
+    return json.dumps(entry) + '\n'
+
+
+def turn(mid, out, text=None, tools=(), cache_read=0, model='claude-opus-5-5'):
+    content = ([{'type': 'text', 'text': text}] if text else []) + [
+        {'type': 'tool_use', 'id': 't' + mid, 'name': name, 'input': data} for name, data in tools]
+    return line(type='assistant', timestamp='2026-11-17T10:00:00Z', message={
+        'id': mid, 'model': model, 'content': content,
+        'usage': {'input_tokens': 10, 'cache_read_input_tokens': cache_read, 'cache_creation_input_tokens': 100,
+                  'cache_creation': {'ephemeral_5m_input_tokens': 0, 'ephemeral_1h_input_tokens': 100}, 'output_tokens': out}})
+
+
+def tool_result(mid, error=False):
+    return line(type='user', message={'role': 'user', 'content': [
+        {'type': 'tool_result', 'tool_use_id': 't' + mid, 'content': 'loaded', 'is_error': error}]})
+
+
+class UsageHookTests(unittest.TestCase):
+    SECRET = 'PROMPT-SECRET-DO-NOT-STORE'
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.env = patch.dict(os.environ, {'SHNITZEL_STATE': str(self.root / 'state')})
+        self.env.start()
+        self.addCleanup(self.env.stop)
+        self.transcript = self.root / 'session.jsonl'
+
+    def run_hook(self, **payload):
+        import io
+        usage.hook(io.StringIO(json.dumps({'session_id': 's1', 'transcript_path': str(self.transcript), **payload})))
+        return usage.load(self.root / 'state/usage')
+
+    def test_attribution_by_skill_tier_playbook_and_turn(self):
+        self.transcript.write_text(
+            line(type='user', message={'role': 'user', 'content': 'please ' + self.SECRET})
+            + turn('m1', 5, tools=[('Read', {'file_path': '/x/.agents/skills/shnitzel-mode/SKILL.md'})])
+            + line(type='user', message={'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'tm1', 'content': self.SECRET}]})
+            + turn('m2', 1, text='Shnitzel tier: Standard')
+            + turn('m2', 40, tools=[('Read', {'file_path': '/e/plugins/pstack/playbooks/bug-fix.md'})]) + tool_result('m2')
+            + turn('m3', 7, tools=[('Skill', {'skill': 'pstack:poteto-mode'})]) + tool_result('m3')
+            + turn('m9', 1, tools=[('Skill', {'skill': 'no-such-skill'})]) + tool_result('m9', error=True)
+            + turn('m4', 3)
+            + line(type='user', message={'role': 'user', 'content': 'next question'})
+            + turn('m5', 2)
+            + line(type='user', message={'role': 'user', 'content': '<command-name>/shnitzel-mode:hld</command-name>'})
+            + turn('m6', 2, model='<synthetic>') + turn('m7', 2, model='claude-mystery-9'))
+        rows = {r['event_id']: r for r in self.run_hook()}
+        self.assertEqual(rows['cc:m1']['feature'], 'unattributed')  # charged before the skill it loads
+        self.assertEqual((rows['cc:m2']['feature'], rows['cc:m2']['tier'], rows['cc:m2']['output_tokens']), ('shnitzel-mode', 'standard', 40))
+        self.assertEqual(rows['cc:m3']['playbook'], 'bug-fix')
+        self.assertEqual((rows['cc:m4']['feature'], rows['cc:m4']['tier']), ('pstack:poteto-mode', 'standard'))
+        self.assertEqual((rows['cc:m5']['feature'], rows['cc:m5']['tier']), ('unattributed', None))
+        self.assertEqual(rows['cc:m7']['feature'], 'shnitzel-mode:hld')
+        self.assertNotIn('cc:m6', rows)
+        self.assertEqual(rows['cc:m2']['input_tokens'], 110)
+        self.assertEqual(rows['cc:m2']['cache_write_1h_tokens'], 100)
+        stored = ''.join(p.read_text() for p in (self.root / 'state/usage').rglob('*') if p.is_file())
+        self.assertNotIn(self.SECRET, stored)
+        self.assertNotIn('please', stored)
+        # A second Stop appends nothing; a later line is picked up with the saved turn context.
+        ledger = next((self.root / 'state/usage').glob('ledger-*.jsonl'))
+        size = ledger.stat().st_size
+        self.run_hook()
+        self.assertEqual(ledger.stat().st_size, size)
+        with self.transcript.open('a') as out:
+            out.write(turn('m8', 1) + '{"type": "assistant", "partial')
+        rows = {r['event_id']: r for r in self.run_hook()}
+        self.assertEqual(rows['cc:m8']['feature'], 'shnitzel-mode:hld')
+
+    def test_subagent_inherits_parent_feature(self):
+        self.transcript.write_text(turn('p1', 1, tools=[('Skill', {'skill': 'hld'})]) + tool_result('p1'))
+        agent = self.root / 'session/subagents/agent-x.jsonl'
+        agent.parent.mkdir(parents=True)
+        agent.write_text(line(type='user', isSidechain=True, message={'role': 'user', 'content': 'subtask'}) + turn('a1', 9))
+        rows = {r['event_id']: r for r in self.run_hook(agent_transcript_path=str(agent))}
+        self.assertEqual((rows['cc:a1']['feature'], rows['cc:a1']['subagent']), ('hld', True))
+        self.assertFalse(rows['cc:p1']['subagent'])
+        # A background subagent's later lines are picked up by the next main Stop, still attributed.
+        with agent.open('a') as out:
+            out.write(turn('a2', 3))
+        rows = {r['event_id']: r for r in self.run_hook()}
+        self.assertEqual((rows['cc:a2']['feature'], rows['cc:a2']['subagent']), ('hld', True))
+
+    def test_opt_out_and_failures_never_raise(self):
+        self.transcript.write_text(turn('m1', 1))
+        (self.root / 'state').mkdir()
+        (self.root / 'state/usage.off').touch()
+        self.assertEqual(self.run_hook(), [])
+        (self.root / 'state/usage.off').unlink()
+        import io
+        usage.hook(io.StringIO('not json'))
+        self.assertIn('JSONDecodeError', (self.root / 'state/usage/errors.jsonl').read_text())
+        self.assertEqual(len(self.run_hook(transcript_path=str(self.root / 'missing.jsonl'))), 0)
+
+    def test_pricing_keys_and_estimate(self):
+        table = json.loads(usage.PRICING.read_text())
+        for model in ['claude-opus-5-5', 'claude-opus-5-5[1m]', 'anthropic.claude-opus-5-5', 'us.anthropic.claude-opus-5-5',
+                      'claude-opus-5-5@20260101', 'claude-opus-5-5-20260101']:
+            self.assertEqual(usage.model_key(model), 'opus-5-5', model)
+        row = {'model': 'claude-opus-5-5', 'uncached_input_tokens': 1_000_000, 'cache_read_tokens': 1_000_000,
+               'cache_write_5m_tokens': 1_000_000, 'cache_write_1h_tokens': 0, 'output_tokens': 1_000_000, 'input_tokens': 3_000_000}
+        self.assertAlmostEqual(usage.price(row, table), 4 + 0.2 + 5 + 20)
+        self.assertIsNone(usage.price({**row, 'model': 'claude-mystery-9'}, table))
+        self.assertIsNone(usage.price({**row, 'model': 'claude-opus-5', 'speed': 'fast'}, table))
+        self.assertTrue(table['estimate'] and table['as_of'])
+
+    def test_report_groups_and_marks_unpriced(self):
+        self.transcript.write_text(turn('m1', 1, tools=[('Skill', {'skill': 'hld'})]) + tool_result('m1') + turn('m2', 5)
+                                   + turn('m3', 5, model='claude-mystery-9'))
+        self.run_hook()
+        result = subprocess.run([sys.executable, str(ROOT / 'bin/shnitzel-cost'), '--json', '--days', '0', '--by', 'feature,model'],
+                                capture_output=True, text=True, env={**os.environ}, check=True)
+        groups = json.loads(result.stdout)['groups']
+        self.assertEqual(groups['feature']['hld']['calls'], 2)
+        self.assertEqual(groups['model']['claude-mystery-9']['unpriced_calls'], 1)
+        text = subprocess.run([sys.executable, str(ROOT / 'bin/shnitzel-cost')], capture_output=True, text=True,
+                              env={**os.environ}, check=True).stdout
+        self.assertIn('not a bill', text)
+        self.assertIn('*', text)
+
+
+class UsageInstallTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.home = Path(self.temp.name)
+        self.env = patch.dict(os.environ, {'CLAUDE_CONFIG_DIR': str(self.home / '.claude')})
+        self.env.start()
+        self.addCleanup(self.env.stop)
+        self.settings = self.home / '.claude/settings.json'
+
+    def commands(self):
+        hooks = json.loads(self.settings.read_text()).get('hooks', {})
+        return {e: [h['command'] for x in hooks.get(e, []) for h in x['hooks']] for e in ('Stop', 'SubagentStop')}
+
+    def test_claude_install_adds_hook_idempotently_and_uninstall_keeps_foreign_hooks(self):
+        self.settings.parent.mkdir()
+        foreign = {'type': 'command', 'command': 'notify-me'}
+        self.settings.write_text(json.dumps({'model': 'x', 'hooks': {'Stop': [{'hooks': [foreign]}]}}))
+        install.install(self.home, ['claude'], apply=True)
+        commands = self.commands()
+        self.assertEqual(commands['Stop'][0], 'notify-me')
+        self.assertTrue(all(any(install.USAGE_MARK in c for c in cs) for cs in commands.values()))
+        self.assertEqual(install.install(self.home, ['claude'], apply=True)['writes'], [])
+        install.install(self.home, ['claude'], apply=True, uninstall=True)
+        self.assertEqual(json.loads(self.settings.read_text()), {'model': 'x', 'hooks': {'Stop': [{'hooks': [foreign]}]}})
+
+    def test_opt_out_and_unreadable_settings(self):
+        install.install(self.home, ['claude'], apply=True, usage=False)
+        self.assertFalse(self.settings.exists())
+        self.settings.write_text('{"hooks": [] // comment')
+        plan = install.install(self.home, ['claude'], apply=True)
+        self.assertIn('usage hook not changed', plan['warnings'][0])
+        self.assertEqual(self.settings.read_text(), '{"hooks": [] // comment')
+
+    def test_plugin_manifest_hook_runs_shipped_script(self):
+        plugin = ROOT / 'plugins/shnitzel-mode'
+        hooks = json.loads((plugin / '.claude-plugin/plugin.json').read_text())['hooks']
+        for event in ('Stop', 'SubagentStop'):
+            command = hooks[event][0]['hooks'][0]['command']
+            self.assertIn('${CLAUDE_PLUGIN_ROOT}/scripts/usage.py', command)
+        self.assertTrue((plugin / 'scripts/usage.py').is_file())
+        self.assertTrue((plugin / 'config/model-pricing.json').is_file())
+
+
 if __name__ == '__main__':
     unittest.main()

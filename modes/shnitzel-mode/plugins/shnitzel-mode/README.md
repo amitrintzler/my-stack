@@ -23,6 +23,10 @@ Then run `/setup-shnitzel-mode` once in each runtime. A marketplace install copi
 
 Requires Python 3 and Git, plus Node and Bun to build the engine.
 
+## Cost per feature
+
+In Claude Code this plugin records the token counts of every model call, tagged with the active skill or command, playbook, stated effort tier and model, in `~/.agents/shnitzel/usage`. It stores no prompts or code and never blocks a session. Type `/shnitzel-mode:shnitzel-cost` for a table per feature and per tier with an estimated USD column (API list prices from `config/model-pricing.json`; not a bill on a subscription). `touch ~/.agents/shnitzel/usage.off` turns recording off.
+
 ## Credits
 
 pstack and poteto-mode are Lauren Tan's work, published in cursor/plugins under MIT. The cross-runtime port is michael-denyer/pstack-claude. Shnitzel is an independent overlay, not an official pstack release, and it switches off pstack's automatic session hook so that its own admission rules decide when pstack runs. See the distribution's NOTICE.md for attribution.

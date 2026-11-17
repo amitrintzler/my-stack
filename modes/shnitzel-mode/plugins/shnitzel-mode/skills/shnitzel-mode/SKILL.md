@@ -16,6 +16,8 @@ Start with the outcome, not a playbook. Resolve this skill's real path; the dist
 
 ## Effort
 
+Once you choose a tier, write `Shnitzel tier: <direct|focused|standard|deep>` once on its own line; the usage report groups cost by it.
+
 **Focused:** bounded, reversible change with clear acceptance criteria. One agent, targeted reads, smallest change, relevant verification. Do not load the full pstack router, generate PRD/HLD documents, launch panels, create backup files beside tracked files, or commit just to satisfy ceremony. Git supplies recovery in a repository; outside one preserve recoverability without initializing repositories unsolicited.
 
 **Standard:** a change spanning behavior or interfaces. Load the matching installed pstack workflow and only relevant domain guidance. Use workflow-required independent review; do not add a panel merely to plan a panel.
