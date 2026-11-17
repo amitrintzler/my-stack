@@ -1,7 +1,7 @@
 {
   "name": "shnitzel-mode",
   "displayName": "shnitzel-mode",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Effort-aware routing over a pinned current pstack engine, with runtime-specific model roles, observable collectors and strict budget capability checks.",
   "author": {
     "name": "Amit Rintzler"
@@ -17,5 +17,29 @@
     "platform",
     "runtime-neutral",
     "workflow"
-  ]
+  ],
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/usage.py\" hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/usage.py\" hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 }

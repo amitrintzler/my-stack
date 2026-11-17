@@ -1,5 +1,8 @@
 # Hooks
 
+The usage hook is separate and on by default: `.claude-plugin/plugin.json` declares a Stop and a SubagentStop hook that runs `scripts/usage.py hook` to record token counts per feature. It injects nothing into the conversation and costs no tokens. Turn it off with `touch ~/.agents/shnitzel/usage.off`. Everything below is about the routing hook only.
+
+
 `hooks.json.disabled` is shipped inert on purpose.
 
 Enabling it injects roughly 135 tokens of routing mandate into every session start, resume, clear and compact, and routes every non-trivial task through `shnitzel-mode` automatically. That is convenient and it also fires on tasks that did not need it, which costs tokens and slows small work.

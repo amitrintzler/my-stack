@@ -146,7 +146,7 @@ Collection is deterministic shell with no mutating command: `gh-collect.sh`, `fe
 
 ## What is verified
 
-- CI on every push: publish check, strict plugin and marketplace validation, 37 contract tests (installer ownership, the Cursor target and rule, version agreement across manifests, budget ledger, collectors, engine rollback), collectors on an empty config, and an installer dry run that must write nothing.
+- CI on every push: publish check, strict plugin and marketplace validation, 47 contract tests (installer ownership, the Cursor target and rule, version agreement across manifests, budget ledger, usage hook attribution and its settings entry, collectors, engine rollback), collectors on an empty config, and an installer dry run that must write nothing.
 - Each engine move passes the port's generator, generator check and playbook check before it is locked.
 - Cursor manifests also pass Cursor's own plugin validator and schemas (run by hand from cursor/plugins, not in CI).
 - Not verified: that a model follows a skill. Cursor support has not been run in a live Cursor session. Live runtime acceptance was last recorded for 1.4 on an older engine ([acceptance.md](acceptance.md)). The only measured token figure is one focused fixture, 80,880 to 51,243 total tokens (36.6% fewer); it is not a benchmark median. A full benchmark is planned, not run.
@@ -160,6 +160,7 @@ Collection is deterministic shell with no mutating command: `gh-collect.sh`, `fe
 | `lib/install.py`, `install.sh` | Owned installation and uninstall |
 | `lib/upstream.py`, `lib/sync-upstream.mjs`, `bin/upstream-check.sh` | Engine build, validation, activation, rollback |
 | `lib/budget.py`, `bin/budget.py` | Budget preflight and ledger |
+| `plugins/shnitzel-mode/scripts/usage.py`, `bin/shnitzel-cost` | Claude Code usage hook and per-feature cost report |
 | `bin/*-collect.sh`, `bin/*-scan.sh`, `bin/digest.sh`, `lib/digest.py` | Read-only collectors |
 | `bin/doctor.py`, `bin/cowork-package.py`, `bin/publish-check.sh` | Diagnostics, Cowork folder, publish gate |
 | `tests/test_contracts.py` | Contract tests |
